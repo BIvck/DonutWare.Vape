@@ -198,7 +198,7 @@ local library = {
     options     = {},
     notifs      = {},
     debugmode   = false,
-    cheatname   = 'octohook',
+    cheatname   = 'DonutWare.Vape',
     gamename    = 'developer test build',
     themes      = themes,
     theme       = themes.default,
@@ -2956,10 +2956,10 @@ do
         watermark.enabled = false
         watermark.objects = {}
         watermark.text = {
-            'octohook.xyz',
-            'liamm#0223',
+            'DonutWare.Vape',
+            'Blvck#4681',
             'uid 1',
-            '999ms',
+            '999 ms',
             '999 fps'
         }
 

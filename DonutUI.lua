@@ -1,6 +1,6 @@
 --[[
-    /------------ [ gameover ui library ] ------------\
-    | fully by euphoria#1337 (1041164903332974682)         |
+    /------------ [ gameover ui library ] ----------------\
+    | fully by liamm#0223 (561301972293255180)            |
     | last modified 12/17/2022                            |
     | if used, give credit.                               |
     |                                                     |

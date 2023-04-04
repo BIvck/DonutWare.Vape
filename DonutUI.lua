@@ -1,3317 +1,3655 @@
---[[Nigga what are u looking this is my own ui bitch]]--
-
--- // load
-local startup_args = ({...})[1] or {}
-if library ~= nil then
-    library:unload()
-end
-
-local themes = {
-    ['default'] = {
-        ['Accent']              = Color3.fromRGB(170, 90, 225),
-        ['Background']          = Color3.fromRGB(15,15,20),
-        ['Border']              = Color3.fromRGB(0,0,0),
-        ['Border 1']            = Color3.fromRGB(10,10,15),
-        ['Border 2']            = Color3.fromRGB(45,45,50),
-        ['Border 3']            = Color3.fromRGB(35,35,40),
-        ['Primary Text']        = Color3.fromRGB(245,245,245),
-        ['Secondary Text']      = Color3.fromRGB(185, 185, 185),
-        ['Group Background']    = Color3.fromRGB(20,20,25),
-        ['Selected Tab']        = Color3.fromRGB(20,20,25),
-        ['Unselected Tab']      = Color3.fromRGB(15,15,20),
-        ['Selected Tab Text']   = Color3.fromRGB(245,245,245),
-        ['Unselected Tab Text'] = Color3.fromRGB(145,145,145),
-        ['Section Background']  = Color3.fromRGB(18,18,23),
-        ['Option Text 1']       = Color3.fromRGB(235,235,235),
-        ['Option Text 2']       = Color3.fromRGB(155,155,155),
-        ['Option Border 1']     = Color3.fromRGB(50,50,50),
-        ['Option Border 2']     = Color3.fromRGB(0,0,0),
-        ['Option Background']   = Color3.fromRGB(31,31,34),
-        ["Risky Text"]          = Color3.fromRGB(175, 21, 21),
-        ["Risky Text Enabled"]  = Color3.fromRGB(255, 41, 41),
-    }
+-- BlvcKWare.vip - UI
+local library = { 
+	flags = { }, 
+	items = { } 
 }
 
--- // variables
+-- Services
+local players = game:GetService("Players")
+local uis = game:GetService("UserInputService")
+local runservice = game:GetService("RunService")
+local tweenservice = game:GetService("TweenService")
+local marketplaceservice = game:GetService("MarketplaceService")
+local textservice = game:GetService("TextService")
+local coregui = game:GetService("CoreGui")
+local httpservice = game:GetService("HttpService")
 
--- globals
-local vector3_new  = Vector3.new
-local vector3_zero = Vector3.zero
-local vector2_new  = Vector2.new
-local vector2_zero = Vector2.zero
-local cframe_new   = CFrame.new
-local cframe_zero  = CFrame.zero
-local color3_new   = Color3.new
-local color3_hsv   = Color3.fromHSV
-local color3_hex   = Color3.fromHex
-local udim_new     = UDim.new
-local udim2_new    = UDim2.new
-local udim2_scale  = UDim2.fromScale
-local udim2_offset = UDim2.fromOffset
-local table_find   = table.find
-local table_sort   = table.sort
-local table_concat = table.concat
-local table_insert = table.insert
-local table_remove = table.remove
-local table_clear  = table.clear
-local math_clamp   = math.clamp
-local math_floor   = math.floor
-local math_ceil    = math.ceil
-local math_huge    = math.huge
-local math_max     = math.max
-local math_min     = math.min
-local math_sin     = math.sin
-local math_cos     = math.cos
-local math_abs     = math.abs 
-local math_rad     = math.rad
-local math_pi      = math.pi
+local player = players.LocalPlayer
+local mouse = player:GetMouse()
+local camera = game.Workspace.CurrentCamera
 
--- locals
-local inputservice    = game:GetService('UserInputService')
-local actionservice   = game:GetService('ContextActionService')
-local tweenservice    = game:GetService('TweenService')
-local runservice      = game:GetService('RunService')
-local http            = game:GetService('HttpService')
-local stats           = game:GetService('Stats')
-local camera          = workspace.CurrentCamera
-local worldtoviewport = camera.WorldToViewportPoint
-
-local library = {
-    classes     = {},
-    instances   = {},
-    connections = {},
-    hooks       = {},
-    meta        = {},
-    flags       = {},
-    options     = {},
-    notifs      = {},
-    debugmode   = false,
-    cheatname   = 'DonutWare.Vape',
-    gamename    = 'developer test build',
-    themes      = themes,
-    theme       = themes.default,
-    signal      = loadstring(game:HttpGetAsync('https://octohook.xyz/module/SgXCh7v6kQlDp6bCMYdcxNwWPTUzu07s0DMBslI7LiCoaMsit2.signal.lua'))(),
-    stat        = {fps = 0, ping = 0},
-    drawings    = {
-        active    = {}, 
-        draggable = {}, 
-        noparent  = {}, 
-        objects   = {}, 
-        raw       = {}
-    },
-    utility     = {
-        table     = {},
-        vector2   = {},
-        vector3   = {},
-        camera    = {},
-        color     = {},
-        string    = {}
-    },
-    images = {
-        ['gradientp90'] = 'https://www.octohook.xyz/assets/bMTlZ7Zlh6qwfjdBM3tWEU95KYG6AaPt6YxaNRQvQjROim1Q78.png',
-        ['gradientp45'] = 'https://www.octohook.xyz/assets/yBlCpOjuJXSGuBatJoRot5IiBztLDY24mkrdwsraHsYTJvjSnn.png',
-        ['colorhue']    = 'https://www.octohook.xyz/assets/hue2.png',
-        ['colortrans']  = 'https://www.octohook.xyz/assets/I05svPLPJk73c1oLlcXAPd907vcRrUnmTjTzK1zaXjYnFGYSoK.png',
-        ['colorsat1']   = 'https://www.octohook.xyz/assets/b6ce2f465dbe0ca4bf88d45ac4be1362.png',
-        ['colorsat2']   = 'https://www.octohook.xyz/assets/0c51aa9d7f2ede5c635c2f44f66be88f.png',
-        ['arrow_up']    = 'https://www.octohook.xyz/assets/arrow_up.png',
-        ['arrow_down']  = 'https://www.octohook.xyz/assets/arrow_down.png',
-        ['intro']       = 'https://www.octohook.xyz/assets/intro.webm'
-    }
+library.theme = {
+    fontsize = 15,
+    titlesize = 18,
+    font = Enum.Font.Code,
+    background = "rbxassetid://5553946656",
+    tilesize = 90,
+    cursor = true,
+    cursorimg = "https://t0.rbxcdn.com/42f66da98c40252ee151326a82aab51f",
+    backgroundcolor = Color3.fromRGB(20, 20, 20),
+    tabstextcolor = Color3.fromRGB(240, 240, 240),
+    bordercolor = Color3.fromRGB(60, 60, 60),
+    accentcolor = Color3.fromRGB(28, 56, 139),
+    accentcolor2 = Color3.fromRGB(16, 31, 78),
+    outlinecolor = Color3.fromRGB(60, 60, 60),
+    outlinecolor2 = Color3.fromRGB(0, 0, 0),
+    sectorcolor = Color3.fromRGB(30, 30, 30),
+    toptextcolor = Color3.fromRGB(255, 255, 255),
+    topheight = 48,
+    topcolor = Color3.fromRGB(30, 30, 30),
+    topcolor2 = Color3.fromRGB(30, 30, 30),
+    buttoncolor = Color3.fromRGB(49, 49, 49),
+    buttoncolor2 = Color3.fromRGB(39, 39, 39),
+    itemscolor = Color3.fromRGB(200, 200, 200),
+    itemscolor2 = Color3.fromRGB(210, 210, 210)
 }
 
-local signal  = library.signal
-local utility = library.utility
-local camera  = workspace.CurrentCamera
-
-local flags = library.flags
-local options = library.options
-
-local drawing_classes = {
-    'Square',
-    'Quad',
-    'Triangle',
-    'Circle',
-    'Line',
-    'Text'
-}
-
--- // initalizations
-do
-
-    for i,v in next, startup_args do
-        library[i] = v
-    end
-
-    makefolder(library.cheatname)
-    makefolder(library.cheatname .. '/cache/')
-    makefolder(library.cheatname .. '/' .. library.gamename)
-    makefolder(library.cheatname .. '/' .. library.gamename .. '/configs')
-
-    for flag, url in next, library.images do
-        if not isfile(library.cheatname .. '/cache/' .. flag .. '.octo') then
-            writefile(library.cheatname .. '/cache/' .. flag .. '.octo', game:HttpGet(url))
-        end
-        library.images[flag] = readfile(library.cheatname .. '/cache/' .. flag .. '.octo')
-    end
-
-    library.mouse_strings = {
-        [Enum.UserInputType.MouseButton1] = 'MB1',
-        [Enum.UserInputType.MouseButton2] = 'MB2',
-        [Enum.UserInputType.MouseButton3] = 'MB3',
-    }
-    
-    library.key_strings = {
-        [Enum.KeyCode.Space] = {' ', ' '},
-        [Enum.KeyCode.Slash] = {'/', '?'},
-        [Enum.KeyCode.BackSlash] = {'\\', '|'},
-        [Enum.KeyCode.Period] = {'.', '>'},
-        [Enum.KeyCode.Comma] = {',', '<'},
-        [Enum.KeyCode.LeftBracket] = {'[', '{'},
-        [Enum.KeyCode.RightBracket] = {']', '}'},
-        [Enum.KeyCode.Quote] = {'\'', '"'},
-        [Enum.KeyCode.Semicolon] = {';', ':'},
-        [Enum.KeyCode.Backquote] = {'`', '~'},
-        [Enum.KeyCode.Minus] = {'-', '_'},
-        [Enum.KeyCode.Equals] = {'=', '+'},
-        [Enum.KeyCode.One] = {'1', '!'},
-        [Enum.KeyCode.Two] = {'2', '@'},
-        [Enum.KeyCode.Three] = {'3', '#'},
-        [Enum.KeyCode.Four] = {'4', '$'},
-        [Enum.KeyCode.Five] = {'5', '%'},
-        [Enum.KeyCode.Six] = {'6', '^'},
-        [Enum.KeyCode.Seven] = {'7', '&'},
-        [Enum.KeyCode.Eight] = {'8', '*'},
-        [Enum.KeyCode.Nine] = {'9', '('},
-        [Enum.KeyCode.Zero] = {'0', ')'},
-    }
-    
-    library.blacklisted_keys = {
-        Enum.KeyCode.LeftShift,
-        Enum.KeyCode.RightShift,
-        Enum.KeyCode.LeftControl,
-        Enum.KeyCode.RightControl,
-        Enum.KeyCode.LeftAlt,
-        Enum.KeyCode.RightAlt,
-        Enum.KeyCode.LeftSuper,
-        Enum.KeyCode.RightSuper,
-        Enum.KeyCode.CapsLock,
-        Enum.KeyCode.Tab
-    }
-
-    library.screengui = Instance.new('ScreenGui')
-    syn.protect_gui(library.screengui)
-    library.screengui.Parent = game:GetService('CoreGui')
-end
-
--- // functions
-do
-    
-    -- library
-    function library:unload()
-        for i,v in next, self.hooks do v:Remove() end
-        for i,v in next, self.connections do v:Disconnect() end
-        for i,v in next, self.drawings.objects do v:Remove() end
-        for i,v in next, self.instances do v:Destroy() end
-        library.screengui:Destroy()
-        table_clear(library)
-        getgenv().library = nil
-    end
-
-    function library:connection(signal, callback, tbl)
-        local connection = signal:Connect(callback)
-        local metatable = setmetatable({}, {
-            __index = function(self, idx)
-                if idx == 'Disconnect' then
-                    table_remove(library.connections, table_find(library.connections, connection))
-                    return function() connection:Disconnect() end
+if library.theme.cursor and Drawing then
+    local success = pcall(function() 
+        library.cursor = Drawing.new("Image")
+        library.cursor.Data = game:HttpGet(library.theme.cursorimg)
+        library.cursor.Size = Vector2.new(64, 64)
+        library.cursor.Visible = uis.MouseEnabled
+        library.cursor.Rounding = 0
+        library.cursor.Position = Vector2.new(mouse.X - 32, mouse.Y + 6)
+    end)
+    if success and library.cursor then
+        uis.InputChanged:Connect(function(input)
+            if uis.MouseEnabled then
+                if input.UserInputType == Enum.UserInputType.MouseMovement then
+                    library.cursor.Position = Vector2.new(input.Position.X - 32, input.Position.Y + 7)
                 end
-                return connection[idx]
             end
-        })
-        table_insert(self.connections, connection)
-        if tbl then table_insert(tbl, metatable) end
-        return metatable
-    end
-
-    function library:hookmetamethod(object, metamethod, func)
-        local original = hookmetamethod(object, metamethod, func)
-        local hook = {}
-
-        function hook:Remove()
-            hookmetamethod(object, metamethod, function(...) return original(...) end)
-            table_remove(library.hooks, table_find(library.hooks, hook))
-            table_clear(hook)
-        end
-
-        function hook:SetFunction(func)
-            assert(typeof(func) == 'function', ("invalid hook function type. expected 'function', got '%s'"):format(typeof(func)))
-            hookmetamethod(object, metamethod, func)
-        end
-
-        table_insert(library.hooks, hook)
-        return original, hook
-    end
-
-    function library:hookfunction(func, replacement)
-
-        local replacement = function(...)
-            return replacement(...)
-        end
-
-        local original = hookfunction(func, replacement)
-        local hook = {
-            _func = func,
-            _original = original,
-            _replacement = replacement
-        }
-
-        function hook:Remove()
-            hookfunction(func, self._original)
-            table_remove(library.hooks, table_find(library.hooks, hook))
-            table_clear(hook)
-        end
-
-        function hook:SetFunction(newfunc)
-            assert(typeof(newfunc) == 'function', ("invalid hook function type. expected 'function', got '%s'"):format(typeof(func)))
-            hookmetamethod(func, newfunc)
-        end
-
-        table_insert(library.hooks, hook)
-        return original, hook
-    end
-
-    function library:instance(class, properties)
-        local inst = Instance.new(class)
-        for i,v in next, properties or {} do 
-            inst[i] = v
-        end
-        table_insert(self.instances, inst)
-        return inst
-    end
-    
-    function library:define(class, constructor, properties, meta)
-        assert(typeof(class) == 'string', ("invalid class name. expected 'string', got '%s'"):format(typeof(class)))
-        assert(typeof(constructor) == 'function' or table_find(drawing_classes, constructor), ("invalid constructor type. expected 'function', got '%s'"):format(typeof(constructor)))
-
-        local object = {
-            class = class,
-            constructor = typeof(constructor) == 'function' and constructor or function(properties) local drawing = Drawing.new(class); for i,v in next, properties do drawing[i] = v end; return drawing end,
-            default_properties = properties or {}
-        }
-
-        if meta then
-            properties.__index = properties
-        end
-
-        self.classes[class] = object
-        return object
-    end
-
-    function library:create(class, ...)
-        assert(self.classes[class] or table_find(drawing_classes, class), ("class '%s' not found"):format(class))
-
-        if table_find(drawing_classes, class) then
-            local drawing = Drawing.new(class)
-            for i,v in next, ({...})[1] or {} do
-                drawing[i] = v
-            end
-            table_insert(library.drawings.raw, drawing)
-            return drawing
-        end
-
-        local class_object = self.classes[class]
-        return class_object.constructor(class_object.default_properties, ...)
-    end
-
-    function library:update_theme()
-        for i,v in next, self.drawings.objects do
-            if v.Theme == nil then continue end 
-            v.Theme = v.Theme
-        end
-        for i,v in next, self.options do
-            if v.class == 'colorpicker' and v.useaccent == true then
-                v:set(library.theme.Accent, v.opacity)
-            end
-        end
-    end
-
-    function library:set_theme(theme)
-        self.theme = self.themes[theme]
-        self:update_theme()
-    end
-
-    function library:get_hover_object()
-        table_sort(self.drawings.active, function(a,b)
-            return a.ZIndex > b.ZIndex
         end)
-
-        local mouse_position = inputservice:GetMouseLocation()
-        for index, drawing in next, self.drawings.active do
-            if drawing._object.Visible and utility.vector2.inside(mouse_position, drawing.AbsolutePosition, drawing.AbsoluteSize) then
-                return drawing
-            end
-        end
-    end
-
-    function library:update_notifications()
-        for i,v in next, self.notifs do
-            utility:tween(v.objects.container, 'Position', udim2_new(0,5,0,100 + (i * 25)), 0.05)
-        end
-    end
-
-    function library:notification(message, duration, color)
-        local notification = {}
-        notification.objects = library:create('notification')
-
-        if color ~= nil then
-            notification.objects.accent.Theme = {}
-            notification.objects.accent.Color = color
-            notification.objects.progress.Theme = {}
-            notification.objects.progress.Color = color
-        end
         
-        function notification:set_message(message)
-            self.objects.label.Text = message
-            self.objects.background.Size = udim2_new(0, self.objects.label.TextBounds.X + 14, 0, 17)
-        end
-
-        function notification:remove()
-            table_remove(library.notifs, table_find(library.notifs, notification))
-            library:update_notifications()
-            self.objects.container:Remove()
-        end
-
-        task.spawn(function()
-            notification.objects.background.AnchorPoint = vector2_new(1,0)
-            utility:tween(notification.objects.background, 'AnchorPoint', vector2_new(0,0), 0.15).Completed:Wait()
-            utility:tween(notification.objects.progress, 'Size', udim2_new(1,0,0,1), duration or 5).Completed:Wait()
-            utility:tween(notification.objects.background, 'AnchorPoint', vector2_new(1,0), 0.15)
+        game:GetService("RunService").RenderStepped:Connect(function()
+            uis.OverrideMouseIconBehavior = Enum.OverrideMouseIconBehavior.ForceHide
+            library.cursor.Visible = uis.MouseEnabled and (uis.MouseIconEnabled or game:GetService("GuiService").MenuIsOpen)
         end)
-
-        delay(0.15 + duration + 0.15, function()
-            notification:remove()
-        end)
-
-        table_insert(library.notifs, notification)
-        notification.objects.container.Position = udim2_new(0,5,0,100 + (table_find(library.notifs, notification) * 25))
-        notification:set_message(message)
-        library:update_notifications()
-        return notification
+    elseif not success and library.cursor then
+        library.cursor:Remove()
     end
-
-    -- configs
-    function library:load_config(config)
-        if typeof(config) == 'string' then
-            local path = library.cheatname .. '/' .. library.gamename .. '/configs/' .. config .. '.txt'
-            assert(isfile(path), ("unable to load config '%s' [invalid config]"):format(tostring(config)))
-            config = http:JSONDecode(readfile(path))
-        end
-
-        for flag, value in next, config do
-            xpcall(function()
-                local option = library.options[flag]
-
-                assert(option ~= nil, 'invalid option')
-
-                if option.class == 'toggle' then
-                    option:set_state(value)
-                elseif option.class == 'slider' then
-                    option:set_value(value)
-                elseif option.class == 'colorpicker' then
-                    local split = value:split('_')
-                    option:set(Color3.fromHex(split[1]), tonumber(split[2]))
-                    option.useaccent = split[3] == 'true'
-                elseif option.class == 'dropdown' then
-                    option:select(value)
-                elseif option.class == 'textbox' then
-                    option:set_text(option.text)
-                elseif option.class == 'keybind' then
-                    option:set_bind(utility.table.includes(Enum.KeyCode, value) and Enum.KeyCode[value] or utility.table.includes(Enum.UserInputType, value) and Enum.UserInputType[value])
-                end
-            end, function(err)
-                library:notification(("unable to set '%s' to '%s' [%s]"):format(flag, typeof(value), tostring(err)), 5)
-            end)
-        end
-    end
-
-    function library:save_config(name, existscheck)
-
-        local path = library.cheatname .. '/' .. library.gamename .. '/configs/' .. name .. '.txt'
-        
-        if existscheck then
-            assert(isfile(path) == false, ("unable to create config '%s' [already exists]"):format(name))
-        end
-
-        if not table_find(options.configs_selected.values, name) then
-            options.configs_selected:add_value(name)
-        end
-
-        local config = {}
-
-        for flag, option in next, library.options do
-            local value = library.flags[flag]
-            if option.class == 'toggle' then
-                config[flag] = option.state
-            elseif option.class == 'slider' then
-                config[flag] = option.value
-            elseif option.class == 'keybind' then
-                config[flag] = option.bind.Name
-            elseif option.class == 'colorpicker' then
-                config[flag] = tostring(option.color:ToHex()) .. '_' .. tostring(option.opacity) .. '_' .. tostring(option.useaccent)
-            elseif option.class == 'dropdown' then
-                config[flag] = option.selected
-            elseif option.class == 'textbox' then
-                config[flag] = option.text
-            end
-        end
-
-        writefile(path, http:JSONEncode(config))
-
-    end
-
-
-    -- util
-    function utility:convert_number_range(value: number, min_old: number, max_old: number, min_new: number, max_new: number)
-        return (((value - min_old) * (max_new - min_new)) / (max_old - min_old)) + min_new
-    end
-
-    function utility:deepcopy(tbl)
-        local new = {}
-        for i,v in next, tbl do
-            if typeof(v) == 'table' then
-                v = utility:deepcopy(v)
-            end
-            new[i] = v
-        end
-        return new
-    end
-
-    function utility:udim2_to_vector2(udim2: UDim2, parent_size: Vector2)
-        local x = udim2.X.Offset + udim2.X.Scale * parent_size.X
-        local y = udim2.Y.Offset + udim2.Y.Scale * parent_size.Y
-        return vector2_new(x, y)
-    end
-
-    function utility:raycast(origin, direction, ignore, distance)
-        distance = distance or 15000
-        ignore = ignore or {}
-
-        local hit = workspace:FindPartOnRayWithIgnoreList(Ray.new(origin, direction * distance or 15000), ignore or {})
-        if hit and 0.25 <= hit.Transparency then
-            return self:raycast(origin, direction, utility.table.merge(ignore, {hit}), distance)
-        end
-        return hit
-    end
-
-    function utility:get_size_string(size, absolute)
-        return ('R(%s, %s, %s, %s), A(%s, %s)'):format(size.X.Scale, size.X.Offset, size.Y.Scale, size.Y.Offset, absolute.X, absolute.Y)
-    end
-
-    function utility:lerp(min, max, time)
-        return min + (max - min) * time
-    end
-
-    function utility:tween(object, property, value_new, time, style, direction)
-        local tween = {}
-        tween.style = style or Enum.EasingStyle.Linear
-        tween.direction = direction or Enum.EasingDirection.In
-        tween.value_start = object[property]
-        tween.value_new = value_new
-        tween.progress_lerp = 0
-        tween.Completed = library.signal.new()
- 
-        function tween:Cancel()
-            tween.connection:Disconnect()
-        end
-
-        tween.connection = library:connection(runservice.Heartbeat, function(delta)
-            tween.progress_lerp = tween.progress_lerp + (delta / time)
-
-            tween.progress_tween = tweenservice:GetValue(tween.progress_lerp, tween.style, tween.direction)
-
-            if typeof(value_new) == 'number' then
-                tween.value_current = self:lerp(tween.value_start, value_new, tween.progress_tween)
-            else
-                tween.value_current = tween.value_start:lerp(tween.value_new, tween.progress_tween)
-            end
-            
-            if utility.table.includes(object, '_object') and not rawget(object._object, '__OBJECT_EXISTS') == true then
-                tween.connection:Disconnect()
-                tween.Completed:Fire()
-                return
-            end
-
-            object[property] = tween.value_current
-
-            if tween.progress_lerp >= 1 or object == nil then
-                tween.connection:Disconnect()
-                tween.Completed:Fire()
-                return
-            end
-
-        end)
-
-        return tween
-    end
-
-    -- table util
-    function utility.table.includes(tbl, key)
-        return ({pcall(function() local a = tbl[key] end)})[1]
-    end
-
-    function utility.table.merge(a,b)
-        local c = {}
-        for i,v in next, a or {} do c[i] = v end
-        for i,v in next, b or {} do c[i] = v end
-        return c
-    end
-
-    function utility.table.getdescendants(tbl, new)
-        local new = new or {}
-        for i,v in next, tbl do
-            if typeof(v) == 'table' then
-                utility.table.getdescendants(v, new)
-            else
-                new[i] = v
-            end
-        end
-        return new
-    end
-
-    function utility.table.deepcopy(tbl)
-        local new = {}
-        for i,v in next, tbl or {} do
-            if typeof(v) == 'table' then
-                v = utility.table.deepcopy(v)
-            end
-            new[i] = v
-        end
-        return new
-    end
-    
-    function utility.table.nuke(tbl)
-        for i,v in next, tbl do
-            if typeof(v) == 'table' then
-                utility.table.nuke(v)
-            end
-            tbl[i] = nil
-        end
-    end
-
-    function utility.table.clearkeys(tbl)
-        local new = {}
-        for i,v in next, tbl do
-            table_insert(new, i)
-        end
-        return new
-    end
-
-    -- camera util
-    function utility.camera.cframetoviewport(cframe)
-        return worldtoviewport(library.camera, cframe * (cframe - cframe.p):ToObjectSpace(library.camera.CFrame - library.camera.CFrame.p).p)
-    end
-
-    function utility.camera.isvisible(position, model, ignore)
-        local ray = Ray.new(library.camera.CFrame.p, cframe_new(library.camera.CFrame.p, position).LookVector * 10000)
-        local hit, position, normal = workspace:FindPartOnRayWithIgnoreList(ray, ignore or {})
-        if not hit then
-            return false
-        end
-        return hit:IsDescendantOf(model), hit, position, normal
-    end
-
-    -- vector2 util
-    function utility.vector2.floor(vector2)
-        return vector2_new(math_floor(vector2.X), math_floor(vector2.Y))
-    end
-    
-    function utility.vector2.rotate(vector2: Vector2, rotation: number)
-        local c = math_cos(rotation)
-        local s = math_sin(rotation)
-        return vector2_new(c * vector2.X - s * vector2.Y, s * vector2.X + c * vector2.Y)
-    end
-
-    function utility.vector2.inside(position: Vector2, rect_position: Vector2, rect_size: Vector2)
-        local x1 = rect_position.X
-        local y1 = rect_position.Y
-        local x2 = x1 + rect_size.X
-        local y2 = y1 + rect_size.Y
-        return position.X >= x1 and position.Y >= y1 and position.X <= x2 and position.Y <= y2
-    end
-
-    -- color util
-    function utility.color.torgb(color: Color3)
-        return color.R * 255, color.G * 255, color.B * 255
-    end
-
-    function utility.color.add(color1: Color3, color2: Color3)
-        return color3_new(color1.R + color2.R, color1.G + color2.G, color1.B + color2.B)
-    end
-
-    -- string util
-    function utility.string.startswith(str1, str2)
-        return string.match(str1, '^' .. str2)
-    end
-
 end
 
--- // meta
-do
+function library:CreateWatermark(name, position)
+    local gamename = marketplaceservice:GetProductInfo(game.PlaceId).Name
+    local watermark = { }
+    watermark.Visible = true
+    watermark.text = " " .. name:gsub("{game}", gamename):gsub("{fps}", "0 FPS") .. " "
 
-    -- options
-    library.meta.options = {}
-    library.meta.options.functions = {}
-    library.meta.options.__index = function(self, idx)
-        if library.meta.options[idx] ~= nil then
-            return library.meta.options[idx].new
-        elseif library.meta.options.functions[idx] ~= nil then
-            return library.meta.options.functions[idx]
-        end
-        return rawget(self, idx)
+    watermark.main = Instance.new("ScreenGui", coregui)
+    watermark.main.Name = "Watermark"
+    if syn then
+        syn.protect_gui(watermark.main)
     end
+
+    if getgenv().watermark then
+        getgenv().watermark:Remove()
+    end
+    getgenv().watermark = watermark.main
     
-    function library.meta.options.functions:set_text(str)
-        self.text = str
-        self.objects.label.Text = str
-    end
+    watermark.mainbar = Instance.new("Frame", watermark.main)
+    watermark.mainbar.Name = "Main"
+    watermark.mainbar.BorderColor3 = Color3.fromRGB(80, 80, 80)
+    watermark.mainbar.Visible = watermark.Visible
+    watermark.mainbar.BorderSizePixel = 0
+    watermark.mainbar.ZIndex = 5
+    watermark.mainbar.Position = UDim2.new(0, position and position.X or 10, 0, position and position.Y or 10)
+    watermark.mainbar.Size = UDim2.new(0, 0, 0, 25)
 
-    function library.meta.options.functions:set_enabled(bool)
-        self.enabled = bool
-        self.parent:update_options()
-    end
+    watermark.Gradient = Instance.new("UIGradient", watermark.mainbar)
+    watermark.Gradient.Rotation = 90
+    watermark.Gradient.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, Color3.fromRGB(40, 40, 40)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(10, 10, 10)) })
 
+    watermark.Outline = Instance.new("Frame", watermark.mainbar)
+    watermark.Outline.Name = "outline"
+    watermark.Outline.ZIndex = 4
+    watermark.Outline.BorderSizePixel = 0
+    watermark.Outline.Visible = watermark.Visible
+    watermark.Outline.BackgroundColor3 = library.theme.outlinecolor
+    watermark.Outline.Position = UDim2.fromOffset(-1, -1)
 
-    -- fov circle
-    library.fovcircles = {}
-    library.fovcircle = {}
-    library.fovcircle.__index = library.fovcircle
+    watermark.BlackOutline = Instance.new("Frame", watermark.mainbar)
+    watermark.BlackOutline.Name = "blackline"
+    watermark.BlackOutline.ZIndex = 3
+    watermark.BlackOutline.BorderSizePixel = 0
+    watermark.BlackOutline.BackgroundColor3 = library.theme.outlinecolor2
+    watermark.BlackOutline.Visible = watermark.Visible
+    watermark.BlackOutline.Position = UDim2.fromOffset(-2, -2)
 
-    function library.fovcircle.new(flag, properties)
-        local circle = setmetatable({
-            _fov = 0,
-            _flag = flag,
-            _components = {
-                library:create('Circle', {Thickness = 1, ZIndex = -4}),
-                library:create('Circle', {Thickness = 1, ZIndex = -4}),
-                library:create('Circle', {Thickness = 3.5, ZIndex = -5})
-            }
-        }, library.fovcircle)
+    watermark.label = Instance.new("TextLabel", watermark.mainbar)
+    watermark.label.Name = "FPSLabel"
+    watermark.label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    watermark.label.BackgroundTransparency = 1.000
+    watermark.label.Position = UDim2.new(0, 0, 0, 0)
+    watermark.label.Size = UDim2.new(0, 238, 0, 25)
+    watermark.label.Font = library.theme.font
+    watermark.label.ZIndex = 6
+    watermark.label.Visible = watermark.Visible
+    watermark.label.Text = watermark.text
+    watermark.label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    watermark.label.TextSize = 15
+    watermark.label.TextStrokeTransparency = 0.000
+    watermark.label.TextXAlignment = Enum.TextXAlignment.Left
+    watermark.label.Size = UDim2.new(0, watermark.label.TextBounds.X+10, 0, 25)
+    
+    watermark.topbar = Instance.new("Frame", watermark.mainbar)
+    watermark.topbar.Name = "TopBar"
+    watermark.topbar.ZIndex = 6
+    watermark.topbar.BackgroundColor3 = library.theme.accentcolor
+    watermark.topbar.BorderSizePixel = 0
+    watermark.topbar.Visible = watermark.Visible
+    watermark.topbar.Size = UDim2.new(0, 0, 0, 1)
 
-        table_insert(library.fovcircles, circle)
+    watermark.mainbar.Size = UDim2.new(0, watermark.label.TextBounds.X, 0, 25)
+    watermark.topbar.Size = UDim2.new(0, watermark.label.TextBounds.X+6, 0, 1)
+    watermark.Outline.Size = watermark.mainbar.Size + UDim2.fromOffset(2, 2)
+    watermark.BlackOutline.Size = watermark.mainbar.Size + UDim2.fromOffset(4, 4)
 
-        for i,v in next, properties or {} do
-            circle[i] = v
+    watermark.mainbar.Size = UDim2.new(0, watermark.label.TextBounds.X+4, 0, 25)    
+    watermark.label.Size = UDim2.new(0, watermark.label.TextBounds.X+4, 0, 25)
+    watermark.topbar.Size = UDim2.new(0, watermark.label.TextBounds.X+6, 0, 1)
+    watermark.Outline.Size = watermark.mainbar.Size + UDim2.fromOffset(2, 2)
+    watermark.BlackOutline.Size = watermark.mainbar.Size + UDim2.fromOffset(4, 4)
+
+    local startTime, counter, oldfps = os.clock(), 0, nil
+    runservice.Heartbeat:Connect(function()
+        watermark.label.Visible = watermark.Visible
+        watermark.mainbar.Visible = watermark.Visible
+        watermark.topbar.Visible = watermark.Visible
+        watermark.Outline.Visible = watermark.Visible
+        watermark.BlackOutline.Visible = watermark.Visible
+
+        if not name:find("{fps}") then
+            watermark.label.Text = " " .. name:gsub("{game}", gamename):gsub("{fps}", "0 FPS") .. " "
         end
 
-        return circle
-    end
+        if name:find("{fps}") then
+            local currentTime = os.clock()
+            counter = counter + 1
+            if currentTime - startTime >= 1 then 
+                local fps = math.floor(counter / (currentTime - startTime))
+                counter = 0
+                startTime = currentTime
 
-    function library.fovcircle:set(property, value)
-        self._components[1][property] = value
-        self._components[2][property] = value
-        self._components[3][property] = value
-    end
+                if fps ~= oldfps then
+                    watermark.label.Text = " " .. name:gsub("{game}", gamename):gsub("{fps}", fps .. " FPS") .. " "
+        
+                    watermark.label.Size = UDim2.new(0, watermark.label.TextBounds.X+10, 0, 25)
+                    watermark.mainbar.Size = UDim2.new(0, watermark.label.TextBounds.X, 0, 25)
+                    watermark.topbar.Size = UDim2.new(0, watermark.label.TextBounds.X, 0, 1)
 
-    function library.fovcircle:update_radius()
-        self._fov = flags[self._flag .. '_fov_radius'] + (flags[self._flag .. '_fov_dynamic'] and -(library.camera.FieldOfView * 2) or 0)
-        self:set('Radius', self._fov)
-    end
-
-    function library.fovcircle:update()
-        self:update_radius()
-        self:set('Position', library.screensize / 2)
-        self:set('Color', flags[self._flag .. '_fov_color'], true)
-        self:set('Visible', flags[self._flag .. '_fov_enabled'])
-        self:set('NumSides', flags[self._flag .. '_fov_sides'])
-        self._components[3].Color = color3_new(0,0,0)
-    end
-
-    -- spring
-    library.spring = {}
-    library.spring.__index = library.spring
-
-    function library.spring.new(freq, position)
-        return setmetatable({
-            f = freq,
-            p = position,
-            v = 0
-        }, library.spring)
-    end
-
-    function library.spring:update(delta, goal)
-        local f = self.f*2*math.pi
-		local p0 = self.p
-		local v0 = self.v
-
-		local offset = goal - p0
-		local decay = math.exp(-f * delta)
-
-		local p1 = goal + (v0 * delta - offset * (f * delta + 1)) * decay
-		local v1 = (f * delta * (offset * f - v0) + v0) * decay
-
-		self.p = p1
-		self.v = v1
-
-		return p1
-    end
-
-    function library.spring:reset(position)
-        self.p = position
-        self.v = 0
-    end
-
-    -- colorpicker object
-    do
-        library.meta.colorpicker = {}
-        library.meta.colorpicker.__index = library.meta.colorpicker
-        setmetatable(library.meta.colorpicker, library.meta.options)
-
-        function library.meta.colorpicker:update()
-            if not self.selected then return end
-
-            local mouse_position = inputservice:GetMouseLocation()
-            local relative_palette = (mouse_position - self.objects.color.AbsolutePosition)
-            local relative_hue     = (mouse_position - self.objects_hue.container.AbsolutePosition)
-            local relative_opacity = (mouse_position - self.objects_opacity.container.AbsolutePosition)
-
-            if self.dragging_sat then
-                self.sat = math_clamp(1 - relative_palette.X / self.objects.color.AbsoluteSize.X, 0, 1)
-                self.val = math_clamp(1 - relative_palette.Y / self.objects.color.AbsoluteSize.Y, 0, 1)
-            elseif self.dragging_hue then
-                self.hue = math_clamp(relative_hue.Y / self.objects_hue.container.AbsoluteSize.Y, 0, 1)
-            elseif self.dragging_opacity then
-                self.opacity = math_clamp(relative_opacity.Y / self.objects_opacity.container.AbsoluteSize.Y, 0, 1)
-            end
-
-            self.color = color3_hsv(self.hue, self.sat, self.val)
-            self.objects.pointer.Position = udim2_new(math_clamp(1 - self.sat, 0.005, 0.995), 0, math_clamp(1 - self.val, 0.005, 0.995), 0)
-            self.objects.color.Color = color3_hsv(self.hue, 1, 1)
-
-            self.objects_hue.slider.Position = udim2_new(0,0,math_clamp(self.hue, 0.005, 0.995),0)
-            self.objects_opacity.slider.Position = udim2_new(0,0,math_clamp(self.opacity, 0.005, 0.995),0)
-            self.objects_opacity.container.Color = self.color
-
-            self.hex:set_text('#' .. self.color:ToHex())
-
-            if self.selected ~= nil then
-                self.selected.color = self.color
-                self.selected.opacity = self.opacity
-                self.selected.objects.background.Color = self.color
-                self.selected.callback(self.selected.color, self.selected.opacity)
-                if self.selected.flag ~= nil then
-                    flags[self.selected.flag] = self.color
+                    watermark.Outline.Size = watermark.mainbar.Size + UDim2.fromOffset(2, 2)
+                    watermark.BlackOutline.Size = watermark.mainbar.Size + UDim2.fromOffset(4, 4)
                 end
+                oldfps = fps
             end
-
         end
+    end)
 
-        function library.meta.colorpicker:set_color(color)
-            -- assert(typeof(color) == 'Color3', ("invalid opacity value. expected 'Color3', got '%s'"):format(typeof(opacity)))
+    watermark.mainbar.MouseEnter:Connect(function()
+        tweenservice:Create(watermark.mainbar, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { BackgroundTransparency = 1, Active = false }):Play()
+        tweenservice:Create(watermark.topbar, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { BackgroundTransparency = 1, Active = false }):Play()
+        tweenservice:Create(watermark.label, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { TextTransparency = 1, Active = false }):Play()
+        tweenservice:Create(watermark.Outline, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { BackgroundTransparency = 1, Active = false }):Play()
+        tweenservice:Create(watermark.BlackOutline, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { BackgroundTransparency = 1, Active = false }):Play()
+    end)
+    
+    watermark.mainbar.MouseLeave:Connect(function()
+        tweenservice:Create(watermark.mainbar, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { BackgroundTransparency = 0, Active = true }):Play()
+        tweenservice:Create(watermark.topbar, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { BackgroundTransparency = 0, Active = true }):Play()
+        tweenservice:Create(watermark.label, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { TextTransparency = 0, Active = true }):Play()
+        tweenservice:Create(watermark.Outline, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { BackgroundTransparency = 0, Active = true }):Play()
+        tweenservice:Create(watermark.BlackOutline, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { BackgroundTransparency = 0, Active = true }):Play()
+    end)
+
+    function watermark:UpdateTheme(theme)
+        theme = theme or library.theme
+        watermark.Outline.BackgroundColor3 = theme.outlinecolor
+        watermark.BlackOutline.BackgroundColor3 = theme.outlinecolor2
+        watermark.label.Font = theme.font
+        watermark.topbar.BackgroundColor3 = theme.accentcolor
+    end
+
+    return watermark
+end
+
+function library:CreateWindow(name, size, hidebutton)
+    local window = { }
+
+    window.name = name or ""
+    window.size = UDim2.fromOffset(size.X, size.Y) or UDim2.fromOffset(492, 598)
+    window.hidebutton = hidebutton or Enum.KeyCode.RightShift
+    window.theme = library.theme
+
+    local updateevent = Instance.new("BindableEvent")
+    function window:UpdateTheme(theme)
+        updateevent:Fire(theme or library.theme)
+        window.theme = (theme or library.theme)
+    end
+
+    window.Main = Instance.new("ScreenGui", coregui)
+    window.Main.Name = name
+    window.Main.DisplayOrder = 15
+    if syn then
+        syn.protect_gui(window.Main)
+    end
+
+    if getgenv().uilib then
+        getgenv().uilib:Remove()
+    end
+    getgenv().uilib = window.Main
+
+    local dragging, dragInput, dragStart, startPos
+    uis.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            window.Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+
+    local dragstart = function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = window.Frame.Position
             
-            self.color = color
-            self.hue, self.sat, self.val = self.color:ToHSV()
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end
 
-            self.objects.pointer.Position = udim2_new(math_clamp(1 - self.sat, 0.005, 0.995), 0, math_clamp(1 - self.val, 0.005, 0.995), 0)
+    local dragend = function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end
 
-            self.objects_opacity.container.Color = self.color
-            self.objects.color.Color = color3_hsv(self.hue, 1, 1)
-            self.objects_hue.slider.Position = udim2_new(0,0,math_clamp(self.hue, 0.005, 0.995),0)
+    window.Frame = Instance.new("TextButton", window.Main)
+    window.Frame.Name = "main"
+    window.Frame.Position = UDim2.fromScale(0.5, 0.5)
+    window.Frame.BorderSizePixel = 0
+    window.Frame.Size = window.size
+    window.Frame.AutoButtonColor = false
+    window.Frame.Text = ""
+    window.Frame.BackgroundColor3 = window.theme.backgroundcolor
+    window.Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+    updateevent.Event:Connect(function(theme)
+        window.Frame.BackgroundColor3 = theme.backgroundcolor
+    end)
 
-            self.hex:set_text('#' .. self.color:ToHex())
+    uis.InputBegan:Connect(function(key)
+        if key.KeyCode == window.hidebutton then
+            window.Frame.Visible = not window.Frame.Visible
+        end
+    end)
 
-            if self.selected ~= nil then
-                self.selected.color = self.color
-                self.selected.objects.background.Color = self.color
-                self.selected.callback(self.selected.color, self.selected.opacity)
-                if self.selected.flag ~= nil then
-                    flags[self.selected.flag] = self.color
+    local function checkIfGuiInFront(Pos)
+        local objects = coregui:GetGuiObjectsAtPosition(Pos.X, Pos.Y)
+        for i,v in pairs(objects) do 
+            if not string.find(v:GetFullName(), window.name) then 
+                table.remove(objects, i)
+            end 
+        end
+        return (#objects ~= 0 and objects[1].AbsolutePosition ~= Pos)
+    end
+
+    window.BlackOutline = Instance.new("Frame", window.Frame)
+    window.BlackOutline.Name = "outline"
+    window.BlackOutline.ZIndex = 1
+    window.BlackOutline.Size = window.size + UDim2.fromOffset(2, 2)
+    window.BlackOutline.BorderSizePixel = 0
+    window.BlackOutline.BackgroundColor3 = window.theme.outlinecolor2
+    window.BlackOutline.Position = UDim2.fromOffset(-1, -1)
+    updateevent.Event:Connect(function(theme)
+        window.BlackOutline.BackgroundColor3 = theme.outlinecolor2
+    end)
+
+    window.Outline = Instance.new("Frame", window.Frame)
+    window.Outline.Name = "outline"
+    window.Outline.ZIndex = 0
+    window.Outline.Size = window.size + UDim2.fromOffset(4, 4)
+    window.Outline.BorderSizePixel = 0
+    window.Outline.BackgroundColor3 = window.theme.outlinecolor
+    window.Outline.Position = UDim2.fromOffset(-2, -2)
+    updateevent.Event:Connect(function(theme)
+        window.Outline.BackgroundColor3 = theme.outlinecolor
+    end)
+
+    window.BlackOutline2 = Instance.new("Frame", window.Frame)
+    window.BlackOutline2.Name = "outline"
+    window.BlackOutline2.ZIndex = -1
+    window.BlackOutline2.Size = window.size + UDim2.fromOffset(6, 6)
+    window.BlackOutline2.BorderSizePixel = 0
+    window.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+    window.BlackOutline2.Position = UDim2.fromOffset(-3, -3)
+    updateevent.Event:Connect(function(theme)
+        window.BlackOutline2.BackgroundColor3 = theme.outlinecolor2
+    end)
+
+    window.TopBar = Instance.new("Frame", window.Frame)
+    window.TopBar.Name = "top"
+    window.TopBar.Size = UDim2.fromOffset(window.size.X.Offset, window.theme.topheight)
+    window.TopBar.BorderSizePixel = 0
+    window.TopBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    window.TopBar.InputBegan:Connect(dragstart)
+    window.TopBar.InputChanged:Connect(dragend)
+    updateevent.Event:Connect(function(theme)
+        window.TopBar.Size = UDim2.fromOffset(window.size.X.Offset, theme.topheight)
+    end)
+
+    window.TopGradient = Instance.new("UIGradient", window.TopBar)
+    window.TopGradient.Rotation = 90
+    window.TopGradient.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, window.theme.topcolor), ColorSequenceKeypoint.new(1.00, window.theme.topcolor2) })
+    updateevent.Event:Connect(function(theme)
+        window.TopGradient.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, theme.topcolor), ColorSequenceKeypoint.new(1.00, theme.topcolor2) })
+    end)
+
+    window.NameLabel = Instance.new("TextLabel", window.TopBar)
+    window.NameLabel.TextColor3 = window.theme.toptextcolor
+    window.NameLabel.Text = window.name
+    window.NameLabel.TextXAlignment = Enum.TextXAlignment.Left
+    window.NameLabel.Font = window.theme.font
+    window.NameLabel.Name = "title"
+    window.NameLabel.Position = UDim2.fromOffset(4, -2)
+    window.NameLabel.BackgroundTransparency = 1
+    window.NameLabel.Size = UDim2.fromOffset(190, window.TopBar.AbsoluteSize.Y / 2 - 2)
+    window.NameLabel.TextSize = window.theme.titlesize
+    updateevent.Event:Connect(function(theme)
+        window.NameLabel.TextColor3 = theme.toptextcolor
+        window.NameLabel.Font = theme.font
+        window.NameLabel.TextSize = theme.titlesize
+    end)
+
+    window.Line2 = Instance.new("Frame", window.TopBar)
+    window.Line2.Name = "line"
+    window.Line2.Position = UDim2.fromOffset(0, window.TopBar.AbsoluteSize.Y / 2.1)
+    window.Line2.Size = UDim2.fromOffset(window.size.X.Offset, 1)
+    window.Line2.BorderSizePixel = 0
+    window.Line2.BackgroundColor3 = window.theme.accentcolor
+    updateevent.Event:Connect(function(theme)
+        window.Line2.BackgroundColor3 = theme.accentcolor
+    end)
+
+    window.TabList = Instance.new("Frame", window.TopBar)
+    window.TabList.Name = "tablist"
+    window.TabList.BackgroundTransparency = 1
+    window.TabList.Position = UDim2.fromOffset(0, window.TopBar.AbsoluteSize.Y / 2 + 1)
+    window.TabList.Size = UDim2.fromOffset(window.size.X.Offset, window.TopBar.AbsoluteSize.Y / 2)
+    window.TabList.BorderSizePixel = 0
+    window.TabList.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+
+    window.TabList.InputBegan:Connect(dragstart)
+    window.TabList.InputChanged:Connect(dragend)
+
+    window.BlackLine = Instance.new("Frame", window.Frame)
+    window.BlackLine.Name = "blackline"
+    window.BlackLine.Size = UDim2.fromOffset(window.size.X.Offset, 1)
+    window.BlackLine.BorderSizePixel = 0
+    window.BlackLine.ZIndex = 9
+    window.BlackLine.BackgroundColor3 = window.theme.outlinecolor2
+    window.BlackLine.Position = UDim2.fromOffset(0, window.TopBar.AbsoluteSize.Y)
+    updateevent.Event:Connect(function(theme)
+        window.BlackLine.BackgroundColor3 = theme.outlinecolor2
+    end)
+
+    window.BackgroundImage = Instance.new("ImageLabel", window.Frame)
+    window.BackgroundImage.Name = "background"
+    window.BackgroundImage.BorderSizePixel = 0
+    window.BackgroundImage.ScaleType = Enum.ScaleType.Tile
+    window.BackgroundImage.Position = window.BlackLine.Position + UDim2.fromOffset(0, 1)
+    window.BackgroundImage.Size = UDim2.fromOffset(window.size.X.Offset, window.size.Y.Offset - window.TopBar.AbsoluteSize.Y - 1)
+    window.BackgroundImage.Image = window.theme.background or ""
+    window.BackgroundImage.ImageTransparency = window.BackgroundImage.Image ~= "" and 0 or 1
+    window.BackgroundImage.ImageColor3 = Color3.new() 
+    window.BackgroundImage.BackgroundColor3 = window.theme.backgroundcolor
+    window.BackgroundImage.TileSize = UDim2.new(0, window.theme.tilesize, 0, window.theme.tilesize)
+    updateevent.Event:Connect(function(theme)
+        window.BackgroundImage.Image = theme.background or ""
+        window.BackgroundImage.ImageTransparency = window.BackgroundImage.Image ~= "" and 0 or 1
+        window.BackgroundImage.BackgroundColor3 = theme.backgroundcolor
+        window.BackgroundImage.TileSize = UDim2.new(0, theme.tilesize, 0, theme.tilesize)
+    end)
+
+    window.Line = Instance.new("Frame", window.Frame)
+    window.Line.Name = "line"
+    window.Line.Position = UDim2.fromOffset(0, 0)
+    window.Line.Size = UDim2.fromOffset(60, 1)
+    window.Line.BorderSizePixel = 0
+    window.Line.BackgroundColor3 = window.theme.accentcolor
+    updateevent.Event:Connect(function(theme)
+        window.Line.BackgroundColor3 = theme.accentcolor
+    end)
+
+    window.ListLayout = Instance.new("UIListLayout", window.TabList)
+    window.ListLayout.FillDirection = Enum.FillDirection.Horizontal
+    window.ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+    window.OpenedColorPickers = { }
+    window.Tabs = { }
+
+    function window:CreateTab(name)
+        local tab = { }
+        tab.name = name or ""
+
+        local textservice = game:GetService("TextService")
+        local size = textservice:GetTextSize(tab.name, window.theme.fontsize, window.theme.font, Vector2.new(200,300))
+
+        tab.TabButton = Instance.new("TextButton", window.TabList)
+        tab.TabButton.TextColor3 = window.theme.tabstextcolor
+        tab.TabButton.Text = tab.name
+        tab.TabButton.AutoButtonColor = false
+        tab.TabButton.Font = window.theme.font
+        tab.TabButton.TextYAlignment = Enum.TextYAlignment.Center
+        tab.TabButton.BackgroundTransparency = 1
+        tab.TabButton.BorderSizePixel = 0
+        tab.TabButton.Size = UDim2.fromOffset(size.X + 15, window.TabList.AbsoluteSize.Y - 1)
+        tab.TabButton.Name = tab.name
+        tab.TabButton.TextSize = window.theme.fontsize
+        updateevent.Event:Connect(function(theme)
+            local size = textservice:GetTextSize(tab.name, theme.fontsize, theme.font, Vector2.new(200,300))
+            tab.TabButton.TextColor3 = tab.TabButton.Name == "SelectedTab" and theme.accentcolor or theme.tabstextcolor
+            tab.TabButton.Font = theme.font
+            tab.TabButton.Size = UDim2.fromOffset(size.X + 15, window.TabList.AbsoluteSize.Y - 1)
+            tab.TabButton.TextSize = theme.fontsize
+        end)
+
+        tab.Left = Instance.new("ScrollingFrame", window.Frame) 
+        tab.Left.Name = "leftside"
+        tab.Left.BorderSizePixel = 0
+        tab.Left.Size = UDim2.fromOffset(window.size.X.Offset / 2, window.size.Y.Offset - (window.TopBar.AbsoluteSize.Y + 1))
+        tab.Left.BackgroundTransparency = 1
+        tab.Left.Visible = false
+        tab.Left.ScrollBarThickness = 0
+        tab.Left.ScrollingDirection = "Y"
+        tab.Left.Position = window.BlackLine.Position + UDim2.fromOffset(0, 1)
+
+        tab.LeftListLayout = Instance.new("UIListLayout", tab.Left)
+        tab.LeftListLayout.FillDirection = Enum.FillDirection.Vertical
+        tab.LeftListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        tab.LeftListLayout.Padding = UDim.new(0, 12)
+
+        tab.LeftListPadding = Instance.new("UIPadding", tab.Left)
+        tab.LeftListPadding.PaddingTop = UDim.new(0, 12)
+        tab.LeftListPadding.PaddingLeft = UDim.new(0, 12)
+        tab.LeftListPadding.PaddingRight = UDim.new(0, 12)
+
+        tab.Right = Instance.new("ScrollingFrame", window.Frame) 
+        tab.Right.Name = "rightside"
+        tab.Right.ScrollBarThickness = 0
+        tab.Right.ScrollingDirection = "Y"
+        tab.Right.Visible = false
+        tab.Right.BorderSizePixel = 0
+        tab.Right.Size = UDim2.fromOffset(window.size.X.Offset / 2, window.size.Y.Offset - (window.TopBar.AbsoluteSize.Y + 1))
+        tab.Right.BackgroundTransparency = 1
+        tab.Right.Position = tab.Left.Position + UDim2.fromOffset(tab.Left.AbsoluteSize.X, 0)
+
+        tab.RightListLayout = Instance.new("UIListLayout", tab.Right)
+        tab.RightListLayout.FillDirection = Enum.FillDirection.Vertical
+        tab.RightListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        tab.RightListLayout.Padding = UDim.new(0, 12)
+
+        tab.RightListPadding = Instance.new("UIPadding", tab.Right)
+        tab.RightListPadding.PaddingTop = UDim.new(0, 12)
+        tab.RightListPadding.PaddingLeft = UDim.new(0, 6)
+        tab.RightListPadding.PaddingRight = UDim.new(0, 12)
+
+        local block = false
+        function tab:SelectTab()
+            repeat 
+                wait()
+            until block == false
+
+            block = true
+            for i,v in pairs(window.Tabs) do
+                if v ~= tab then
+                    v.TabButton.TextColor3 = Color3.fromRGB(230, 230, 230)
+                    v.TabButton.Name = "Tab"
+                    v.Left.Visible = false
+                    v.Right.Visible = false
                 end
             end
 
+            tab.TabButton.TextColor3 = window.theme.accentcolor
+            tab.TabButton.Name = "SelectedTab"
+            tab.Right.Visible = true
+            tab.Left.Visible = true
+            window.Line:TweenSizeAndPosition(UDim2.fromOffset(size.X + 15, 1), UDim2.new(0, (tab.TabButton.AbsolutePosition.X - window.Frame.AbsolutePosition.X), 0, 0) + (window.BlackLine.Position - UDim2.fromOffset(0, 1)), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.15)
+            wait(0.2)
+            block = false
+        end
+    
+        if #window.Tabs == 0 then
+            tab:SelectTab()
         end
 
-        function library.meta.colorpicker:set_opacity(opacity)
-            assert(typeof(opacity) == 'number', ("invalid opacity value. expected 'number', got '%s'"):format(typeof(opacity)))
+        tab.TabButton.MouseButton1Down:Connect(function()
+            tab:SelectTab()
+        end)
+
+        tab.SectorsLeft = { }
+        tab.SectorsRight = { }
+
+        function tab:CreateSector(name,side)
+            local sector = { }
+            sector.name = name or ""
+            sector.side = side:lower() or "left"
             
-            self.opacity = opacity
-            self.objects_opacity.slider.Position = udim2_new(0,0,math_clamp(self.opacity, 0.005, 0.995),0)
-            self.objects_opacity.container.Color = self.color
-        end
-
-        function library.meta.colorpicker:set(color, opacity)
-            self:set_color(color or color3_new(1,1,1))
-            self:set_opacity(opacity or 1)
-        end
-
-    end
-
-    -- toggle
-    do
-        library.meta.options.toggle = {}
-        library.meta.options.toggle.__index = library.meta.options.toggle
-        setmetatable(library.meta.options.toggle, library.meta.options)
-
-        function library.meta.options.toggle:new(properties)
-            local toggle = library:create('option', properties, self, 'toggle')
-            toggle.state = false
-
-            toggle.objects.background = library:create('rect', {
-                Theme = {['Color'] = 'Option Background'},
-                Size = udim2_new(0,6,0,6),
-                Position = udim2_new(0,3,0,5),
-                AnchorPoint = vector2_new(0,0),
-                ZIndex = toggle.zindex + 3,
-                Parent = toggle.objects.container
-            })
-
-            toggle.objects.label.Position = udim2_new(0,17,0,1)
-            toggle.objects.border_inner = library:create('outline', toggle.objects.background,   {['Theme'] = {['Color'] = 'Border 1'}})
-            toggle.objects.border_mid   = library:create('outline', toggle.objects.border_inner, {['Theme'] = {['Color'] = 'Border 2'}})
-            toggle.objects.border_outer = library:create('outline', toggle.objects.border_mid,   {['Theme'] = {['Color'] = 'Border 1'}})
-
-            library:connection(toggle.objects.container.MouseButton1Down, function()
-                toggle:set_state(not toggle.state)
+            sector.Main = Instance.new("Frame", sector.side == "left" and tab.Left or tab.Right) 
+            sector.Main.Name = sector.name:gsub(" ", "") .. "Sector"
+            sector.Main.BorderSizePixel = 0
+            sector.Main.ZIndex = 4
+            sector.Main.Size = UDim2.fromOffset(window.size.X.Offset / 2 - 17, 20)
+            sector.Main.BackgroundColor3 = window.theme.sectorcolor
+            --sector.Main.Position = sector.side == "left" and UDim2.new(0, 11, 0, 12) or UDim2.new(0, window.size.X.Offset - sector.Main.AbsoluteSize.X - 11, 0, 12)
+            updateevent.Event:Connect(function(theme)
+                sector.Main.BackgroundColor3 = theme.sectorcolor
             end)
 
-            library:connection(toggle.objects.container.MouseEnter, function()
-                toggle.objects.border_mid.Theme = {['Color'] = 'Accent'}
+            sector.Line = Instance.new("Frame", sector.Main)
+            sector.Line.Name = "line"
+            sector.Line.ZIndex = 4
+            sector.Line.Size = UDim2.fromOffset(sector.Main.Size.X.Offset + 4, 1)
+            sector.Line.BorderSizePixel = 0
+            sector.Line.Position = UDim2.fromOffset(-2, -2)
+            sector.Line.BackgroundColor3 = window.theme.accentcolor
+            updateevent.Event:Connect(function(theme)
+                sector.Line.BackgroundColor3 = theme.accentcolor
             end)
 
-            library:connection(toggle.objects.container.MouseLeave, function()
-                toggle.objects.border_mid.Theme = {['Color'] = toggle.state and 'Accent' or 'Border 2'}
+            sector.BlackOutline = Instance.new("Frame", sector.Main)
+            sector.BlackOutline.Name = "outline"
+            sector.BlackOutline.ZIndex = 3
+            sector.BlackOutline.Size = sector.Main.Size + UDim2.fromOffset(2, 2)
+            sector.BlackOutline.BorderSizePixel = 0
+            sector.BlackOutline.BackgroundColor3 = window.theme.outlinecolor2
+            sector.BlackOutline.Position = UDim2.fromOffset(-1, -1)
+            sector.Main:GetPropertyChangedSignal("Size"):Connect(function()
+                sector.BlackOutline.Size = sector.Main.Size + UDim2.fromOffset(2, 2)
+            end)
+            updateevent.Event:Connect(function(theme)
+                sector.BlackOutline.BackgroundColor3 = theme.outlinecolor2
             end)
 
-            table_insert(self.options, toggle)
-            toggle:set_state(toggle.state)
-            if self.update_options ~= nil then
-                self:update_options() 
-            end
-            return self.class ~= 'section' and self or toggle
-        end
 
-        function library.meta.options.toggle:set_state(bool)
-            assert(typeof(bool) == 'boolean', ("invalid toggle state type. expected 'boolean', got '%s'"):format(typeof(bool)))
-            self.state = bool
-            self.objects.border_mid.Theme = {['Color'] = (bool or self.objects.container.MouseHover) and 'Accent' or 'Border 2'}
-            self.objects.background.Theme = {['Color'] = bool and 'Accent' or 'Option Background'}
-            self.objects.label.Theme = {['Color'] = bool and 'Option Text 1' or 'Option Text 2'}
-            if self.flag then
-                library.flags[self.flag] = bool
-            end
-            self.callback(bool)
-        end
+            sector.Outline = Instance.new("Frame", sector.Main)
+            sector.Outline.Name = "outline"
+            sector.Outline.ZIndex = 2
+            sector.Outline.Size = sector.Main.Size + UDim2.fromOffset(4, 4)
+            sector.Outline.BorderSizePixel = 0
+            sector.Outline.BackgroundColor3 = window.theme.outlinecolor
+            sector.Outline.Position = UDim2.fromOffset(-2, -2)
+            sector.Main:GetPropertyChangedSignal("Size"):Connect(function()
+                sector.Outline.Size = sector.Main.Size + UDim2.fromOffset(4, 4)
+            end)
+            updateevent.Event:Connect(function(theme)
+                sector.Outline.BackgroundColor3 = theme.outlinecolor
+            end)
 
-        function library.meta.options.toggle:update_options()
+            sector.BlackOutline2 = Instance.new("Frame", sector.Main)
+            sector.BlackOutline2.Name = "outline"
+            sector.BlackOutline2.ZIndex = 1
+            sector.BlackOutline2.Size = sector.Main.Size + UDim2.fromOffset(6, 6)
+            sector.BlackOutline2.BorderSizePixel = 0
+            sector.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+            sector.BlackOutline2.Position = UDim2.fromOffset(-3, -3)
+            sector.Main:GetPropertyChangedSignal("Size"):Connect(function()
+                sector.BlackOutline2.Size = sector.Main.Size + UDim2.fromOffset(6, 6)
+            end)
+            updateevent.Event:Connect(function(theme)
+                sector.BlackOutline2.BackgroundColor3 = theme.outlinecolor2
+            end)
 
-            local pos_x = -2
-            local pos_y = 0
+            local size = textservice:GetTextSize(sector.name, 15, window.theme.font, Vector2.new(2000, 2000))
+            sector.Label = Instance.new("TextLabel", sector.Main)
+            sector.Label.AnchorPoint = Vector2.new(0,0.5)
+            sector.Label.Position = UDim2.fromOffset(12, -1)
+            sector.Label.Size = UDim2.fromOffset(math.clamp(textservice:GetTextSize(sector.name, 15, window.theme.font, Vector2.new(200,300)).X + 13, 0, sector.Main.Size.X.Offset), size.Y)
+            sector.Label.BackgroundTransparency = 1
+            sector.Label.BorderSizePixel = 0
+            sector.Label.ZIndex = 6
+            sector.Label.Text = sector.name
+            sector.Label.TextColor3 = Color3.new(1,1,2552/255)
+            sector.Label.TextStrokeTransparency = 1
+            sector.Label.Font = window.theme.font
+            sector.Label.TextSize = 15
+            updateevent.Event:Connect(function(theme)
+                local size = textservice:GetTextSize(sector.name, 15, theme.font, Vector2.new(2000, 2000))
+                sector.Label.Size = UDim2.fromOffset(math.clamp(textservice:GetTextSize(sector.name, 15, theme.font, Vector2.new(200,300)).X + 13, 0, sector.Main.Size.X.Offset), size.Y)
+                sector.Label.Font = theme.font
+            end)
 
-            for index, option in next, self.options do
-                if option.class == 'colorpicker' or option.class == 'keybind' then
-                    pos_x = pos_x + option.objects.container.AbsoluteSize.X + 2
-                    option.objects.container.Position = udim2_new(1,-pos_x,0,0)
-                else
-                    pos_y = pos_y + option.objects.container.AbsoluteSize.Y + 2
-                    option.objects.container.Position = udim2_new(0,0,1,-pos_y)
+            sector.LabelBackFrame = Instance.new("Frame", sector.Main)
+            sector.LabelBackFrame.Name = "labelframe"
+            sector.LabelBackFrame.ZIndex = 5
+            sector.LabelBackFrame.Size = UDim2.fromOffset(sector.Label.Size.X.Offset, 10)
+            sector.LabelBackFrame.BorderSizePixel = 0
+            sector.LabelBackFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+            sector.LabelBackFrame.Position = UDim2.fromOffset(sector.Label.Position.X.Offset, sector.BlackOutline2.Position.Y.Offset)
+
+            sector.Items = Instance.new("Frame", sector.Main) 
+            sector.Items.Name = "items"
+            sector.Items.ZIndex = 2
+            sector.Items.BackgroundTransparency = 1
+            sector.Items.Size = UDim2.fromOffset(170, 140)
+            sector.Items.AutomaticSize = Enum.AutomaticSize.Y
+            sector.Items.BorderSizePixel = 0
+
+            sector.ListLayout = Instance.new("UIListLayout", sector.Items)
+            sector.ListLayout.FillDirection = Enum.FillDirection.Vertical
+            sector.ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            sector.ListLayout.Padding = UDim.new(0, 12)
+
+            sector.ListPadding = Instance.new("UIPadding", sector.Items)
+            sector.ListPadding.PaddingTop = UDim.new(0, 15)
+            sector.ListPadding.PaddingLeft = UDim.new(0, 6)
+            sector.ListPadding.PaddingRight = UDim.new(0, 6)
+
+            table.insert(sector.side:lower() == "left" and tab.SectorsLeft or tab.SectorsRight, sector)
+
+            function sector:FixSize()
+                sector.Main.Size = UDim2.fromOffset(window.size.X.Offset / 2 - 17, sector.ListLayout.AbsoluteContentSize.Y + 22)
+                local sizeleft, sizeright = 0, 0
+                for i,v in pairs(tab.SectorsLeft) do
+                    sizeleft = sizeleft + v.Main.AbsoluteSize.Y
                 end
+                for i,v in pairs(tab.SectorsRight) do
+                    sizeright = sizeright + v.Main.AbsoluteSize.Y
+                end
+
+                tab.Left.CanvasSize = UDim2.fromOffset(tab.Left.AbsoluteSize.X, sizeleft + ((#tab.SectorsLeft - 1) * tab.LeftListPadding.PaddingTop.Offset) + 20)
+                tab.Right.CanvasSize = UDim2.fromOffset(tab.Right.AbsoluteSize.X, sizeright + ((#tab.SectorsRight - 1) * tab.RightListPadding.PaddingTop.Offset) + 20)
             end
 
-            self.objects.container.Size = udim2_new(1,0,0,18 + pos_y)
-            self.parent:update_options()
+            function sector:AddButton(text, callback)
+                local button = { }
+                button.text = text or ""
+                button.callback = callback or function() end
 
-        end
+                button.Main = Instance.new("TextButton", sector.Items)
+                button.Main.BorderSizePixel = 0
+                button.Main.Text = ""
+                button.Main.AutoButtonColor = false
+                button.Main.Name = "button"
+                button.Main.ZIndex = 5
+                button.Main.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 12, 14)
+                button.Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 
-    end
+                button.Gradient = Instance.new("UIGradient", button.Main)
+                button.Gradient.Rotation = 90
+                button.Gradient.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, window.theme.buttoncolor), ColorSequenceKeypoint.new(1.00, window.theme.buttoncolor2) })
+                updateevent.Event:Connect(function(theme)
+                    button.Gradient.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, theme.buttoncolor), ColorSequenceKeypoint.new(1.00, theme.buttoncolor2) })
+                end)
 
-    -- button
-    do
-        library.meta.options.button = {}
-        library.meta.options.button.__index = library.meta.options.button
-        setmetatable(library.meta.options.button, library.meta.options)
+                button.BlackOutline2 = Instance.new("Frame", button.Main)
+                button.BlackOutline2.Name = "blackline"
+                button.BlackOutline2.ZIndex = 4
+                button.BlackOutline2.Size = button.Main.Size + UDim2.fromOffset(6, 6)
+                button.BlackOutline2.BorderSizePixel = 0
+                button.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                button.BlackOutline2.Position = UDim2.fromOffset(-3, -3)
+                updateevent.Event:Connect(function(theme)
+                    button.BlackOutline2.BackgroundColor3 = theme.outlinecolor2
+                end)
 
-        function library.meta.options.button:new(properties)
-            local button = library:create('option', properties, self, 'button')
-            button.confirm = properties.confirm or false
-            button.clicked = false
+                button.Outline = Instance.new("Frame", button.Main)
+                button.Outline.Name = "blackline"
+                button.Outline.ZIndex = 4
+                button.Outline.Size = button.Main.Size + UDim2.fromOffset(4, 4)
+                button.Outline.BorderSizePixel = 0
+                button.Outline.BackgroundColor3 = window.theme.outlinecolor
+                button.Outline.Position = UDim2.fromOffset(-2, -2)
+                updateevent.Event:Connect(function(theme)
+                    button.Outline.BackgroundColor3 = theme.outlinecolor
+                end)
 
-            button.objects.background = library:create('rect', {
-                Theme = {['Color'] = 'Option Background'},
-                Size = udim2_new(1,-6,1,-8),
-                Position = udim2_new(0.5,0,0.5,0),
-                AnchorPoint = vector2_new(0.5,0.5),
-                ZIndex = button.zindex + 3,
-                Parent = button.objects.container
-            })
+                button.BlackOutline = Instance.new("Frame", button.Main)
+                button.BlackOutline.Name = "blackline"
+                button.BlackOutline.ZIndex = 4
+                button.BlackOutline.Size = button.Main.Size + UDim2.fromOffset(2, 2)
+                button.BlackOutline.BorderSizePixel = 0
+                button.BlackOutline.BackgroundColor3 = window.theme.outlinecolor2
+                button.BlackOutline.Position = UDim2.fromOffset(-1, -1)
+                updateevent.Event:Connect(function(theme)
+                    button.BlackOutline.BackgroundColor3 = theme.outlinecolor2
+                end)
 
-            button.objects.gradient = library:create('rect', {
-                Size = udim2_new(1,0,1,0),
-                Transparency = 0.5,
-                ZIndex = button.zindex + 4,
-                Data = library.images.gradientp90,
-                Parent = button.objects.background,
-            }, 'Image')
+                button.Label = Instance.new("TextLabel", button.Main)
+                button.Label.Name = "Label"
+                button.Label.BackgroundTransparency = 1
+                button.Label.Position = UDim2.new(0, -1, 0, 0)
+                button.Label.ZIndex = 5
+                button.Label.Size = button.Main.Size
+                button.Label.Font = window.theme.font
+                button.Label.Text = button.text
+                button.Label.TextColor3 = window.theme.itemscolor2
+                button.Label.TextSize = 15
+                button.Label.TextStrokeTransparency = 1
+                button.Label.TextXAlignment = Enum.TextXAlignment.Center
+                button.Main.MouseButton1Down:Connect(button.callback)
+                updateevent.Event:Connect(function(theme)
+                    button.Label.Font = theme.font
+                    button.Label.TextColor3 = theme.itemscolor
+                end)
 
-            library:connection(button.objects.container.MouseButton1Down, function()
-                button.objects.background.Theme = {['Color'] = 'Accent'}
-                button.objects.label.Theme = {['Color'] = 'Option Text 1'}
+                button.BlackOutline2.MouseEnter:Connect(function()
+                    button.BlackOutline2.BackgroundColor3 = window.theme.accentcolor
+                end)
 
-                if (button.confirm and button.clicked) or not button.confirm then
-                    button.callback()
-                    button.objects.label.Text = button.text
-                    button.clicked = false
-                elseif button.confirm and not button.clicked then
-                    button.clicked = true
-                    for i = 3, 1, -1 do
-                        if not button.clicked then break end
-                        button.objects.label.Text = 'confirm? [' .. i .. 's]'
-                        wait(1)
+                button.BlackOutline2.MouseLeave:Connect(function()
+                    button.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                end)
+
+                sector:FixSize()
+                return button
+            end
+
+            function sector:AddLabel(text)
+                local label = { }
+
+                label.Main = Instance.new("TextLabel", sector.Items)
+                label.Main.Name = "Label"
+                label.Main.BackgroundTransparency = 1
+                label.Main.Position = UDim2.new(0, -1, 0, 0)
+                label.Main.ZIndex = 4
+                label.Main.AutomaticSize = Enum.AutomaticSize.XY
+                label.Main.Font = window.theme.font
+                label.Main.Text = text
+                label.Main.TextColor3 = window.theme.itemscolor
+                label.Main.TextSize = 15
+                label.Main.TextStrokeTransparency = 1
+                label.Main.TextXAlignment = Enum.TextXAlignment.Left
+                updateevent.Event:Connect(function(theme)
+                    label.Main.Font = theme.font
+                    label.Main.TextColor3 = theme.itemscolor
+                end)
+
+                function label:Set(value)
+                    label.Main.Text = value
+                end
+
+                sector:FixSize()
+                return label
+            end
+            
+            function sector:AddToggle(text, default, callback, flag)
+                local toggle = { }
+                toggle.text = text or ""
+                toggle.default = default or false
+                toggle.callback = callback or function(value) end
+                toggle.flag = flag or text or ""
+                
+                toggle.value = toggle.default
+
+                toggle.Main = Instance.new("TextButton", sector.Items)
+                toggle.Main.Name = "toggle"
+                toggle.Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                toggle.Main.BorderColor3 = window.theme.outlinecolor
+                toggle.Main.BorderSizePixel = 0
+                toggle.Main.Size = UDim2.fromOffset(8, 8)
+                toggle.Main.AutoButtonColor = false
+                toggle.Main.ZIndex = 5
+                toggle.Main.Font = Enum.Font.SourceSans
+                toggle.Main.Text = ""
+                toggle.Main.TextColor3 = Color3.fromRGB(0, 0, 0)
+                toggle.Main.TextSize = 15
+                updateevent.Event:Connect(function(theme)
+                    toggle.Main.BorderColor3 = theme.outlinecolor
+                end)
+
+                toggle.BlackOutline2 = Instance.new("Frame", toggle.Main)
+                toggle.BlackOutline2.Name = "blackline"
+                toggle.BlackOutline2.ZIndex = 4
+                toggle.BlackOutline2.Size = toggle.Main.Size + UDim2.fromOffset(6, 6)
+                toggle.BlackOutline2.BorderSizePixel = 0
+                toggle.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                toggle.BlackOutline2.Position = UDim2.fromOffset(-3, -3)
+                updateevent.Event:Connect(function(theme)
+                    toggle.BlackOutline2.BackgroundColor3 = theme.outlinecolor2
+                end)
+                
+                toggle.Outline = Instance.new("Frame", toggle.Main)
+                toggle.Outline.Name = "blackline"
+                toggle.Outline.ZIndex = 4
+                toggle.Outline.Size = toggle.Main.Size + UDim2.fromOffset(4, 4)
+                toggle.Outline.BorderSizePixel = 0
+                toggle.Outline.BackgroundColor3 = window.theme.outlinecolor
+                toggle.Outline.Position = UDim2.fromOffset(-2, -2)
+                updateevent.Event:Connect(function(theme)
+                    toggle.Outline.BackgroundColor3 = theme.outlinecolor
+                end)
+
+                toggle.BlackOutline = Instance.new("Frame", toggle.Main)
+                toggle.BlackOutline.Name = "blackline"
+                toggle.BlackOutline.ZIndex = 4
+                toggle.BlackOutline.Size = toggle.Main.Size + UDim2.fromOffset(2, 2)
+                toggle.BlackOutline.BorderSizePixel = 0
+                toggle.BlackOutline.BackgroundColor3 = window.theme.outlinecolor2
+                toggle.BlackOutline.Position = UDim2.fromOffset(-1, -1)
+                updateevent.Event:Connect(function(theme)
+                    toggle.BlackOutline.BackgroundColor3 = theme.outlinecolor2
+                end)
+
+                toggle.Gradient = Instance.new("UIGradient", toggle.Main)
+                toggle.Gradient.Rotation = (22.5 * 13)
+                toggle.Gradient.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, Color3.fromRGB(30, 30, 30)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(45, 45, 45)) })
+
+                toggle.Label = Instance.new("TextButton", toggle.Main)
+                toggle.Label.Name = "Label"
+                toggle.Label.AutoButtonColor = false
+                toggle.Label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                toggle.Label.BackgroundTransparency = 1
+                toggle.Label.Position = UDim2.fromOffset(toggle.Main.AbsoluteSize.X + 10, -2)
+                toggle.Label.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 71, toggle.BlackOutline.Size.Y.Offset)
+                toggle.Label.Font = window.theme.font
+                toggle.Label.ZIndex = 5
+                toggle.Label.Text = toggle.text
+                toggle.Label.TextColor3 = window.theme.itemscolor
+                toggle.Label.TextSize = 15
+                toggle.Label.TextStrokeTransparency = 1
+                toggle.Label.TextXAlignment = Enum.TextXAlignment.Left
+                updateevent.Event:Connect(function(theme)
+                    toggle.Label.Font = theme.font
+                    toggle.Label.TextColor3 = toggle.value and window.theme.itemscolor2 or theme.itemscolor
+                end)
+
+                toggle.CheckedFrame = Instance.new("Frame", toggle.Main)
+                toggle.CheckedFrame.ZIndex = 5
+                toggle.CheckedFrame.BorderSizePixel = 0
+                toggle.CheckedFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- Color3.fromRGB(204, 0, 102)
+                toggle.CheckedFrame.Size = toggle.Main.Size
+
+                toggle.Gradient2 = Instance.new("UIGradient", toggle.CheckedFrame)
+                toggle.Gradient2.Rotation = (22.5 * 13)
+                toggle.Gradient2.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, window.theme.accentcolor2), ColorSequenceKeypoint.new(1.00, window.theme.accentcolor) })
+                updateevent.Event:Connect(function(theme)
+                    toggle.Gradient2.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, theme.accentcolor2), ColorSequenceKeypoint.new(1.00, theme.accentcolor) })
+                end)
+
+                toggle.Items = Instance.new("Frame", toggle.Main)
+                toggle.Items.Name = "\n"
+                toggle.Items.ZIndex = 4
+                toggle.Items.Size = UDim2.fromOffset(60, toggle.BlackOutline.AbsoluteSize.Y)
+                toggle.Items.BorderSizePixel = 0
+                toggle.Items.BackgroundTransparency = 1
+                toggle.Items.BackgroundColor3 = Color3.new(0, 0, 0)
+                toggle.Items.Position = UDim2.fromOffset(sector.Main.Size.X.Offset - 71, 0)
+
+                toggle.ListLayout = Instance.new("UIListLayout", toggle.Items)
+                toggle.ListLayout.FillDirection = Enum.FillDirection.Horizontal
+                toggle.ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+                toggle.ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+                toggle.ListLayout.Padding = UDim.new(0.04, 6)
+
+                if toggle.flag and toggle.flag ~= "" then
+                    library.flags[toggle.flag] = toggle.default or false
+                end
+
+                function toggle:Set(value) 
+                    if value then
+                        toggle.Label.TextColor3 = window.theme.itemscolor2
+                    else
+                        toggle.Label.TextColor3 = window.theme.itemscolor
                     end
-                    button.clicked = false
-                    button.objects.label.Text = button.text
+
+                    toggle.value = value
+                    toggle.CheckedFrame.Visible = value
+                    if toggle.flag and toggle.flag ~= "" then
+                        library.flags[toggle.flag] = toggle.value
+                    end
+                    pcall(toggle.callback, value)
                 end
-            end)
-
-            library:connection(button.objects.container.MouseButton1Up, function()
-                button.objects.background.Theme = {['Color'] = 'Option Background'}
-                button.objects.label.Theme = {['Color'] = 'Option Text 2'}
-            end)
-
-            library:connection(button.objects.container.MouseEnter, function()
-                button.objects.background.Theme = {['Color'] = 'Option Background'}
-                button.objects.label.Theme = {['Color'] = 'Option Text 2'}
-                button.objects.border_mid.Theme = {['Color'] = 'Accent'}
-            end)
-
-            library:connection(button.objects.container.MouseLeave, function()
-                button.objects.background.Theme = {['Color'] = 'Option Background'}
-                button.objects.label.Theme = {['Color'] = 'Option Text 2'}
-                button.objects.border_mid.Theme = {['Color'] = 'Border 2'}
-            end)
-
-            button.objects.label.Center   = true
-            button.objects.label.Position = udim2_new(0.5,0,0,2)
-            button.objects.border_inner   = library:create('outline', button.objects.background,   {['Theme'] = {['Color'] = 'Border 1'}})
-            button.objects.border_mid     = library:create('outline', button.objects.border_inner, {['Theme'] = {['Color'] = 'Border 2'}})
-            button.objects.border_outer   = library:create('outline', button.objects.border_mid,   {['Theme'] = {['Color'] = 'Border 1'}})
-
-            table_insert(self.options, button)
-            if self.update_options ~= nil then 
-                self:update_options() 
-            end
-            return self.class ~= 'section' and self or button
-        end
-    end
-
-    -- slider
-    do
-        library.meta.options.slider = {}
-        library.meta.options.slider.__index = library.meta.options.slider
-        setmetatable(library.meta.options.slider, library.meta.options)
-
-        function library.meta.options.slider:new(properties)
-            local slider = library:create('option', utility.table.merge(properties, {size = udim2_new(1,0,0,36)}), self, 'slider')
-            slider.parent = self
-            slider.value = 0
-            slider.min = properties.min or 0
-            slider.max = properties.max or 100
-            slider.increment = properties.increment or 1
-            slider.mintext = properties.mintext or ''
-            slider.maxtext = properties.maxtext or ''
-            slider.suffix = properties.suffix or ''
-
-            slider.objects.background = library:create('rect', {
-                Theme = {['Color'] = 'Option Background'},
-                Size = udim2_new(1,-6,0,10),
-                Position = udim2_new(0.5,0,1,-5),
-                AnchorPoint = vector2_new(0.5,1),
-                ZIndex = slider.zindex + 3,
-                Parent = slider.objects.container
-            })
-
-            slider.objects.slider = library:create('rect', {
-                Theme = {['Color'] = 'Accent'},
-                Size = udim2_new(0,0,1,0),
-                ZIndex = slider.zindex + 4,
-                Parent = slider.objects.background
-            })
-
-            slider.objects.gradient = library:create('rect', {
-                Size = udim2_new(1,0,1,0),
-                Transparency = 0.5,
-                ZIndex = slider.zindex + 5,
-                Data = library.images.gradientp90,
-                Parent = slider.objects.background,
-            }, 'Image')
-
-            library:connection(slider.objects.container.MouseButton1Down, function()
-                slider:update()
-                library.dragging_slider = slider
-                slider.objects.border_mid.Theme = {['Color'] = 'Accent'}
-            end)
-
-            library:connection(slider.objects.container.MouseEnter, function()
-                slider.objects.border_mid.Theme = {['Color'] = 'Accent'}
-            end)
-
-            library:connection(slider.objects.container.MouseLeave, function()
-                slider.objects.border_mid.Theme = {['Color'] = 'Border 2'}
-            end)
-
-            slider.objects.label.ZIndex     = slider.zindex + 6
-            slider.objects.container.ZIndex = slider.zindex + 6
-
-            slider.objects.container.Size = slider.parent.class == 'section' and udim2_new(1,0,0,36) or udim2_new(1,0,0,18)
-            slider.objects.label.Position = slider.parent.class == 'section' and udim2_new(0,0,0,1) or udim2_new(0.5,0,0,1)
-            slider.objects.label.Center   = slider.parent.class ~= 'section'
-
-            slider.objects.border_inner = library:create('outline', slider.objects.background,   {['Theme'] = {['Color'] = 'Border 1'}})
-            slider.objects.border_mid   = library:create('outline', slider.objects.border_inner, {['Theme'] = {['Color'] = 'Border 2'}})
-            slider.objects.border_outer = library:create('outline', slider.objects.border_mid,   {['Theme'] = {['Color'] = 'Border 1'}})
-
-            table_insert(self.options, slider)
-            slider:set_value(properties.default or 0)
-            if self.update_options ~= nil then 
-                self:update_options() 
-            end            
-            return self.class ~= 'section' and self or slider
-        end
-
-        function library.meta.options.slider:set_value(value, nocallback)
-            assert(typeof(value) == 'number', ("invalid toggle state type. expected 'number', got '%s'"):format(typeof(value)))
-
-            self.value = math_clamp(self.increment * math_floor(value / self.increment), self.min, self.max)
-            self.objects.label.Theme = {['Color'] = (self.value == self.min or (0 > self.min and self.value == 0)) and 'Option Text 2' or 'Option Text 1'}
-
-            if self.parent.class == 'section' then
-                self.objects.label.Text = self.text .. ': ' .. string.format("%.14g", self.value) .. self.suffix
-            else
-                self.objects.label.Text = string.format("%.14g", self.value) .. self.suffix .. '/' .. self.max .. self.suffix
-            end
-
-            if self.maxtext ~= '' and self.value == self.max then
-                self.objects.label.Text = self.maxtext
-            elseif self.mintext ~= '' and self.value == self.min then
-                self.objects.label.Text = self.mintext
-            end
-
-            if self.min >= 0 then
-                self.objects.slider.Size = udim2_new((self.value - self.min) / (self.max - self.min), 0, 1, 0)
-            else
-                self.objects.slider.Size = udim2_new(self.value / (self.max - self.min), 0, 1, 0)
-                self.objects.slider.Position = udim2_new((0 - self.min) / (self.max - self.min), -1, 0, -1)
-            end
-
-            if self.flag ~= nil then
-                library.flags[self.flag] = self.value
-            end
-
-            if not nocallback then
-                self.callback(self.value)
-            end
-        end
-
-        function library.meta.options.slider:update()
-            local relative = utility.vector2.floor(inputservice:GetMouseLocation() - self.objects.background.AbsolutePosition)
-            local value = utility:convert_number_range(relative.X, 0, self.objects.background.AbsoluteSize.X, self.min, self.max)
-            self:set_value(math_clamp(value, self.min, self.max))
-        end
-
-    end
-
-    -- colorpicker
-    do
-        library.meta.options.colorpicker = {}
-        library.meta.options.colorpicker.__index = library.meta.options.colorpicker
-        setmetatable(library.meta.options.colorpicker, library.meta.options)
-
-        function library.meta.options.colorpicker:new(properties)
-            properties = properties or {}
-
-            local colorpicker = library:create('option', properties, self, 'colorpicker')
-            colorpicker.parent = self
-            colorpicker.useaccent = false
-            colorpicker.displayuseaccent = properties.displayuseaccent == nil and true or properties.displayuseaccent
-            colorpicker.color = properties.default or color3_new(1,1,1)
-            colorpicker.opacity = properties.default_opacity or 1
-
-            colorpicker.objects.background = library:create('rect', {
-                Color = colorpicker.color,
-                Size = udim2_new(0,15,0,6),
-                Position = udim2_new(1,-3,0,6),
-                AnchorPoint = vector2_new(1,0),
-                ZIndex = colorpicker.zindex + 3,
-                Parent = colorpicker.objects.container
-            })
-
-            if self.class ~= 'section' then
-                colorpicker.objects.container.ZIndex = colorpicker.zindex + 4
-                colorpicker.objects.container.Size = udim2_new(0,21,1,0) 
-            end
-
-            colorpicker.objects.label.Visible = self.class == 'section'
-            colorpicker.objects.border_inner = library:create('outline', colorpicker.objects.background,   {['Theme'] = {['Color'] = 'Border 1'}})
-            colorpicker.objects.border_mid   = library:create('outline', colorpicker.objects.border_inner, {['Theme'] = {['Color'] = 'Border 2'}})
-            colorpicker.objects.border_outer = library:create('outline', colorpicker.objects.border_mid,   {['Theme'] = {['Color'] = 'Border 1'}})
-
-            library:connection(colorpicker.objects.container.MouseButton1Down, function()
-                if library.colorpicker.selected == colorpicker then
-                    library.colorpicker.selected = nil
-                    library.colorpicker.objects.background.Parent = nil
-                    library.colorpicker.objects.background.Visible = false
-                else
-                    library.colorpicker.selected = colorpicker
-                    library.meta.options.toggle.set_state(options.COLORPICKER_ACCENT_TOGGLE, colorpicker.useaccent)
-                    library.colorpicker.objects.background.Parent = colorpicker.objects.container
-                    library.colorpicker.objects.background.Visible = true
-                    library.colorpicker.objects.label.Text = colorpicker.text or colorpicker.flag or ''
-                    library.colorpicker:set(colorpicker.color, colorpicker.opacity)
+                function toggle:Get() 
+                    return toggle.value
                 end
-            end)
+                toggle:Set(toggle.default)
 
-            library:connection(colorpicker.objects.container.MouseEnter, function()
-                colorpicker.objects.border_mid.Theme = {['Color'] = 'Accent'}
-            end)
+                function toggle:AddKeybind(default, flag)
+                    local keybind = { }
 
-            library:connection(colorpicker.objects.container.MouseLeave, function()
-                colorpicker.objects.border_mid.Theme = {['Color'] = colorpicker.state and 'Accent' or 'Border 2'}
-            end)
+                    keybind.default = default or "None"
+                    keybind.value = keybind.default
+                    keybind.flag = flag or ( (toggle.text or "") .. tostring(#toggle.Items:GetChildren()))
 
-            table_insert(self.options, colorpicker)
-            if properties.flag ~= nil then
-                flags[properties.flag] = colorpicker.color
-            end
-            if self.update_options ~= nil then 
-                self:update_options() 
-            end
-            return self.class ~= 'section' and self or colorpicker
-        end
+                    local shorter_keycodes = {
+                        ["LeftShift"] = "LSHIFT",
+                        ["RightShift"] = "RSHIFT",
+                        ["LeftControl"] = "LCTRL",
+                        ["RightControl"] = "RCTRL",
+                        ["LeftAlt"] = "LALT",
+                        ["RightAlt"] = "RALT"
+                    }
 
-        function library.meta.options.colorpicker:set(color, opacity)
-            if self.useaccent then
-                color = library.theme.Accent
-            end
+                    local text = keybind.default == "None" and "[None]" or "[" .. (shorter_keycodes[keybind.default.Name] or keybind.default.Name) .. "]"
+                    local size = textservice:GetTextSize(text, 15, window.theme.font, Vector2.new(2000, 2000))
 
-            self.color = color
-            self.opacity = opacity
-            self.objects.background.Color = color
-            if self.flag ~= nil then
-                library.flags[self.flag] = color
-            end
-            self.callback(color, opacity)
-        end
-
-    end
-
-    -- textbox
-    do
-        library.meta.options.textbox = {}
-        library.meta.options.textbox.__index = library.meta.options.textbox
-
-        function library.meta.options.textbox:new(properties)
-            local textbox = library:create('option', properties, self, 'textbox')
-            textbox.text = ''
-            textbox.placeholder = properties.placeholder or ''
-            textbox.callback = properties.callback or function() end
-            textbox.parent = self
-
-            textbox.objects.background = library:create('rect', {
-                Theme = {['Color'] = 'Option Background'},
-                Size = udim2_new(1,-6,0,10),
-                Position = udim2_new(0.5,0,1,-5),
-                AnchorPoint = vector2_new(0.5,1),
-                ZIndex = textbox.zindex + 3,
-                Parent = textbox.objects.container
-            })
-
-            textbox.objects.gradient = library:create('rect', {
-                Size = udim2_new(1,0,1,0),
-                Transparency = 0.5,
-                ZIndex = textbox.zindex + 4,
-                Data = library.images.gradientp90,
-                Parent = textbox.objects.background,
-            }, 'Image')
-
-            textbox.objects.input = library:create('text', {
-                Theme = {['Color'] = 'Option Text 2'},
-                Position = udim2_new(0,1,0,-2),
-                Text = textbox.placeholder,
-                Center = textbox.center or false,
-                ZIndex = textbox.zindex + 5,
-                Parent = textbox.objects.background,
-            })
-
-            library:connection(textbox.objects.container.MouseButton1Down, function()
-                if not textbox.focued then
-                    textbox:capture()
-                end
-            end)
-
-            library:connection(textbox.objects.container.MouseEnter, function()
-                textbox.objects.border_mid.Theme = {['Color'] = 'Accent'}
-            end)
-
-            library:connection(textbox.objects.container.MouseLeave, function()
-                textbox.objects.border_mid.Theme = {['Color'] = 'Border 2'}
-            end)
-
-            textbox.objects.container.ZIndex = textbox.zindex + 5
-            textbox.objects.label.Visible  = textbox.parent.class == 'section'
-            textbox.objects.container.Size = textbox.parent.class == 'section' and udim2_new(1,0,0,36) or udim2_new(1,0,0,18)
-            textbox.objects.border_inner   = library:create('outline', textbox.objects.background,   {['Theme'] = {['Color'] = 'Border 1'}})
-            textbox.objects.border_mid     = library:create('outline', textbox.objects.border_inner, {['Theme'] = {['Color'] = 'Border 2'}})
-            textbox.objects.border_outer   = library:create('outline', textbox.objects.border_mid,   {['Theme'] = {['Color'] = 'Border 1'}})
-
-            table_insert(self.options, textbox)
-            if self.update_options ~= nil then 
-                self:update_options() 
-            end
-            return self.class ~= 'section' and self or textbox
-        end
-
-        function library.meta.options.textbox:set_text(str, nocallback)
-            assert(typeof(str) == 'string', ("invalid textbox input type. expected 'string', got '%s'"):format(typeof(str)))
-
-            self.text = str
-            self.objects.input.Text = (str == '' and not self.focused) and self.placeholder or str
-            self.objects.input.Theme = {['Color'] = self.focused and 'Option Text 1' or 'Option Text 2'}
-            self.objects.label.Theme = {['Color'] = (str == '' and not self.focused) and 'Option Text 2' or 'Option Text 1'}
-
-            if not nocallback then
-                self.callback(str)
-            end
-
-            if self.flag ~= nil then
-                library.flags[self.flag] = str
-            end
-        end
-
-        function library.meta.options.textbox:handle_keypress(input)
-            if not self.focused then return end
-            if table_find(library.blacklisted_keys, input.KeyCode) then return end
-
-            local caps = inputservice:IsKeyDown(Enum.KeyCode.LeftShift) or inputservice:IsKeyDown(Enum.KeyCode.RightShift)
-            local keystring = library.key_strings[input.KeyCode]
-            local keystring = (keystring == nil and (caps and input.KeyCode.Name or input.KeyCode.Name:lower()) or (caps and keystring[2] or keystring[1]))
-
-            if input.KeyCode == Enum.KeyCode.Backspace then
-                self:set_text(self.text:sub(0,-2))
-            elseif input.KeyCode == Enum.KeyCode.Return or input.KeyCode == Enum.KeyCode.Escape or input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
-                self:release()
-                self:set_text(self.text)
-                return
-            else
-                self:set_text(self.text .. keystring, true)
-            end
-        end
-
-        function library.meta.options.textbox:capture()
-            if not self.focused then
-                actionservice:BindAction(
-                    'FreezeMovement',
-                    function()
-                        return Enum.ContextActionResult.Sink
-                    end,
-                    false,
-                    unpack(Enum.PlayerActions:GetEnumItems())
-                )
-
-                self.focused = true
-                self:set_text(self.text, true)
-                self.connection = library:connection(inputservice.InputBegan, function(input)
-
-                    if inputservice:GetFocusedTextBox() then return end
-                    local released = false
-
-                    self:handle_keypress(input)
-
-                    task.spawn(function()
-                        inputservice.InputEnded:Wait()
-                        released = true
+                    keybind.Main = Instance.new("TextButton", toggle.Items)
+                    keybind.Main.Name = "keybind"
+                    keybind.Main.BackgroundTransparency = 1
+                    keybind.Main.BorderSizePixel = 0
+                    keybind.Main.ZIndex = 5
+                    keybind.Main.Size = UDim2.fromOffset(size.X + 2, size.Y - 7)
+                    keybind.Main.Text = text
+                    keybind.Main.Font = window.theme.font
+                    keybind.Main.TextColor3 = Color3.fromRGB(136, 136, 136)
+                    keybind.Main.TextSize = 15
+                    keybind.Main.TextXAlignment = Enum.TextXAlignment.Right
+                    keybind.Main.MouseButton1Down:Connect(function()
+                        keybind.Main.Text = "[...]"
+                        keybind.Main.TextColor3 = window.theme.accentcolor
+                    end)
+                    updateevent.Event:Connect(function(theme)
+                        keybind.Main.Font = theme.font
+                        if keybind.Main.Text == "[...]" then
+                            keybind.Main.TextColor3 = theme.accentcolor
+                        else
+                            keybind.Main.TextColor3 = Color3.fromRGB(136, 136, 136)
+                        end
                     end)
 
-                    task.wait(0.5)
-                    if not released then
-                        repeat
-                            self:handle_keypress(input)
-                            wait(0.05)
-                        until released
+                    if keybind.flag and keybind.flag ~= "" then
+                        library.flags[keybind.flag] = keybind.default
                     end
-                end)
-            end
-        end
-
-        function library.meta.options.textbox:release()
-            if self.focused then
-                actionservice:UnbindAction('FreezeMovement')
-                self.focused = false
-                self.connection:Disconnect()
-            end
-        end
-
-    end
-
-    -- dropdown
-    do
-        library.meta.options.dropdown = {}
-        library.meta.options.dropdown.__index = library.meta.options.dropdown
-        setmetatable(library.meta.options.dropdown, library.meta.options)
-
-        function library.meta.options.dropdown:new(properties)
-            local dropdown = library:create('option', properties, self, 'dropdown')
-            dropdown.multi = properties.multi or false
-            dropdown.searching = false
-            dropdown.maxvalues = 10
-            dropdown.values = {}
-            dropdown.selected = properties.multi and {}
-
-            for i,v in next, properties.values or {} do
-                dropdown:add_value(v)
-            end
-
-            dropdown.objects.background = library:create('rect', {
-                Theme = {['Color'] = 'Option Background'},
-                Size = udim2_new(1,-6,0,10),
-                Position = udim2_new(0.5,0,1,-5),
-                AnchorPoint = vector2_new(0.5,1),
-                ZIndex = dropdown.zindex + 3,
-                Parent = dropdown.objects.container
-            })
-            
-            dropdown.objects.status_text = library:create('text', {
-                Theme = {['Color'] = 'Option Text 2'},
-                Position = udim2_new(0,1,0,-3),
-                Text = 'none',
-                Center = dropdown.center or false,
-                ZIndex = dropdown.zindex + 5,
-                Parent = dropdown.objects.background,
-            })
-
-            dropdown.objects.status = library:create('rect', {
-                Size = udim2_new(0,7,0,5),
-                Position = udim2_new(1,-4,0.5,1),
-                AnchorPoint = vector2_new(1,0.5),
-                ZIndex = dropdown.zindex + 4,
-                Data = library.images.arrow_down,
-                Parent = dropdown.objects.background,
-            }, 'Image')
-
-            dropdown.objects.gradient = library:create('rect', {
-                Size = udim2_new(1,0,1,0),
-                Transparency = 0.5,
-                ZIndex = dropdown.zindex + 4,
-                Data = library.images.gradientp90,
-                Parent = dropdown.objects.background,
-            }, 'Image')
-
-            library:connection(dropdown.objects.container.MouseButton1Down, function()
-
-                for i,v in next, library.dropdown.connections do
-                    v:Disconnect()
-                end
-
-                if library.dropdown.selected == dropdown then
-                    dropdown.objects.status.Data = library.images.arrow_down
-                    dropdown.objects.status.Position = udim2_new(1,-4,0.5,1)
-                    library.dropdown.selected = nil
-                    library.dropdown.objects.background.Parent = nil
-                    library.dropdown.objects.background.Visible = false
-                    if dropdown.search_connection then
-                        dropdown.search_connection:Disconnect()
-                        dropdown.search_connection = nil
-                        dropdown.searching = false
-                        dropdown.objects.status_text.Text = dropdown.text
-                    end
-                else
-                    dropdown.objects.status.Data = library.images.arrow_up
-                    dropdown.objects.status.Position = udim2_new(1,-4,0.5,0)
-                    library.dropdown.selected = dropdown
-                    library.dropdown.objects.background.Parent = dropdown.objects.container
-                    library.dropdown.objects.background.Visible = true
-                    dropdown:update()
-
-                    if inputservice:IsKeyDown(Enum.KeyCode.LeftControl) then
-
-                        local status_text = dropdown.objects.status_text
-
-                        dropdown.searching = true
-                        status_text.Text = ''
-                        
-                        dropdown.search_connection = library:connection(inputservice.InputBegan, function(input)
-                            if input.UserInputType ~= Enum.UserInputType.Keyboard or not input.KeyCode then return end
-                            if table_find(library.blacklisted_keys, input.KeyCode) then return end
-                
-                            local caps = inputservice:IsKeyDown(Enum.KeyCode.LeftShift) or inputservice:IsKeyDown(Enum.KeyCode.RightShift)
-                            local keystring = library.key_strings[input.KeyCode]
-                            local keystring = (keystring == nil and (caps and input.KeyCode.Name or input.KeyCode.Name:lower()) or (caps and keystring[2] or keystring[1]))
-                
-                            if input.KeyCode == Enum.KeyCode.Backspace then
-                                status_text.Text = status_text.Text:sub(0,-2)
-                            elseif input.KeyCode == Enum.KeyCode.Return or input.KeyCode == Enum.KeyCode.Escape or input.UserInputType == Enum.UserInputType.MouseButton1 then
-                                dropdown.search_connection:Disconnect()
-                                dropdown.search_connection = nil
-                                dropdown.searching = false
-                                status_text.Text = dropdown.text
-                                return
-                            else
-                                status_text.Text = status_text.Text .. keystring
+                    function keybind:Set(key)
+                        if key == "None" then
+                            keybind.Main.Text = "[" .. key .. "]"
+                            keybind.value = key
+                            if keybind.flag and keybind.flag ~= "" then
+                                library.flags[keybind.flag] = key
                             end
-        
-                            dropdown:update()
-        
-                        end)
-        
-                    end
-
-                end
-            end)
-
-            library:connection(dropdown.objects.container.MouseEnter, function()
-                dropdown.objects.border_mid.Theme = {['Color'] = 'Accent'}
-            end)
-
-            library:connection(dropdown.objects.container.MouseLeave, function()
-                dropdown.objects.border_mid.Theme = {['Color'] = 'Border 2'}
-            end)
-
-            dropdown.objects.container.ZIndex = dropdown.zindex + 6
-            dropdown.objects.label.Visible    = dropdown.parent.class == 'section'
-            dropdown.objects.container.Size   = dropdown.parent.class == 'section' and udim2_new(1,0,0,36) or udim2_new(1,0,0,18)
-            dropdown.objects.border_inner     = library:create('outline', dropdown.objects.background,   {['Theme'] = {['Color'] = 'Border 1'}})
-            dropdown.objects.border_mid       = library:create('outline', dropdown.objects.border_inner, {['Theme'] = {['Color'] = 'Border 2'}})
-            dropdown.objects.border_outer     = library:create('outline', dropdown.objects.border_mid,   {['Theme'] = {['Color'] = 'Border 1'}})
-            
-            table_insert(self.options, dropdown)
-            if properties.flag then
-                library.flags[properties.flag] = dropdown.selected
-            end
-            if self.update_options then 
-                self:update_options() 
-            end
-            if properties.default then
-                dropdown:select(properties.default)
-            end
-            return self.class ~= 'section' and self or dropdown
-        end
-
-        function library.meta.options.dropdown:select(values)
-            self.selected = values
-            self:update_text()
-            library.flags[self.flag] = self.selected
-            if self.callback ~= nil then
-                self.callback(self.selected)
-            end
-        end
-
-        function library.meta.options.dropdown:add_value(value)
-            table_insert(self.values, value)
-            if self.multi then
-                self.selected[value] = false
-            end
-            self:update()
-        end
-
-        function library.meta.options.dropdown:remove_value(value)
-            table_remove(self.values, table_find(self.values, value))
-            if self.multi then
-                self.selected[value] = nil
-            end
-            self:update()
-        end
-
-        function library.meta.options.dropdown:update_text()
-            local full_text = self.selected or ''
-            local text = ''
-            
-            if self.multi then
-                full_text = {}
-                for i,v in next, self.values do
-                    if self.selected[v] == true then
-                        table_insert(full_text, v)
-                    end
-                end
-                full_text = table_concat(full_text, ', ') or ''
-            end
-
-            self.objects.status_text.Text = 'none'
-
-            for i,v in next, full_text:split('') do
-                text = text .. v
-                self.objects.status_text.Text = text
-                if self.objects.status_text.TextBounds.X > self.objects.container.AbsoluteSize.X - 40 then
-                    self.objects.status_text.Text = text:sub(1,-3) .. '...'
-                    break
-                end
-            end
-        end
-
-        function library.meta.options.dropdown:update() -- i gave up trying to make things look nice on this dropdown shit
-            if library.dropdown.selected ~= self then return end
-
-            local dropdown = self
-
-            for i,v in next, library.dropdown.connections do
-                v:Disconnect()
-            end
-
-            for index in next, dropdown.values do
-                if not library.dropdown.objects.values[index] then
-                    library.dropdown.objects.values[index] = library:create('dropdownvalue', library.dropdown.objects.background)
-                end
-            end
-
-            local index = 0
-
-            for _, objects in next, library.dropdown.objects.values do
-                local value = dropdown.values[_]
-                if value == nil then
-                    objects.container.Visible = false
-                    continue
-                end
-
-                local selected = ((dropdown.multi and dropdown.selected[value] == true) or (not dropdown.multi and dropdown.selected == value))
-
-                if not selected and dropdown.searching and not value:lower():match(dropdown.objects.status_text.Text) then
-                    objects.container.Visible = false
-                    continue
-                end
-
-                index = index + 1
-
-                objects.label.Text = value
-                objects.label.Theme = {['Color'] = (selected and 'Option Text 1' or 'Option Text 2')}
-                objects.container.Transparency = selected and 0.1 or 0
-                objects.container.Visible = true
-                objects.container.Position = udim2_new(0,2,0,2 + (index - 1) * 16)
-        
-                library:connection(objects.container.MouseButton1Down, function()
-                    if dropdown.multi then
-                        dropdown.selected[value] = not dropdown.selected[value]
-                        objects.label.Theme = {['Color'] = dropdown.selected[value] and 'Option Text 1' or 'Option Text 2'}
-                        objects.container.Transparency = dropdown.selected[value] and 0.15 or 0
-                    else
-                        dropdown.selected = dropdown.selected ~= value and value or nil
-                        for i,v in next, library.dropdown.objects.values do
-                            v.label.Theme = {['Color'] = (v == objects and dropdown.selected == value) and 'Option Text 1' or 'Option Text 2'}
-                            v.container.Transparency = (v == objects and dropdown.selected == value) and 0.15 or 0
+                        end
+                        keybind.Main.Text = "[" .. (shorter_keycodes[key.Name] or key.Name) .. "]"
+                        keybind.value = key
+                        if keybind.flag and keybind.flag ~= "" then
+                            library.flags[keybind.flag] = keybind.value
                         end
                     end
-                    if dropdown.flag ~= nil then
-                        library.flags[dropdown.flag] = dropdown.selected
-                    end
-                    if dropdown.callback ~= nil then
-                        dropdown.callback(dropdown.selected)
-                    end
-                    if not dropdown.searching then
-                        dropdown:update_text()
-                    else
-                        dropdown:update()
-                    end
-                end, library.dropdown.connections)
-            end
 
-            library.dropdown.objects.background.Size = udim2_new(1,-4,0,index * 16 + 3)
-
-        end
-
-    end
-
-    -- keybind
-    do
-        library.meta.options.keybind = {}
-        library.meta.options.keybind.__index = library.meta.options.keybind
-        setmetatable(library.meta.options.keybind, library.meta.options)
-
-
-        function library.meta.options.keybind:new(properties)
-            properties = properties or {}
-
-            local keybind = library:create('option', properties, self, 'keybind'), library.meta.options.keybind
-            keybind.parent = self
-            keybind.binding = false
-            keybind.state = false
-            keybind.mode = properties.mode or 'toggle'
-            keybind.key = properties.default or 'none'
-
-            keybind.objects.keytext = library:create('text', {
-                Color = keybind.color,
-                ZIndex = keybind.zindex + 3,
-                Parent = keybind.objects.container
-            })
-
-            keybind.objects.label.Visible = self.class == 'section'
-
-            if self.class ~= 'section' then
-                keybind.objects.container.ZIndex = keybind.zindex + 4
-                keybind.objects.container.Size = udim2_new(0,21,1,0) 
-            end
-
-            library:connection(keybind.objects.container.MouseButton1Down, function()
-
-                keybind.binding = true
-                keybind:set_text('...')
-                
-                local c; c = library:connection(inputservice.InputBegan, function(input)
-                    if input.KeyCode == Enum.KeyCode.Backspace then
-                        keybind:set_bind(nil)
-                    elseif not keybind.nomouse and library.mouse_strings[input.UserInputType] then
-                        keybind:set_bind(input.UserInputType)
-                    elseif input.UserInputType == Enum.UserInputType.Keyboard then
-                        keybind:set_bind(input.KeyCode)
+                    function keybind:Get()
+                        return keybind.value
                     end
 
-                    if not keybind.binding then
-                        c:Disconnect()
-                    end
-                end)
-
-            end)
-
-            library:connection(keybind.objects.container.MouseEnter, function()
-                keybind.objects.keytext.Theme = {['Color'] = 'Accent'}
-            end)
-
-            library:connection(keybind.objects.container.MouseLeave, function()
-                keybind.objects.keytext.Theme = {['Color'] = keybind.binding and 'Accent' or 'Option Text 2'}
-            end)
-
-            library:connection(inputservice.InputBegan, function(input, gpe)
-                if keybind.bind == 'none' or keybind.bind == nil or gpe then return end
-
-                if input.KeyCode == keybind.bind or input.UserInputType == keybind.bind then
-                    if keybind.mode == 'toggle' then
-                        keybind.state = not keybind.state
-                    elseif keybind.mode == 'hold' then
-                        keybind.state = true
-
-                        local c; c = library:connection(inputservice.InputEnded, function(input)
-                            if input.KeyCode == keybind.bind or input.UserInputType == keybind.bind then
-                                c:Disconnect()
-                                keybind.state = false
-                                keybind.callback(keybind.state)
-                                if keybind.flag ~= nil then
-                                    flags[keybind.flag] = keybind.state
+                    uis.InputBegan:Connect(function(input, gameProcessed)
+                        if not gameProcessed then
+                            if keybind.Main.Text == "[...]" then
+                                keybind.Main.TextColor3 = Color3.fromRGB(136, 136, 136)
+                                if input.UserInputType == Enum.UserInputType.Keyboard then
+                                    keybind:Set(input.KeyCode)
+                                else
+                                    keybind:Set("None")
+                                end
+                            else
+                                if keybind.value ~= "None" and input.KeyCode == keybind.value then
+                                    toggle:Set(not toggle.CheckedFrame.Visible)
                                 end
                             end
-                        end)
-
-                    else
-                        keybind.state = true
-
-                        local c; c = library:connection(runservice.Heartbeat, function(delta)
-                            if (input.KeyCode == keybind.key and not inputservice:IsKeyDown(keybind.key)) or (input.UserInputType == keybind.key and not inputservice:IsMouseButtonPressed(keybind.key)) then
-                                c:Disconnect()
-                                if keybind.flag ~= nil then
-                                    flags[keybind.flag] = keybind.state
-                                end
-                                keybind.state = false
-                                keybind.callback(keybind.state)
-                            end
-                            if keybind.mode == 'always' then
-                                keybind.callback(delta)
-                            end
-                        end)
-
-                    end
-
-                    keybind.callback(keybind.state)
-                    if keybind.flag ~= nil then
-                        flags[keybind.flag] = keybind.state
-                    end
-                end
-            end)
-
-            keybind:set_bind(properties.default)
-            table_insert(self.options, keybind)
-            if self.update_options ~= nil then 
-                self:update_options() 
-            end
-            return self.class ~= 'section' and self or keybind
-        end
-
-        function library.meta.options.keybind:set_text(text)
-            self.objects.keytext.Text = '[' .. tostring(text) .. ']'
-            self.objects.keytext.Position = udim2_new(1,-self.objects.keytext.TextBounds.X,0,0)
-            if self.parent.class ~= 'section' then
-                self.objects.container.Size = udim2_new(0,self.objects.keytext.TextBounds.X, 0, 17)
-                self.parent:update_options()
-            end
-        end
-
-        function library.meta.options.keybind:set_bind(bind)
-            self.bind = bind == nil and 'none' or bind
-            self.binding = false
-
-            local name = 'none'
-            if library.mouse_strings[bind] ~= nil then
-                name = library.mouse_strings[bind]
-            elseif bind ~= nil and bind.Name ~= nil then
-                name = bind.Name
-            end
-            
-            self:set_text(tostring(name):upper())
-            self.objects.keytext.Theme = {
-                ['Color'] = self.objects.container.MouseHover and 'Accent' or 'Option Text 2'
-            }
-        end
-
-    end
-
-    -- separator
-    do
-        library.meta.options.separator = {}
-        library.meta.options.separator.__index = library.meta.options.separator
-        setmetatable(library.meta.options.separator, library.meta.options)
-
-        function library.meta.options.separator:new(properties)
-            local separator = library:create('option', properties, self, 'separator'), library.meta.options.separator
-            separator.state = false
-
-            separator.objects.line_1 = library:create('rect', {
-                Theme = {['Color'] = 'Option Background'},
-                Size = udim2_new(0,0,0,1),
-                Position = udim2_new(0,1,0.5,0),
-                AnchorPoint = vector2_new(0,0.5),
-                ZIndex = separator.zindex + 3,
-                Parent = separator.objects.container
-            })
-
-            separator.objects.line_2 = library:create('rect', {
-                Theme = {['Color'] = 'Option Background'},
-                Size = udim2_new(0,0,0,1),
-                Position = udim2_new(1,-1,0.5,0),
-                AnchorPoint = vector2_new(1,0.5),
-                ZIndex = separator.zindex + 3,
-                Parent = separator.objects.container
-            })
-
-            separator.objects.label.Center = true
-            separator.objects.label.Position = udim2_new(0.5,0,0,1)
-
-            separator.objects.border_1 = library:create('outline', separator.objects.line_1, {['Theme'] = {['Color'] = 'Border 1'}})
-            separator.objects.border_2 = library:create('outline', separator.objects.line_2, {['Theme'] = {['Color'] = 'Border 1'}})
-
-            table_insert(self.options, separator)
-            separator:set_text(separator.text)
-            if self.update_options ~= nil then 
-                self:update_options() 
-            end
-            return self.class ~= 'section' and self or separator
-        end
-
-        function library.meta.options.separator:set_text(str)
-            self.text = str
-            self.objects.label.Text = str
-
-            local size_x = (self.objects.container.AbsoluteSize.X - self.objects.label.TextBounds.X - 12) / 2
-            self.objects.line_1.Size = udim2_new(0, size_x, 0, 1)
-            self.objects.line_2.Size = udim2_new(0, size_x, 0, 1)
-
-        end
-
-    end
-end
-
--- // classes
-do
-
-    -- drawing
-    library:define('drawing', function(default_properties, class, properties, readonly)
-        local drawing = {
-            Name        = '',
-            Theme       = {},
-            _object     = Drawing.new(class),
-            _properties = properties or {},
-            _readonly   = readonly or {},
-            _handlers   = {},
-            _children   = {}
-        }
-
-        drawing._handlers.Size = function(size)
-            drawing._object.Size = size or 0
-            drawing._properties.Size = size or 0
-        end
-
-        drawing._handlers.Position = function(position)
-            assert(typeof(position) == 'UDim2', ("invalid Position type. expected 'UDim2', got '%s'."):format(typeof(position)))
-
-            local parent = drawing._properties.Parent
-            local parent_position = parent == nil and vector2_zero or parent.AbsolutePosition
-            local parent_size = parent == nil and library.screensize or parent.AbsoluteSize
-            local new_position = utility:udim2_to_vector2(position, parent_size)
-            local anchorpoint = (
-                drawing._properties.AnchorPoint ~= nil and 
-                utility:udim2_to_vector2(
-                    udim2_new(drawing._properties.AnchorPoint.X, 0, drawing._properties.AnchorPoint.Y, 0), 
-                    class == 'Text' and drawing._object.TextBounds or drawing._properties.AbsoluteSize
-                )
-            ) or vector2_new(0,0)
-            
-            drawing._properties.Position = position
-            drawing._properties.AbsolutePosition = utility.vector2.floor((parent_position + new_position) - anchorpoint)
-            drawing._object.Position = drawing._properties.AbsolutePosition
-
-            for i,v in next, drawing._children do
-                v.Position = v.Position
-            end
-
-        end
-
-        drawing._handlers.Visible = function(bool)
-            assert(typeof(bool) == 'boolean', ("invalid Visible type. expected 'boolean', got '%s'"):format(typeof(bool)))
-
-            local parent_visible = drawing._properties.Parent == nil and true or drawing._properties.Parent._object.Visible
-            local visible = bool and parent_visible
-
-            drawing._properties.Visible = bool
-            drawing._object.Visible = visible
-
-            for i,v in next, drawing._children do
-                v.Visible = v.Visible
-            end
-
-        end
-
-        drawing._handlers.AnchorPoint = function(anchorpoint)
-            assert(typeof(anchorpoint) == 'Vector2', ("invalid AnchorPoint type. expected 'Vector2', got '%s'."):format(typeof(anchorpoint)))
-            
-            drawing._properties.AnchorPoint = anchorpoint
-            drawing._handlers.Position(drawing._properties.Position)
-
-        end
-
-        drawing._handlers.Parent = function(parent)
-            -- assert(parent == nil or table_find(library.drawings, parent), ("invalid Parent. not a valid drawing."))
-
-            if drawing._properties.Parent ~= nil then
-                table_remove(drawing._properties.Parent._children, table_find(drawing._properties.Parent._children, drawing._metatable))
-            end
-
-            if parent ~= nil then
-                table_insert(parent._children, drawing._metatable)
-            end
-             
-            local position = table_find(library.drawings.noparent, drawing._metatable)
-            if parent == nil and not position then
-                table_insert(library.drawings.noparent, drawing._metatable)
-            elseif parent ~= nil and position then
-                table_remove(library.drawings.noparent, position)
-            end
-
-            drawing._properties.Parent = parent
-            drawing._handlers.Position(drawing._properties.Position)
-            drawing._handlers.Size(drawing._properties.Size)
-            
-        end
-
-        drawing._handlers.Theme = function(theme)
-            drawing.Theme = theme
-            for property, themecolor in next, theme do
-                local color = library.theme[themecolor]
-                if themecolor then
-                    drawing._metatable[property] = color
-                end
-            end
-        end
-
-        drawing._handlers.ZIndexOffset = function(offset)
-            drawing._metatable.ZIndex = drawing._properties.Parent == nil and 1 or drawing._properties.Parent.ZIndex + offset
-        end
-
-        function drawing:GetDescendants(children, descendants)
-            local descendants = {}
-            local function a(t)
-                for _,v in next, t._children do
-                    table_insert(descendants, v)
-                    a(v)
-                end
-            end
-            a(self)
-            return descendants
-        end
-
-        function drawing:Remove()
-
-            if rawget(drawing._object, '__OBJECT_EXISTS') then
-                self._object:Remove()
-            end
-
-            if drawing._properties.Parent ~= nil then
-                drawing._properties.Parent._children[drawing] = nil
-            end
-
-            library.drawings.raw[drawing._object] = nil
-            library.drawings.objects[drawing] = nil
-            library.drawings.noparent[drawing] = nil
-            library.drawings.active[drawing] = nil
-            library.drawings.draggable[drawing] = nil
-
-            for i,v in next, self._children do
-                v:Remove()
-            end
-            
-        end
-
-        function drawing:Clone()
-            local clone = library:create('drawing', class, drawing._properties, drawing._readonly)
-            for i,v in next, drawing._properties do
-                clone[i] = v
-            end
-            return clone
-        end
-
-        drawing._metatable = setmetatable({}, {
-            __index = function(self, idx)
-                if drawing[idx] ~= nil then
-                    return drawing[idx]
-                elseif drawing._properties[idx] ~= nil or idx == 'Parent' then
-                    return drawing._properties[idx]
-                elseif drawing._object[idx] ~= nil then
-                    return drawing._object[idx]
-                else
-                    -- warn(("invalid '%s' property '%s'."):format(class, idx))
-                end
-            end,
-            __newindex = function(self, idx, val)
-                if table_find(drawing._readonly, idx) then
-                    warn(("'%s' property '%s' is readonly."):format(class, idx))
-                elseif drawing._handlers[idx] then
-                    drawing._handlers[idx](val)
-                elseif drawing[idx] ~= nil then
-                    drawing[idx] = val
-                elseif drawing._properties[idx] ~= nil or idx == 'Parent' then
-                    drawing._properties[idx] = val
-                elseif utility.table.includes(drawing._object, idx) or idx == 'Data' then
-                    drawing._object[idx] = val
-                else
-                    -- warn(("invalid '%s' property '%s'."):format(class, idx))
-                end
-            end
-        })
-
-        table_insert(library.drawings.noparent, drawing._metatable)
-        library.drawings.raw[drawing._object] = class
-        library.drawings.objects[drawing] = drawing._metatable
-        return drawing._metatable
-    end)
-
-    -- rect
-    library:define('rect', function(default_properties, properties, class)
-        local rect = library:create('drawing', class or 'Square', {
-            Size             = udim2_new(0,0,0,0),
-            Position         = udim2_new(0,0,0,0),
-            AbsoluteSize     = vector2_new(0,0),
-            AbsolutePosition = vector2_new(0,0),
-            AnchorPoint      = vector2_new(0,0),
-            Active           = false,
-            Draggable        = false,
-            MouseHover       = false,
-            MouseEnter       = signal.new(),
-            MouseLeave       = signal.new(),
-            MouseButton1Down = signal.new(),
-            MouseButton1Up   = signal.new(),
-            MouseButton2Down = signal.new(),
-            MouseButton2Up   = signal.new(),
-        }, {
-            'AbsoluteSize',
-            'AbsolutePosition',
-            'MouseHover',
-            'MouseEnter',
-            'MouseLeave',
-            'MouseButton1Down',
-            'MouseButton1Up',
-            'MouseButton2Down',
-            'MouseButton2Up'
-        })
-
-        rect._handlers.Size = function(size)
-            assert(typeof(size) == 'UDim2', ("invalid Size type. expected 'UDim2', got '%s'"):format(typeof(size)))
-
-            local parent = rect._properties.Parent
-            local parent_position = parent == nil and vector2_new(0,0) or parent.AbsolutePosition
-            local parent_size = parent == nil and library.screensize or parent.AbsoluteSize
-            
-            rect._properties.Size = size
-            rect._properties.AbsoluteSize = utility.vector2.floor(utility:udim2_to_vector2(size, parent_size))
-            rect._object.Size = rect._properties.AbsoluteSize
-            rect._handlers.AnchorPoint(rect._properties.AnchorPoint)
-
-            for i,v in next, rect._children do
-                v.Size = v.Size
-            end
-
-        end
-
-        rect._handlers.Active = function(bool)
-            assert(typeof(bool) == 'boolean', ("invalid Active type. expected 'boolean', got '%s'"):format(typeof(bool)))
-
-            local position = table_find(library.drawings.active, rect)
-            if not bool and position then
-                table_remove(library.drawings.active, position)
-            elseif bool and not position then
-                table_insert(library.drawings.active, rect)
-            end
-
-            rect._properties.Active = bool
-
-        end
-
-        rect._handlers.Draggable = function(bool)
-            assert(typeof(bool) == 'boolean', ("invalid Draggable type. expected 'boolean', got '%s'"):format(typeof(bool)))
-
-            local position = table_find(library.drawings.draggable, rect)
-            if not bool and position then
-                table_remove(library.drawings.draggable, position)
-            elseif bool and not position then
-                table_insert(library.drawings.draggable, rect)
-            end
-
-            rect._properties.Draggable = bool
-
-        end
-
-        for property, value in next, utility.table.merge(default_properties, properties) do
-            rect[property] = value
-        end 
-
-        return rect
-    end, {
-        Position = udim2_new(0,0,0,0),
-        Size = udim2_new(0,0,0,0),
-        AnchorPoint = vector2_new(0,0),
-        Visible = true,
-        Filled = true,
-        Active = false,
-        Draggable = false
-    })
-
-    -- text
-    library:define('text', function(default_properties, properties)
-        local text = library:create('drawing', 'Text', {
-            Position         = udim2_new(0,0,0,0),
-            AbsolutePosition = vector2_new(0,0),
-            AnchorPoint      = vector2_new(0,0),
-        }, {
-            'AbsolutePosition',
-        })
-
-        for property, value in next, utility.table.merge(default_properties, properties) do
-            text[property] = value
-        end
-
-        return text
-    end, {
-        Size = 13,
-        Font = 2,
-        Position = udim2_new(0,0,0,0),
-        Visible = true,
-    })
-
-    -- outline
-    library:define('outline', function(default_properties, parent, properties)
-        local outline = library:create('rect', {Parent = parent})
-
-        outline._handlers.Thickness = function(thickness)
-            if typeof(thickness) == 'table' then -- [1] = top, [2] = right, [3] = bottom, [4] = left
-                outline.AnchorPoint = vector2_new(0,0)
-                outline.Size = udim2_new(
-                    1, 
-                    thickness[2] + thickness[4],
-                    1,
-                    thickness[1] + thickness[3]
-                )
-                outline.Position = udim2_new(
-                    0,
-                    -thickness[4],
-                    0,
-                    -thickness[1]
-                )
-            else
-                outline.AnchorPoint = vector2_new(0.5,0.5)
-                outline.Size = udim2_new(1, thickness * 2, 1, thickness * 2)
-            end
-        end
-
-        for i,v in next, utility.table.merge(default_properties, properties) do
-            outline[i] = v
-        end
-        
-        return outline
-    end, {
-        Position = udim2_new(0.5,0,0.5,0),
-        AnchorPoint = vector2_new(0.5,0.5),
-        ZIndexOffset = -1,
-        Thickness = 1,
-    })
-
-    -- menu
-    library:define('menu', function(meta, properties)
-        local menu = setmetatable({}, meta)
-        properties     = properties or {}
-        menu.text      = properties.text or 'menu'
-        menu.size      = properties.size or udim2_new(0, 525, 0, 650)
-        menu.position  = properties.position or udim2_new(0.2, 0, 0.2, 0)
-        menu.open      = true
-        menu.visvalues = {}
-        menu.objects   = {}
-        menu.tabs      = {}
-
-        menu.objects.background = library:create('rect', {
-            Theme    = {['Color'] = 'Background'},
-            Visible  = true,
-            Size     = menu.size,
-            Position = menu.position
-        })
-
-        menu.objects.title = library:create('text', {
-            Theme    = {['Color'] = 'Primary Text'},
-            Position = udim2_new(0,0,0,-18),
-            Outline  = true,
-            Text     = menu.text,
-            Parent   = menu.objects.background
-        })
-
-        menu.objects.group_background = library:create('rect', {
-            Theme       = {['Color'] = 'Group Background'},
-            Size        = udim2_new(1,-20,1,-43),
-            Position    = udim2_new(0.5,0,1,-10),
-            AnchorPoint = vector2_new(0.5,1),
-            ZIndex      = 3,
-            Parent      = menu.objects.background,
-        })
-
-        menu.objects.tab_container = library:create('rect', {
-            Size = udim2_new(1,0,0,23),
-            Position = udim2_new(0,0,0,0),
-            AnchorPoint = vector2_new(0,1),
-            Transparency = 0,
-            Parent = menu.objects.group_background
-        })
-
-        menu.objects.section_container_1 = library:create('rect', {
-            Size = udim2_new(0.485,-8,1,-20),
-            Position = udim2_new(0,10,0,10),
-            Parent = menu.objects.group_background,
-            Transparency = 0,
-            ZIndex = 5,
-        })
-
-        menu.objects.section_container_2 = library:create('rect', {
-            Size = udim2_new(0.485,-8,1,-20),
-            Position = udim2_new(1,-10,0,10),
-            AnchorPoint = vector2_new(1,0,0,0),
-            Parent = menu.objects.group_background,
-            Transparency = 0,
-            ZIndex = 5,
-        })
-
-        menu.objects.group_outline_1 = library:create('outline', menu.objects.group_background, {Theme = {['Color'] = 'Border 3'}})
-        menu.objects.group_outline_2 = library:create('outline', menu.objects.group_outline_1,  {Theme = {['Color'] = 'Border'}})
-        menu.objects.outline_inner_1 = library:create('outline', menu.objects.background,       {Theme = {['Color'] = 'Border 1'}})
-        menu.objects.outline_inner_2 = library:create('outline', menu.objects.outline_inner_1,  {Theme = {['Color'] = 'Border 2'}})
-        menu.objects.outline_middle  = library:create('outline', menu.objects.outline_inner_2,  {Theme = {['Color'] = 'Border 3'}, Thickness = {19, 5, 5, 5}})
-        menu.objects.outline_outer_1 = library:create('outline', menu.objects.outline_middle,   {Theme = {['Color'] = 'Accent'}})
-        menu.objects.outline_outer_2 = library:create('outline', menu.objects.outline_outer_1,  {Theme = {['Color'] = 'Border 1'}})
-
-        menu.objects.drag_interaction = library:create('rect', {
-            Size = udim2_new(1,0,1,0),
-            Active = true,
-            Thickness = 1,
-            ZIndex = 3,
-            Transparency = 0,
-            Parent = menu.objects.outline_outer_2
-        })
-
-        menu.objects.drag_fade = library:create('rect', {
-            Size = udim2_new(1,0,1,0),
-            Thickness = 1,
-            ZIndex = 100,
-            Transparency = 0,
-            Parent = menu.objects.outline_outer_2
-        })
-
-        library:connection(menu.objects.drag_interaction.MouseButton1Down, function()
-            if menu.dragging then
-                return
-            end
-
-            local drag_position_start = menu.objects.background.AbsolutePosition
-            local mouse_position_start = inputservice:GetMouseLocation()
-            local start_relative_pos = mouse_position_start - drag_position_start
-            local drag_position = mouse_position_start - start_relative_pos
-
-            local drag_object = library:create('rect', {
-                Size = udim2_offset(menu.objects.outline_outer_2.AbsoluteSize.X, menu.objects.outline_outer_2.AbsoluteSize.Y),
-                Position = udim2_offset(drag_position.X - 9, drag_position.Y - 23),
-                Color = color3_new(1,1,1),
-                Filled = false,
-                Thickness = 1,
-                Transparency = 0,
-                ZIndex = 100,
-            })
-
-            local inputchanged; inputchanged = library:connection(inputservice.InputChanged, function(input)
-                if input.UserInputType == Enum.UserInputType.MouseMovement then
-                    local position = inputservice:GetMouseLocation() - start_relative_pos
-                    drag_position = vector2_new(math_clamp(position.X, 9, (camera.ViewportSize.X + 9) - menu.objects.outline_outer_2.AbsoluteSize.X), math_clamp(position.Y, 23, (camera.ViewportSize.Y + 23) - menu.objects.outline_outer_2.AbsoluteSize.Y))
-                    drag_object.Position = udim2_offset(drag_position.X - 9, drag_position.Y - 23)
-                end
-            end)
-
-            local inputended; inputended = library:connection(inputservice.InputEnded, function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    inputchanged:Disconnect()
-                    inputended:Disconnect()
-
-                    utility:tween(menu.objects.background, 'Position', udim2_offset(drag_position.X, drag_position.Y), 0.15, Enum.EasingStyle.Quad)
-                    utility:tween(menu.objects.drag_fade, 'Transparency', 0, 0.075)
-                    utility:tween(drag_object, 'Transparency', 0, 0.075).Completed:Wait()
-                    drag_object:Remove()
-                    menu.dragging = false
-
-                end
-            end)
-
-            menu.dragging = true
-            utility:tween(drag_object, 'Transparency', 1, 0.075)
-            utility:tween(menu.objects.drag_fade, 'Transparency', 0.2, 0.075).Completed:Wait()
-        end)
-
-        return menu
-    end, {
-
-        set_open = function(self, bool, duration)
-            if bool == self.open then return end
-
-            duration = duration or 0
-
-            local objects = self.objects.background:GetDescendants()
-            table_insert(objects, self.objects.background)
-
-            for _,v in next, objects do
-                if v.Transparency ~= 0 then
-                    if bool then
-                        utility:tween(v, 'Transparency', self.visvalues[v] or 1, duration)
-                    else
-                        self.visvalues[v] = v.Transparency
-                        utility:tween(v, 'Transparency', 0.05, duration)
-                    end
-                end
-            end
-
-            task.spawn(function()
-                if not bool then
-                    task.wait(duration)
-                end
-                self.objects.background.Visible = bool
-                library.screengui.Enabled = bool
-                self.open = bool
-            end)
-        end,
-
-        tab = function(self, properties)
-            local tab = library:create('tab', properties, self.objects.tab_container)
-            tab.sections = {}
-            tab.order = properties.order or #self.tabs + 1
-            tab.parent = self
-
-            library:connection(tab.objects.background.MouseButton1Down, function()
-                if self.selected == tab then return end
-                self.selected = tab
-                self:update_tabs()
-            end)
-
-            if self.selected == nil then
-                self.selected = tab
-            end
-
-            table_insert(self.tabs, tab)
-            self:update_tabs()
-            return tab
-        end,
-
-        update_tabs = function(self)
-            table_sort(self.tabs, function(a,b)
-                return a.order < b.order
-            end)
-
-            for i, tab in next, self.tabs do
-                local selected = tab == self.selected
-                tab.objects.accent.Visible      = selected
-                tab.objects.separator.Visible   = not selected
-                tab.objects.background.Size     = udim2_new(1 / #self.tabs, i == #self.tabs and 1 or -1, 1, 0)
-                tab.objects.background.Position = udim2_new((i - 1) * (1 / #self.tabs), 0, 0, 0)
-                tab.objects.background.Theme    = {['Color'] = selected and 'Selected Tab' or 'Unselected Tab'}
-                tab.objects.text.Theme          = {['Color'] = selected and 'Selected Tab Text' or 'Unselected Tab Text'}
-                tab:update_sections()
-            end
-        end
-    }, true)
-
-    -- tab
-    library:define('tab', function(meta, properties, container, parent)
-        local tab = setmetatable({}, meta)
-        tab.text = properties.text or ''
-        tab.objects = {}
-
-        tab.objects.background = library:create('rect', {
-            Name = 'tab',
-            Theme = {['Color'] = 'Unselected Tab'},
-            Active = true,
-            Size = udim2_new(1,0,1,0),
-            Parent = container,
-            ZIndex = 6
-        })
-
-        tab.objects.accent = library:create('rect', {
-            Theme   = {['Color'] = 'Accent'},
-            Size    = udim2_new(1,0,0,1),
-            Parent  = tab.objects.background,
-            Visible = false,
-            ZIndex  = 7
-        })
-
-        tab.objects.text = library:create('text', {
-            Theme = {['Color'] = 'Unselected Tab Text'},
-            Position = udim2_new(0.5,0,0.5,-7),
-            Center = true,
-            Text = properties.text,
-            Parent = tab.objects.background,
-            ZIndex = 7
-        })
-
-        tab.objects.separator = library:create('rect', {
-            Theme = {['Color'] = 'Border 3'},
-            Size = udim2_new(1,0,0,1),
-            Position = udim2_new(0,0,1,-1),
-            Parent = tab.objects.background,
-            ZIndex = 7
-        })
-
-        tab.objects.outline_1 = library:create('outline', tab.objects.background, {Theme = {['Color'] = 'Border 3'}, Thickness = {1,1,-1,1}})
-        tab.objects.outline_2 = library:create('outline', tab.objects.outline_1,  {Theme = {['Color'] = 'Border'}, Thickness = {1,1,-1,1}})
-
-        return tab
-    end, {
-
-        section = function(self, properties)
-            local side = math_clamp(properties.side or 1, 1, 2)
-            local section = library:create('section', properties, self.parent.objects['section_container_' .. side])
-            section.options = {}
-            section.side = side
-            section.parent = self
-            section.class = 'section'
-
-            function section:update_options()
-                self.parent:update_sections()
-            end
-
-            table_insert(self.sections, section)
-            return setmetatable(section, library.meta.options)
-        end,
-
-        update_sections = function(self)
-            local pos_y_1 = 0
-            local pos_y_2 = 0
-            for _, section in next, self.sections do
-                local size_y = 0
-                for _, option in next, section.options do
-                    option.objects.container.Visible = option.enabled
-                    if not option.enabled then
-                        continue
-                    end
-
-                    option.objects.container.Position = udim2_new(0, 0, 0, 2 + size_y)
-                    size_y = size_y + option.objects.container.AbsoluteSize.Y + 1
+                        end
+                    end)
+
+                    table.insert(library.items, keybind)
+                    return keybind
                 end
 
-                section.objects.background.Visible = self.parent.selected == self
-                section.objects.background.Position = udim2_new(0, 0, 0, section.side == 1 and pos_y_1 or pos_y_2)
-                section.objects.background.Size = udim2_new(1, 0, 0, size_y + 23)
-                
-                if section.side == 1 then
-                    pos_y_1 = pos_y_1 + section.objects.background.AbsoluteSize.Y + 15
-                else
-                    pos_y_2 = pos_y_2 + section.objects.background.AbsoluteSize.Y + 15
-                end
-            end
-        end
-    }, true)
-
-    -- section
-    library:define('section', function(default_properties, properties, container)
-        local section = {}
-        section.text = properties.text or ''
-        section.objects = {}
-
-        section.objects.background = library:create('rect', {
-            Name = 'section',
-            Theme = {['Color'] = 'Section Background'},
-            Size = udim2_new(1,0,0,60),
-            Parent = container,
-            ZIndex = 6,
-        })
-
-        section.objects.accent = library:create('rect', {
-            Theme = {['Color'] = 'Accent'},
-            Size = udim2_new(1,0,0,1),
-            Parent = section.objects.background,
-            ZIndex = 7
-        })
-
-        section.objects.text = library:create('text', {
-            Theme = {['Color'] = 'Primary Text'},
-            Position = udim2_new(0,5,0,3),
-            Text = properties.text,
-            Parent = section.objects.background,
-            ZIndex = 7,
-        })
-
-        section.objects.container = library:create('rect', {
-            Size = udim2_new(1,-14,1,-25),
-            Position = udim2_new(0,7,0,20),
-            Parent = section.objects.background,
-            Transparency = 0,
-            ZIndex = 7
-        })
-
-        section.objects.outline_1 = library:create('outline', section.objects.background, {Theme = {['Color'] = 'Border'}, Thickness = {1,1,1,1}})
-        section.objects.outline_2 = library:create('outline', section.objects.outline_1,  {Theme = {['Color'] = 'Border 3'}, Thickness = {1,1,1,1}})
-
-        return setmetatable(section, {
-            __index = function(self, idx)
-                if self[idx] ~= nil then
-                    return self[idx]
-                elseif library.meta.options[idx] ~= nil then
-                    return library.meta.options[idx]
-                end
-            end
-        })
-    end)
-
-    -- option
-    library:define('option', function(default_properties, properties, parent, id)
-        local option = {}
-        option.class    = id
-        option.parent   = parent
-        option.flag     = properties.flag
-        option.order    = properties.order or #option.parent.options + 1
-        option.enabled  = properties.enabled == nil and true or properties.enabled
-        option.zindex   = properties.zindex or 15
-        option.text     = properties.text or ''
-        option.callback = properties.callback or function() end
-        option.objects  = {}
-        option.options  = {}
-
-        if _G.debug then
-            print(option.flag, id)
-        end
-
-        option.objects.container = library:create('rect', {
-            Name = id or 'option',
-            Size = properties.size or udim2_new(1,0,0,18),
-            Position = properties.position,
-            AnchorPoint = properties.anchorpoint,
-            Transparency = 0,
-            Active = true,
-            ZIndex = option.zindex,
-            Parent = option.parent.objects.container
-        })
-
-        option.objects.label = library:create('text', {
-            Theme = {['Color'] = 'Option Text 2', ['OutlineColor'] = 'Border 1'},
-            Position = udim2_new(0,0,0,1),
-            Text = option.text,
-            Outline = true,
-            Parent = option.objects.container,
-            ZIndex = option.zindex + 5
-        })
-
-        if option.flag ~= nil then
-            library.options[option.flag] = option
-        end
-
-        return setmetatable(option, library.meta.options[id])
-    end)
-
-    -- colorpicker slider
-    library:define('colorpickerslider', function(default_properties, container, properties)
-        local slider = {}
-
-        slider.container = library:create('rect', {
-            Name = properties.id,
-            Active = true,
-            Size = udim2_new(0,10,1,0),
-            Position = properties.position,
-            Parent = container,
-            ZIndex = container.ZIndex + 3,
-        })
-
-        slider.hue_image = library:create('rect', {
-            Data = properties.image,
-            Size = udim2_new(1,0,1,0),
-            Parent = slider.container,
-            ZIndex = container.ZIndex + 4,
-        }, 'Image')
-
-        slider.slider = library:create('rect', {
-            Size = udim2_new(1,0,0,3),
-            Filled = false,
-            Thickness = 1,
-            Parent = slider.container,
-            ZIndex = container.ZIndex + 5,
-        })
-
-        slider.hue_border_inner = library:create('outline', slider.container, {['Theme'] = {['Color'] = 'Border'}})
-        slider.hue_border_outer = library:create('outline', slider.hue_border_inner, {['Theme'] = {['Color'] = 'Border 3'}})
-
-        return slider
-    end)
-
-    -- colorpicker
-    library:define('colorpicker', function(default_properties, properties)
-        local colorpicker = setmetatable({}, library.meta.colorpicker)
-        colorpicker.objects = {}
-        colorpicker.options = {}
-        colorpicker.color   = color3_new(1,1,1)
-        colorpicker.hex     = colorpicker.color:ToHex()
-        colorpicker.hue     = ({colorpicker.color:ToHSV()})[1] -- this is retarded its just to keep it clean(ish)
-        colorpicker.sat     = ({colorpicker.color:ToHSV()})[2]
-        colorpicker.val     = ({colorpicker.color:ToHSV()})[3]
-        colorpicker.opacity = 1
-        colorpicker.zindex  = properties.zindex or 30
-
-        colorpicker.objects.background = library:create('rect', {
-            Name = 'colorpicker',
-            Theme = {['Color'] = 'Group Background'},
-            Active = true,
-            Size = udim2_new(0,206,0,240),
-            Position = udim2_new(1,-2,1,2),
-            AnchorPoint = vector2_new(1,0),
-            ZIndex = colorpicker.zindex
-        })
-
-        colorpicker.objects.label = library:create('text', {
-            Text = 'colorpicker name',
-            Theme = {['Color'] = 'Primary Text'},
-            Position = udim2_new(0,6,0,1),
-            Outline = true,
-            Parent = colorpicker.objects.background,
-            ZIndex = colorpicker.zindex + 1
-        })
-
-        colorpicker.objects.color = library:create('rect', {
-            Name = 'color palette',
-            Color = colorpicker.color,
-            Active = true,
-            Size = udim2_new(0,150,0,150),
-            Position = udim2_new(0,8,0,20),
-            Parent = colorpicker.objects.background,
-            ZIndex = colorpicker.zindex + 5,
-        })
-
-        colorpicker.objects.sat = library:create('rect', {
-            Data = library.images.colorsat1,
-            Size = udim2_new(1,0,1,0),
-            Parent = colorpicker.objects.color,
-            ZIndex = colorpicker.zindex + 6,
-        }, 'Image')
-
-        colorpicker.objects.val = library:create('rect', {
-            Data = library.images.colorsat2,
-            Size = udim2_new(1,0,1,0),
-            Parent = colorpicker.objects.color,
-            ZIndex = colorpicker.zindex + 7,
-        }, 'Image')
-
-        colorpicker.objects.pointer = library:create('rect', {
-            Position = udim2_new(1,0.5,1,0),
-            Size = udim2_new(0,1,0,1),
-            Color = color3_new(1,1,1),
-            ZIndex = colorpicker.zindex + 7,
-            Parent = colorpicker.objects.color
-        })
-
-        colorpicker.objects.container = library:create('rect', {
-            Name = 'container',
-            Size = udim2_new(0,194,0,75),
-            Position = udim2_new(0,-2,1,5),
-            Transparency = 0,
-            Parent = colorpicker.objects.color,
-            ZIndex = colorpicker.zindex + 1,
-        })
-
-        colorpicker.objects.pointer_outline = library:create('outline', colorpicker.objects.pointer)
-        colorpicker.objects.border_inner = library:create('outline', colorpicker.objects.background, {['Theme'] = {['Color'] = 'Border 3'}})
-        colorpicker.objects.border_outer = library:create('outline', colorpicker.objects.border_inner,   {['Theme'] = {['Color'] = 'Border'}})
-        colorpicker.objects.color_border_inner = library:create('outline', colorpicker.objects.color,   {['Theme'] = {['Color'] = 'Border'}})
-        colorpicker.objects.color_border_outer = library:create('outline', colorpicker.objects.color_border_inner, {['Theme'] = {['Color'] = 'Border 3'}})
-        colorpicker.objects_hue = library:create('colorpickerslider', colorpicker.objects.color, {position = udim2_new(1,10,0,0),  image = library.images.colorhue, id = 'hue'})
-        colorpicker.objects_opacity = library:create('colorpickerslider', colorpicker.objects.color, {position = udim2_new(1,30,0,0), image = library.images.colortrans, id = 'opacity'})
-
-        colorpicker.accent_toggle = colorpicker:toggle({
-            text = 'use accent',
-            flag = 'COLORPICKER_ACCENT_TOGGLE',
-            position = udim2_new(0,1,0,0),
-            zindex = colorpicker.zindex + 10,
-            callback = function(bool)
-                if not colorpicker.selected or colorpicker.selected.flag == 'theme_accent' then return end
-                
-                colorpicker.selected.useaccent = bool
-
-                if bool then
-                    colorpicker:set(library.theme.Accent, colorpicker.selected.opacity)
-                    colorpicker.selected:set(library.theme.Accent, colorpicker.selected.opacity) 
-                end
-            end
-        })
-
-        colorpicker.hex = colorpicker:button({
-            text = '#' .. colorpicker.hex,
-            size = udim2_new(0.5,-2,0,18),
-            position = udim2_new(0,1,0,20),
-            zindex = colorpicker.zindex + 10
-        })
-
-        colorpicker.reset = colorpicker:button({
-            text = 'reset',
-            size = udim2_new(0.5,-2,0,18),
-            position = udim2_new(0.5,2,0,20),
-            zindex = colorpicker.zindex + 10,
-            callback = function()
-                if not colorpicker.selected then return end
-                colorpicker:set(colorpicker.selected.default or color3_new(1,1,1), colorpicker.selected.default_opacity or 0)
-            end
-        })
-
-        colorpicker.copy = colorpicker:button({
-            text = 'copy',
-            size = udim2_new(0.5,-2,0,18),
-            position = udim2_new(0,1,0,40),
-            zindex = colorpicker.zindex + 10,
-            callback = function()
-                if not colorpicker.selected then return end
-                library.colorpicker_copied_color = colorpicker.selected.color
-                library.colorpicker_copied_opacity = colorpicker.selected.opacity
-                setclipboard(colorpicker.selected.color:ToHex())
-            end
-        })
-
-        colorpicker.paste = colorpicker:button({
-            text = 'paste',
-            size = udim2_new(0.5,-2,0,18),
-            position = udim2_new(0.5,2,0,40),
-            zindex = colorpicker.zindex + 10,
-            callback = function()
-                if not colorpicker.selected then return end
-                colorpicker:set(library.colorpicker_copied_color or color3_new(1,1,1), library.colorpicker_copied_opacity or 0)
-            end
-        })
-
-        library:connection(colorpicker.objects.color.MouseButton1Down, function()
-            colorpicker.dragging_sat = true
-            colorpicker:update()
-        end)
-
-        library:connection(colorpicker.objects_hue.container.MouseButton1Down, function()
-            colorpicker.dragging_hue = true
-            colorpicker:update()
-        end)
-
-        library:connection(colorpicker.objects_opacity.container.MouseButton1Down, function()
-            colorpicker.dragging_opacity = true
-            colorpicker:update()
-        end)
-
-        library:connection(inputservice.InputEnded, function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                colorpicker.dragging_opacity = false
-                colorpicker.dragging_sat = false
-                colorpicker.dragging_hue = false
-            end
-        end)
-
-        library:connection(inputservice.InputChanged, function(input)
-            if input.UserInputType == Enum.UserInputType.MouseMovement and (colorpicker.dragging_hue or colorpicker.dragging_sat or colorpicker.dragging_opacity) then
-                colorpicker:update()
-            end
-        end)
-
-        colorpicker.objects.background.Visible = false
-        colorpicker:set(properties.default or colorpicker.color, properties.default_opacity or colorpicker.opacity)
-        return colorpicker
-    end)
-
-    -- dropdown option
-    library:define('dropdownvalue', function(default_properties, container)
-        local objects = {}
-
-        objects.container = library:create('rect', {
-            Color = color3_new(1,1,1),
-            Size = udim2_new(1,-8,0,15),
-            Position = udim2_new(0,2,1,0),
-            Transparency = 0,
-            Active = true,
-            Visible = false,
-            ZIndex = 43,
-            Parent = container
-        })
-
-        objects.label = library:create('text', {
-            Theme = {['Color'] = 'Option Text 2'},
-            Text = 'placeholder',
-            Position = udim2_new(0,2,0,0),
-            Outline = true,
-            ZIndex = 44,
-            Parent = objects.container
-        })
-
-        return objects
-    end)
-
-    -- notification
-    library:define('notification', function()
-        local objects = {}
-        local zindex = 100
-
-        objects.container = library:create('rect', {
-            Name = 'container',
-            Size = udim2_new(0,200,0,18),
-            Visible = false,
-            ZIndex = zindex,
-        })
-
-        objects.background = library:create('rect', {
-            Name = 'background',
-            Theme = {['Color'] = 'Background'},
-            Parent = objects.container,
-            ZIndex = zindex,
-        })
-
-        objects.label = library:create('text', {
-            Theme = {['Color'] = 'Primary Text'},
-            Position = udim2_new(0.5,1,0,0),
-            Center = true,
-            Parent = objects.background,
-            ZIndex = zindex + 1,
-        })
-
-        objects.accent = library:create('rect', {
-            Name = 'accent',
-            Theme = {['Color'] = 'Accent'},
-            Size = udim2_new(0,1,1,0),
-            Parent = objects.background,
-            ZIndex = zindex + 1,
-        })
-
-        objects.progress = library:create('rect', {
-            Name = 'progress',
-            Theme = {['Color'] = 'Accent'},
-            Size = udim2_new(0,0,0,1),
-            Position = udim2_new(0,0,1,-1),
-            Parent = objects.background,
-            ZIndex = zindex + 1,
-        })
-
-        objects.border_inner = library:create('outline', objects.background,   {Theme = {['Color'] = 'Border 3'}})
-        objects.border_outer = library:create('outline', objects.border_inner, {Theme = {['Color'] = 'Border'}})
-
-        return objects
-    end)
-
-    -- cursor
-    library:define('cursor', function()
-        return {
-            library:create('Quad', {
-                Color = color3_new(0.9,0.9,0.9),
-                Visible = true,
-                Filled = true,
-                ZIndex = 1000,
-            }),
-            library:create('Quad', {
-                Color = color3_new(0,0,0),
-                Visible = true,
-                Filled = true,
-                ZIndex = 999,
-            })
-        }
-    end)
-
-    -- watermark
-    library:define('watermark', function()
-        local watermark = {}
-        watermark.lastupdate = 0
-        watermark.enabled = false
-        watermark.objects = {}
-        watermark.text = {
-            'DonutWare.Vape',
-            'Blvck#4681',
-            'uid 1',
-            '999 ms',
-            '999 fps'
-        }
-
-        watermark.objects.background = library:create('rect', {
-            Position = udim2_new(0,10,0,10),
-            Theme = {['Color'] = 'Background'},
-        })
-
-        watermark.objects.label = library:create('text', {
-            Theme = {['Color'] = 'Primary Text'},
-            Position = udim2_new(0.5,0,0,2),
-            Center = true,
-            Parent = watermark.objects.background
-        })
-
-        watermark.objects.accent = library:create('rect', {
-            Theme = {['Color'] = 'Accent'},
-            Size = udim2_new(1,0,0,1),
-            Parent = watermark.objects.background
-        })
-
-        
-        watermark.objects.outline = library:create('outline', watermark.objects.background, {Theme = {['Color'] = 'Border 1'}})
-        watermark.objects.outline2 = library:create('outline', watermark.objects.outline, {Theme = {['Color'] = 'Border 2'}})
-
-        library:connection(runservice.PreRender, function(delta)
-            library.stat.fps = 1 / delta
-            library.stat.ping = stats.Network.ServerStatsItem["Data Ping"]:GetValue()
-
-            if tick() - watermark.lastupdate > 0.15 then
-                watermark.lastupdate = tick()
-
-                watermark.text[4] = tostring(math_floor(library.stat.ping)) .. 'ms'
-                watermark.text[5] = tostring(math_floor(library.stat.fps)) .. ' fps'
-
-                watermark.objects.label.Text = table_concat(watermark.text, ' - ')
-                watermark.objects.background.Size = udim2_new(0, watermark.objects.label.TextBounds.X + 10, 0, 18) 
-            end
-        end)
-
-
-        return watermark
-    end)
-
-    -- indicator
-    library:define('indicator', function(meta, properties)
-        local indicator = setmetatable({}, meta)
-        properties = properties or {}
-        indicator.title = properties.title or 'title'
-        indicator.position = properties.position or udim2_new(0,0,0,0)
-        indicator.values = {}
-        indicator.objects = {}
-        indicator.zindex = 0
-        
-        indicator.objects.background = library:create('rect', {
-            Theme = {['Color'] = 'Background'},
-        })
-
-        indicator.objects.accent = library:create('rect', {
-            Theme = {['Color'] = 'Accent'},
-            Size = udim2_new(1,0,0,1),
-            Parent = indicator.objects.background,
-        })
-
-        indicator.objects.title = library:create('text', {
-            Theme = {['Color'] = 'Primary Text'},
-            Position = udim2_new(0.5,0,0,2),
-            Center = true,
-            Text = indicator.title,
-            Parent = indicator.objects.background,
-        })
-
-        indicator.objects.border_inner = library:create('outline', indicator.objects.background, {Theme = {['Color'] = 'Border 3'}})
-        indicator.objects.border_outer = library:create('outline', indicator.objects.border_inner, {Theme = {['Color'] = 'Border'}})
-
-        indicator:update()
-        return indicator
-    end, {
-
-        set_title = function(self, text, noupdate)
-            self.objects.title.Text = tostring(text)
-            if not noupdate then
-                self:update()
-            end
-        end,
-
-        update = function(self)
-            local size_x = math_max(125, self.objects.title.TextBounds.X + 24)
-            local pos_y = 21
-
-            for idx, value in next, self.values do
-
-                value.objects.background.Position = udim2_new(0,0,0,pos_y)
-
-                local size_y
-
-                if value.alignment == 'vertical' then
-                    size_y = value.objects.key.TextBounds.Y + value.objects.value.TextBounds.Y
-                    size_x = math_max(size_x, value.objects.key.TextBounds.X + 12, value.objects.value.TextBounds.X + 12)
-                    value.objects.value.Position = udim2_new(0, 6, 0, value.objects.key.TextBounds.Y - 8)
-                else
-                    size_y = math_max(value.objects.key.TextBounds.Y + 4, value.objects.value.TextBounds.Y + 4)
-                    size_x = math_max(size_x, value.objects.key.TextBounds.X + 35 + value.objects.value.TextBounds.X)
-                end
-
-                value.objects.background.Size = udim2_new(1,0,0,size_y)
-                pos_y = pos_y + size_y
-
-            end
-
-            self.objects.background.Size = udim2_new(0, size_x, 0, 18)
-            self.objects.background.Position = self.position
-        end,
-
-        value = function(self, properties)
-            local value = library:create('indicator_value', properties, self)
-            table_insert(self.values, value)
-            self:update()
-            return value
-        end
-
-    }, true)
-
-    library:define('indicator_value', function(meta, properties, parent)
-        local value = setmetatable({}, meta)
-        value.parent = parent
-        value.key = properties.key or 'key'
-        value.value = properties.value or 'value'
-        value.alignment = properties.alignment or 'horizontal'
-        value.objects = {}
-        value.enabled = true
-
-        value.objects.background = library:create('rect', {
-            Theme = {['Color'] = 'Background'},
-            Size = value.alignment == 'vertical' and udim2_new(1,0,0,36) or udim2_new(1,0,0,18),
-            Parent = parent.objects.background
-        })
-
-        value.objects.key = library:create('text', {
-            Theme = {['Color'] = 'Primary Text'},
-            Position = udim2_new(0,6,0,1),
-            Text = value.key,
-            Parent = value.objects.background
-        })
-
-        value.objects.value = library:create('text', {
-            Theme = {['Color'] = 'Secondary Text'},
-            Position = value.alignment == 'vertical' and udim2_new(0,6,0,0) or udim2_new(1,-6,0,1),
-            AnchorPoint = value.alignment == 'vertical' and vector2_new(0,0) or vector2_new(1,0),
-            Text = value.value,
-            Parent = value.objects.background
-        })
-
-        value.objects.border_inner = library:create('outline', value.objects.background, {Theme = {['Color'] = 'Border 3'}})
-        value.objects.border_outer = library:create('outline', value.objects.border_inner, {Theme = {['Color'] = 'Border'}})
-
-        return value
-    end, {
-
-        set_value = function(self, text, noupdate)
-            self.objects.value.Text = tostring(text)
-            if not noupdate then
-                self.parent:update()
-            end
-        end,
-
-        set_key = function(self, text, noupdate)
-            self.objects.key.Text = tostring(text)
-            if not noupdate then
-                self.parent:update()
-            end
-        end
-
-    }, true)
-
-end
-
--- // listeners
-do
-
-    function camera_added(camera)
-        if library.camera then
-            library.camera_connection:Disconnect()
-        end
-
-        library.camera = workspace.CurrentCamera
-        library.screensize = library.camera.ViewportSize
-        library.camera_connection = library:connection(library.camera:GetPropertyChangedSignal('ViewportSize'), function()
-            library.screensize = library.camera.ViewportSize
-        end)
-    end
-
-    camera_added(workspace.CurrentCamera)
-
-    library:connection(workspace:GetPropertyChangedSignal('CurrentCamera'), camera_added)
-
-    library.cursor = library:create('cursor')
-
-    library.debug_object = library:create('rect', {
-        Color = color3_new(1,1,1),
-        Size = udim2_new(1,2,1,2),
-        Position = udim2_new(0,-1,0,-1),
-        Filled = false,
-        Thickness = 1,
-        ZIndex = 9999,
-    })
+                function toggle:AddDropdown(items, default, multichoice, callback, flag)
+                    local dropdown = { }
+
+                    dropdown.defaultitems = items or { }
+                    dropdown.default = default
+                    dropdown.callback = callback or function() end
+                    dropdown.multichoice = multichoice or false
+                    dropdown.values = { }
+                    dropdown.flag = flag or ( (toggle.text or "") .. tostring(#(sector.Items:GetChildren())) .. "a")
     
-    library.debug_text = library:create('text', {
-        Color = color3_new(1,1,1),
-        Position = udim2_new(0.5,0,1,0),
-        Center = true,
-        Outline = true,
-        ZIndex = 9999,
-        Parent = library.debug_object,
-    })
+                    dropdown.Main = Instance.new("TextButton", sector.Items)
+                    dropdown.Main.Name = "dropdown"
+                    dropdown.Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    dropdown.Main.BorderSizePixel = 0
+                    dropdown.Main.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 12, 16)
+                    dropdown.Main.Position = UDim2.fromOffset(0, 0)
+                    dropdown.Main.ZIndex = 5
+                    dropdown.Main.AutoButtonColor = false
+                    dropdown.Main.Font = window.theme.font
+                    dropdown.Main.Text = ""
+                    dropdown.Main.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    dropdown.Main.TextSize = 15
+                    dropdown.Main.TextXAlignment = Enum.TextXAlignment.Left
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.Main.Font = theme.font
+                    end)
+    
+                    dropdown.Gradient = Instance.new("UIGradient", dropdown.Main)
+                    dropdown.Gradient.Rotation = 90
+                    dropdown.Gradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(49, 49, 49)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(39, 39, 39))}
+    
+                    dropdown.SelectedLabel = Instance.new("TextLabel", dropdown.Main)
+                    dropdown.SelectedLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    dropdown.SelectedLabel.BackgroundTransparency = 1
+                    dropdown.SelectedLabel.Position = UDim2.fromOffset(5, 2)
+                    dropdown.SelectedLabel.Size = UDim2.fromOffset(130, 13)
+                    dropdown.SelectedLabel.Font = window.theme.font
+                    dropdown.SelectedLabel.Text = toggle.text
+                    dropdown.SelectedLabel.ZIndex = 5
+                    dropdown.SelectedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    dropdown.SelectedLabel.TextSize = 15
+                    dropdown.SelectedLabel.TextStrokeTransparency = 1
+                    dropdown.SelectedLabel.TextXAlignment = Enum.TextXAlignment.Left
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.SelectedLabel.Font = theme.font
+                    end)  
 
-    library:connection(inputservice.InputBegan, function(input, processed)
-        -- if processed then return end
+                    dropdown.Nav = Instance.new("ImageButton", dropdown.Main)
+                    dropdown.Nav.Name = "navigation"
+                    dropdown.Nav.BackgroundTransparency = 1
+                    dropdown.Nav.LayoutOrder = 10
+                    dropdown.Nav.Position = UDim2.fromOffset(sector.Main.Size.X.Offset - 26, 5)
+                    dropdown.Nav.Rotation = 90
+                    dropdown.Nav.ZIndex = 5
+                    dropdown.Nav.Size = UDim2.fromOffset(8, 8)
+                    dropdown.Nav.Image = "rbxassetid://4918373417"
+                    dropdown.Nav.ImageColor3 = Color3.fromRGB(210, 210, 210)
+    
+                    dropdown.BlackOutline2 = Instance.new("Frame", dropdown.Main)
+                    dropdown.BlackOutline2.Name = "blackline"
+                    dropdown.BlackOutline2.ZIndex = 4
+                    dropdown.BlackOutline2.Size = dropdown.Main.Size + UDim2.fromOffset(6, 6)
+                    dropdown.BlackOutline2.BorderSizePixel = 0
+                    dropdown.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                    dropdown.BlackOutline2.Position = UDim2.fromOffset(-3, -3)
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.BlackOutline2.BackgroundColor3 = theme.outlinecolor2
+                    end)
+    
+                    dropdown.Outline = Instance.new("Frame", dropdown.Main)
+                    dropdown.Outline.Name = "blackline"
+                    dropdown.Outline.ZIndex = 4
+                    dropdown.Outline.Size = dropdown.Main.Size + UDim2.fromOffset(4, 4)
+                    dropdown.Outline.BorderSizePixel = 0
+                    dropdown.Outline.BackgroundColor3 = window.theme.outlinecolor
+                    dropdown.Outline.Position = UDim2.fromOffset(-2, -2)
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.Outline.BackgroundColor3 = theme.outlinecolor
+                    end)
+    
+                    dropdown.BlackOutline = Instance.new("Frame", dropdown.Main)
+                    dropdown.BlackOutline.Name = "blackline444"
+                    dropdown.BlackOutline.ZIndex = 4
+                    dropdown.BlackOutline.Size = dropdown.Main.Size + UDim2.fromOffset(2, 2)
+                    dropdown.BlackOutline.BorderSizePixel = 0
+                    dropdown.BlackOutline.BackgroundColor3 = window.theme.outlinecolor2
+                    dropdown.BlackOutline.Position = UDim2.fromOffset(-1, -1)
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.BlackOutline.BackgroundColor3 = theme.outlinecolor2
+                    end)
+    
+                    dropdown.ItemsFrame = Instance.new("ScrollingFrame", dropdown.Main)
+                    dropdown.ItemsFrame.Name = "itemsframe"
+                    dropdown.ItemsFrame.BorderSizePixel = 0
+                    dropdown.ItemsFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                    dropdown.ItemsFrame.Position = UDim2.fromOffset(0, dropdown.Main.Size.Y.Offset + 8)
+                    dropdown.ItemsFrame.ScrollBarThickness = 2
+                    dropdown.ItemsFrame.ZIndex = 8
+                    dropdown.ItemsFrame.ScrollingDirection = "Y"
+                    dropdown.ItemsFrame.Visible = false
+                    dropdown.ItemsFrame.Size = UDim2.new(0, 0, 0, 0)
+                    dropdown.ItemsFrame.CanvasSize = UDim2.fromOffset(dropdown.Main.AbsoluteSize.X, 0)
+    
+                    dropdown.ListLayout = Instance.new("UIListLayout", dropdown.ItemsFrame)
+                    dropdown.ListLayout.FillDirection = Enum.FillDirection.Vertical
+                    dropdown.ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    
+                    dropdown.ListPadding = Instance.new("UIPadding", dropdown.ItemsFrame)
+                    dropdown.ListPadding.PaddingTop = UDim.new(0, 2)
+                    dropdown.ListPadding.PaddingBottom = UDim.new(0, 2)
+                    dropdown.ListPadding.PaddingLeft = UDim.new(0, 2)
+                    dropdown.ListPadding.PaddingRight = UDim.new(0, 2)
+    
+                    dropdown.BlackOutline2Items = Instance.new("Frame", dropdown.Main)
+                    dropdown.BlackOutline2Items.Name = "blackline3"
+                    dropdown.BlackOutline2Items.ZIndex = 7
+                    dropdown.BlackOutline2Items.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(6, 6)
+                    dropdown.BlackOutline2Items.BorderSizePixel = 0
+                    dropdown.BlackOutline2Items.BackgroundColor3 = window.theme.outlinecolor2
+                    dropdown.BlackOutline2Items.Position = dropdown.ItemsFrame.Position + UDim2.fromOffset(-3, -3)
+                    dropdown.BlackOutline2Items.Visible = false
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.BlackOutline2Items.BackgroundColor3 = theme.outlinecolor2
+                    end)
+                    
+                    dropdown.OutlineItems = Instance.new("Frame", dropdown.Main)
+                    dropdown.OutlineItems.Name = "blackline8"
+                    dropdown.OutlineItems.ZIndex = 7
+                    dropdown.OutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(4, 4)
+                    dropdown.OutlineItems.BorderSizePixel = 0
+                    dropdown.OutlineItems.BackgroundColor3 = window.theme.outlinecolor
+                    dropdown.OutlineItems.Position = dropdown.ItemsFrame.Position + UDim2.fromOffset(-2, -2)
+                    dropdown.OutlineItems.Visible = false
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.OutlineItems.BackgroundColor3 = theme.outlinecolor
+                    end)
+    
+                    dropdown.BlackOutlineItems = Instance.new("Frame", dropdown.Main)
+                    dropdown.BlackOutlineItems.Name = "blackline3"
+                    dropdown.BlackOutlineItems.ZIndex = 7
+                    dropdown.BlackOutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(-2, -2)
+                    dropdown.BlackOutlineItems.BorderSizePixel = 0
+                    dropdown.BlackOutlineItems.BackgroundColor3 = window.theme.outlinecolor2
+                    dropdown.BlackOutlineItems.Position = dropdown.ItemsFrame.Position + UDim2.fromOffset(-1, -1)
+                    dropdown.BlackOutlineItems.Visible = false
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.BlackOutlineItems.BackgroundColor3 = theme.outlinecolor2
+                    end)
+    
+                    dropdown.IgnoreBackButtons = Instance.new("TextButton", dropdown.Main)
+                    dropdown.IgnoreBackButtons.BackgroundTransparency = 1
+                    dropdown.IgnoreBackButtons.BorderSizePixel = 0
+                    dropdown.IgnoreBackButtons.Position = UDim2.fromOffset(0, dropdown.Main.Size.Y.Offset + 8)
+                    dropdown.IgnoreBackButtons.Size = UDim2.new(0, 0, 0, 0)
+                    dropdown.IgnoreBackButtons.ZIndex = 7
+                    dropdown.IgnoreBackButtons.Text = ""
+                    dropdown.IgnoreBackButtons.Visible = false
+                    dropdown.IgnoreBackButtons.AutoButtonColor = false
 
-        if input.KeyCode == Enum.KeyCode.Equals then
-            game:GetService('TeleportService'):Teleport(game.PlaceId)
-        end
+                    if dropdown.flag and dropdown.flag ~= "" then
+                        library.flags[dropdown.flag] = dropdown.multichoice and { dropdown.default or dropdown.defaultitems[1] or "" } or (dropdown.default or dropdown.defaultitems[1] or "")
+                    end
 
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    function dropdown:isSelected(item)
+                        for i, v in pairs(dropdown.values) do
+                            if v == item then
+                                return true
+                            end
+                        end
+                        return false
+                    end
+    
+                    function dropdown:updateText(text)
+                        if #text >= 27 then
+                            text = text:sub(1, 25) .. ".."
+                        end
+                        dropdown.SelectedLabel.Text = text
+                    end
+    
+                    dropdown.Changed = Instance.new("BindableEvent")
+                    function dropdown:Set(value)
+                        if type(value) == "table" then
+                            dropdown.values = value
+                            dropdown:updateText(table.concat(value, ", "))
+                            pcall(dropdown.callback, value)
+                        else
+                            dropdown:updateText(value)
+                            dropdown.values = { value }
+                            pcall(dropdown.callback, value)
+                        end
+                        
+                        dropdown.Changed:Fire(value)
+                        if dropdown.flag and dropdown.flag ~= "" then
+                            library.flags[dropdown.flag] = dropdown.multichoice and dropdown.values or dropdown.values[1]
+                        end
+                    end
+    
+                    function dropdown:Get()
+                        return dropdown.multichoice and dropdown.values or dropdown.values[1]
+                    end
+    
+                    dropdown.items = { }
+                    function dropdown:Add(v)
+                        local Item = Instance.new("TextButton", dropdown.ItemsFrame)
+                        Item.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                        Item.TextColor3 = Color3.fromRGB(255, 255, 255)
+                        Item.BorderSizePixel = 0
+                        Item.Position = UDim2.fromOffset(0, 0)
+                        Item.Size = UDim2.fromOffset(dropdown.Main.Size.X.Offset - 4, 20)
+                        Item.ZIndex = 9
+                        Item.Text = v
+                        Item.Name = v
+                        Item.AutoButtonColor = false
+                        Item.Font = window.theme.font
+                        Item.TextSize = 15
+                        Item.TextXAlignment = Enum.TextXAlignment.Left
+                        Item.TextStrokeTransparency = 1
+                        dropdown.ItemsFrame.CanvasSize = dropdown.ItemsFrame.CanvasSize + UDim2.fromOffset(0, Item.AbsoluteSize.Y)
+    
+                        Item.MouseButton1Down:Connect(function()
+                            if dropdown.multichoice then
+                                if dropdown:isSelected(v) then
+                                    for i2, v2 in pairs(dropdown.values) do
+                                        if v2 == v then
+                                            table.remove(dropdown.values, i2)
+                                        end
+                                    end
+                                    dropdown:Set(dropdown.values)
+                                else
+                                    table.insert(dropdown.values, v)
+                                    dropdown:Set(dropdown.values)
+                                end
+    
+                                return
+                            else
+                                dropdown.Nav.Rotation = 90
+                                dropdown.ItemsFrame.Visible = false
+                                dropdown.ItemsFrame.Active = false
+                                dropdown.OutlineItems.Visible = false
+                                dropdown.BlackOutlineItems.Visible = false
+                                dropdown.BlackOutline2Items.Visible = false
+                                dropdown.IgnoreBackButtons.Visible = false
+                                dropdown.IgnoreBackButtons.Active = false
+                            end
+    
+                            dropdown:Set(v)
+                            return
+                        end)
+    
+                        runservice.RenderStepped:Connect(function()
+                            if dropdown.multichoice and dropdown:isSelected(v) or dropdown.values[1] == v then
+                                Item.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
+                                Item.TextColor3 = window.theme.accentcolor
+                                Item.Text = " " .. v
+                            else
+                                Item.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                                Item.TextColor3 = Color3.fromRGB(255, 255, 255)
+                                Item.Text = v
+                            end
+                        end)
+    
+                        table.insert(dropdown.items, v)
+                        dropdown.ItemsFrame.Size = UDim2.fromOffset(dropdown.Main.Size.X.Offset, math.clamp(#dropdown.items * Item.AbsoluteSize.Y, 20, 156) + 4)
+                        dropdown.ItemsFrame.CanvasSize = UDim2.fromOffset(dropdown.ItemsFrame.AbsoluteSize.X, (#dropdown.items * Item.AbsoluteSize.Y) + 4)
+    
+                        dropdown.OutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(4, 4)
+                        dropdown.BlackOutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(2, 2)
+                        dropdown.BlackOutline2Items.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(6, 6)
+                        dropdown.IgnoreBackButtons.Size = dropdown.ItemsFrame.Size
+                    end
+    
+                    function dropdown:Remove(value)
+                        local item = dropdown.ItemsFrame:FindFirstChild(value)
+                        if item then
+                            for i,v in pairs(dropdown.items) do
+                                if v == value then
+                                    table.remove(dropdown.items, i)
+                                end
+                            end
+    
+                            dropdown.ItemsFrame.Size = UDim2.fromOffset(dropdown.Main.Size.X.Offset, math.clamp(#dropdown.items * item.AbsoluteSize.Y, 20, 156) + 4)
+                            dropdown.ItemsFrame.CanvasSize = UDim2.fromOffset(dropdown.ItemsFrame.AbsoluteSize.X, (#dropdown.items * item.AbsoluteSize.Y) + 4)
+        
+                            dropdown.OutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(2, 2)
+                            dropdown.BlackOutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(4, 4)
+                            dropdown.BlackOutline2Items.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(6, 6)
+                            dropdown.IgnoreBackButtons.Size = dropdown.ItemsFrame.Size
+    
+                            item:Remove()
+                        end
+                    end 
+    
+                    for i,v in pairs(dropdown.defaultitems) do
+                        dropdown:Add(v)
+                    end
+    
+                    if dropdown.default then
+                        dropdown:Set(dropdown.default)
+                    end
+    
+                    local MouseButton1Down = function()
+                        if dropdown.Nav.Rotation == 90 then
+                            tweenservice:Create(dropdown.Nav, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { Rotation = -90 }):Play()
+                            if dropdown.items and #dropdown.items ~= 0 then
+                                dropdown.ItemsFrame.ScrollingEnabled = true
+                                sector.Main.Parent.ScrollingEnabled = false
+                                dropdown.ItemsFrame.Visible = true
+                                dropdown.ItemsFrame.Active = true
+                                dropdown.IgnoreBackButtons.Visible = true
+                                dropdown.IgnoreBackButtons.Active = true
+                                dropdown.OutlineItems.Visible = true
+                                dropdown.BlackOutlineItems.Visible = true
+                                dropdown.BlackOutline2Items.Visible = true
+                            end
+                        else
+                            tweenservice:Create(dropdown.Nav, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { Rotation = 90 }):Play()
+                            dropdown.ItemsFrame.ScrollingEnabled = false
+                            sector.Main.Parent.ScrollingEnabled = true
+                            dropdown.ItemsFrame.Visible = false
+                            dropdown.ItemsFrame.Active = false
+                            dropdown.IgnoreBackButtons.Visible = false
+                            dropdown.IgnoreBackButtons.Active = false
+                            dropdown.OutlineItems.Visible = false
+                            dropdown.BlackOutlineItems.Visible = false
+                            dropdown.BlackOutline2Items.Visible = false
+                        end
+                    end
+    
+                    dropdown.Main.MouseButton1Down:Connect(MouseButton1Down)
+                    dropdown.Nav.MouseButton1Down:Connect(MouseButton1Down)
+    
+                    dropdown.BlackOutline2.MouseEnter:Connect(function()
+                        dropdown.BlackOutline2.BackgroundColor3 = window.theme.accentcolor
+                    end)
+                    dropdown.BlackOutline2.MouseLeave:Connect(function()
+                        dropdown.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                    end)
+    
+                    sector:FixSize()
+                    table.insert(library.items, dropdown)
+                    return dropdown
+                end
 
-            if library.colorpicker.selected ~= nil and not utility.vector2.inside(inputservice:GetMouseLocation(), library.colorpicker.objects.background.AbsolutePosition, library.colorpicker.objects.background.AbsoluteSize) then
-                library.colorpicker.selected = nil
-                library.colorpicker.objects.background.Parent = nil
-                library.colorpicker.objects.background.Visible = false
-            end
+                function toggle:AddTextbox(default, callback, flag)
+                    local textbox = { }
+                    textbox.callback = callback or function() end
+                    textbox.default = default
+                    textbox.value = ""
+                    textbox.flag = flag or ( (toggle.text or "") .. tostring(#(sector.Items:GetChildren())) .. "a")
+    
+                    textbox.Holder = Instance.new("Frame", sector.Items)
+                    textbox.Holder.Name = "holder"
+                    textbox.Holder.ZIndex = 5
+                    textbox.Holder.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 12, 14)
+                    textbox.Holder.BorderSizePixel = 0
+                    textbox.Holder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    
+                    textbox.Gradient = Instance.new("UIGradient", textbox.Holder)
+                    textbox.Gradient.Rotation = 90
+                    textbox.Gradient.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, Color3.fromRGB(49, 49, 49)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(39, 39, 39)) })
+    
+                    textbox.Main = Instance.new("TextBox", textbox.Holder)
+                    textbox.Main.PlaceholderText = ""
+                    textbox.Main.Text = ""
+                    textbox.Main.BackgroundTransparency = 1
+                    textbox.Main.Font = window.theme.font
+                    textbox.Main.Name = "textbox"
+                    textbox.Main.MultiLine = false
+                    textbox.Main.ClearTextOnFocus = false
+                    textbox.Main.ZIndex = 5
+                    textbox.Main.TextScaled = true
+                    textbox.Main.Size = textbox.Holder.Size
+                    textbox.Main.TextSize = 15
+                    textbox.Main.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    textbox.Main.BorderSizePixel = 0
+                    textbox.Main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+                    textbox.Main.TextXAlignment = Enum.TextXAlignment.Left
+    
+                    if textbox.flag and textbox.flag ~= "" then
+                        library.flags[textbox.flag] = textbox.default or ""
+                    end
 
-            local hover_object = library:get_hover_object()
-            if hover_object then
-                hover_object.MouseButton1Down:Fire()
-            end
-        elseif input.UserInputType == Enum.UserInputType.MouseButton2 then
-            local hover_object = library:get_hover_object()
-            if hover_object then
-                hover_object.MouseButton2Down:Fire()
-            end
-        end
-    end)
+                    function textbox:Set(text)
+                        textbox.value = text
+                        textbox.Main.Text = text
+                        if textbox.flag and textbox.flag ~= "" then
+                            library.flags[textbox.flag] = text
+                        end
+                        pcall(textbox.callback, text)
+                    end
+                    updateevent.Event:Connect(function(theme)
+                        textbox.Main.Font = theme.font
+                    end)
+    
+                    function textbox:Get()
+                        return textbox.value
+                    end
+    
+                    if textbox.default then 
+                        textbox:Set(textbox.default)
+                    end
+    
+                    textbox.Main.FocusLost:Connect(function()
+                        textbox:Set(textbox.Main.Text)
+                    end)
+    
+                    textbox.BlackOutline2 = Instance.new("Frame", textbox.Main)
+                    textbox.BlackOutline2.Name = "blackline"
+                    textbox.BlackOutline2.ZIndex = 4
+                    textbox.BlackOutline2.Size = textbox.Main.Size + UDim2.fromOffset(6, 6)
+                    textbox.BlackOutline2.BorderSizePixel = 0
+                    textbox.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                    textbox.BlackOutline2.Position = UDim2.fromOffset(-3, -3)
+                    updateevent.Event:Connect(function(theme)
+                        textbox.BlackOutline2.BackgroundColor3 = theme.outlinecolor2
+                    end)
+                    
+                    textbox.Outline = Instance.new("Frame", textbox.Main)
+                    textbox.Outline.Name = "blackline"
+                    textbox.Outline.ZIndex = 4
+                    textbox.Outline.Size = textbox.Main.Size + UDim2.fromOffset(4, 4)
+                    textbox.Outline.BorderSizePixel = 0
+                    textbox.Outline.BackgroundColor3 = window.theme.outlinecolor
+                    textbox.Outline.Position = UDim2.fromOffset(-2, -2)
+                    updateevent.Event:Connect(function(theme)
+                        textbox.Outline.BackgroundColor3 = theme.outlinecolor
+                    end)
+    
+                    textbox.BlackOutline = Instance.new("Frame", textbox.Main)
+                    textbox.BlackOutline.Name = "blackline"
+                    textbox.BlackOutline.ZIndex = 4
+                    textbox.BlackOutline.Size = textbox.Main.Size + UDim2.fromOffset(2, 2)
+                    textbox.BlackOutline.BorderSizePixel = 0
+                    textbox.BlackOutline.BackgroundColor3 = window.theme.outlinecolor2
+                    textbox.BlackOutline.Position = UDim2.fromOffset(-1, -1)
+                    updateevent.Event:Connect(function(theme)
+                        textbox.BlackOutline.BackgroundColor3 = theme.outlinecolor2
+                    end)
+    
+                    textbox.BlackOutline2.MouseEnter:Connect(function()
+                        textbox.BlackOutline2.BackgroundColor3 = window.theme.accentcolor
+                    end)
+                    textbox.BlackOutline2.MouseLeave:Connect(function()
+                        textbox.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                    end)
+    
+                    sector:FixSize()
+                    table.insert(library.items, textbox)
+                    return textbox
+                end
 
-    library:connection(inputservice.InputEnded, function(input, processed)
-        -- if processed then return end
+                function toggle:AddColorpicker(default, callback, flag)
+                    local colorpicker = { }
 
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    colorpicker.callback = callback or function() end
+                    colorpicker.default = default or Color3.fromRGB(255, 255, 255)
+                    colorpicker.value = colorpicker.default
+                    colorpicker.flag = flag or ( (toggle.text or "") .. tostring(#toggle.Items:GetChildren()))
 
-            library.dragging_slider = nil
+                    colorpicker.Main = Instance.new("Frame", toggle.Items)
+                    colorpicker.Main.ZIndex = 6
+                    colorpicker.Main.BorderSizePixel = 0
+                    colorpicker.Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    colorpicker.Main.Size = UDim2.fromOffset(16, 10)
 
-            local hover_object = library:get_hover_object()
-            if hover_object then
-                hover_object.MouseButton1Up:Fire()
-            end
-        elseif input.UserInputType == Enum.UserInputType.MouseButton2 then
-            local hover_object = library:get_hover_object()
-            if hover_object then
-                hover_object.MouseButton2Up:Fire()
-            end
-        end
-    end)
+                    colorpicker.Gradient = Instance.new("UIGradient", colorpicker.Main)
+                    colorpicker.Gradient.Rotation = 90
 
-    library:connection(inputservice.InputChanged, function(input, processed)
-        if input.UserInputType == Enum.UserInputType.MouseMovement and library.has_init and library.menu and library.menu.open then
+                    local clr = Color3.new(math.clamp(colorpicker.value.R / 1.7, 0, 1), math.clamp(colorpicker.value.G / 1.7, 0, 1), math.clamp(colorpicker.value.B / 1.7, 0, 1))
+                    colorpicker.Gradient.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, colorpicker.value), ColorSequenceKeypoint.new(1.00, clr) })
 
-            local mouse_pos = inputservice:GetMouseLocation()
-            local hover_object = library:get_hover_object()
+                    colorpicker.BlackOutline2 = Instance.new("Frame", colorpicker.Main)
+                    colorpicker.BlackOutline2.Name = "blackline"
+                    colorpicker.BlackOutline2.ZIndex = 4
+                    colorpicker.BlackOutline2.Size = colorpicker.Main.Size + UDim2.fromOffset(6, 6)
+                    colorpicker.BlackOutline2.BorderSizePixel = 0
+                    colorpicker.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                    colorpicker.BlackOutline2.Position = UDim2.fromOffset(-3, -3)
+                    updateevent.Event:Connect(function(theme)
+                        if window.OpenedColorPickers[colorpicker.MainPicker] then
+                            colorpicker.BlackOutline2.BackgroundColor3 = theme.accentcolor
+                        else
+                            colorpicker.BlackOutline2.BackgroundColor3 = theme.outlinecolor2
+                        end
+                    end)
+                    
+                    colorpicker.Outline = Instance.new("Frame", colorpicker.Main)
+                    colorpicker.Outline.Name = "blackline"
+                    colorpicker.Outline.ZIndex = 4
+                    colorpicker.Outline.Size = colorpicker.Main.Size + UDim2.fromOffset(4, 4)
+                    colorpicker.Outline.BorderSizePixel = 0
+                    colorpicker.Outline.BackgroundColor3 = window.theme.outlinecolor
+                    colorpicker.Outline.Position = UDim2.fromOffset(-2, -2)
+                    updateevent.Event:Connect(function(theme)
+                        colorpicker.Outline.BackgroundColor3 = theme.outlinecolor
+                    end)
+    
+                    colorpicker.BlackOutline = Instance.new("Frame", colorpicker.Main)
+                    colorpicker.BlackOutline.Name = "blackline"
+                    colorpicker.BlackOutline.ZIndex = 4
+                    colorpicker.BlackOutline.Size = colorpicker.Main.Size + UDim2.fromOffset(2, 2)
+                    colorpicker.BlackOutline.BorderSizePixel = 0
+                    colorpicker.BlackOutline.BackgroundColor3 = window.theme.outlinecolor2
+                    colorpicker.BlackOutline.Position = UDim2.fromOffset(-1, -1)
+                    updateevent.Event:Connect(function(theme)
+                        colorpicker.BlackOutline.BackgroundColor3 = theme.outlinecolor2
+                    end)
 
-            if library.cursor[1].Visible then
-                library.cursor[1].PointA = mouse_pos
-                library.cursor[1].PointB = mouse_pos + vector2_new(10,8)
-                library.cursor[1].PointC = mouse_pos + vector2_new(4,8)
-                library.cursor[1].PointD = mouse_pos + vector2_new(0,13)
-                library.cursor[2].PointA = library.cursor[1].PointA + vector2_new(-1,-2)
-                library.cursor[2].PointB = library.cursor[1].PointB + vector2_new(2,0)
-                library.cursor[2].PointC = library.cursor[1].PointC + vector2_new(-1,2)
-                library.cursor[2].PointD = library.cursor[1].PointD + vector2_new(-1,2)
-            end
+                    colorpicker.BlackOutline2.MouseEnter:Connect(function()
+                        colorpicker.BlackOutline2.BackgroundColor3 = window.theme.accentcolor
+                    end)
 
-            if library.debugmode then
-                local debug_calc_start = tick()
-                local debug_hover_object
+                    colorpicker.BlackOutline2.MouseLeave:Connect(function()
+                        if not window.OpenedColorPickers[colorpicker.MainPicker] then
+                            colorpicker.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                        end
+                    end)
 
-                table_sort(library.drawings.objects, function(a,b)
-                    return a.ZIndex > b.ZIndex
+                    colorpicker.MainPicker = Instance.new("TextButton", colorpicker.Main)
+                    colorpicker.MainPicker.Name = "picker"
+                    colorpicker.MainPicker.ZIndex = 100
+                    colorpicker.MainPicker.Visible = false
+                    colorpicker.MainPicker.AutoButtonColor = false
+                    colorpicker.MainPicker.Text = ""
+                    window.OpenedColorPickers[colorpicker.MainPicker] = false
+                    colorpicker.MainPicker.Size = UDim2.fromOffset(180, 196)
+                    colorpicker.MainPicker.BorderSizePixel = 0
+                    colorpicker.MainPicker.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                    colorpicker.MainPicker.Rotation = 0.000000000000001
+                    colorpicker.MainPicker.Position = UDim2.fromOffset(-colorpicker.MainPicker.AbsoluteSize.X + colorpicker.Main.AbsoluteSize.X, 17)
+
+                    colorpicker.BlackOutline3 = Instance.new("Frame", colorpicker.MainPicker)
+                    colorpicker.BlackOutline3.Name = "blackline"
+                    colorpicker.BlackOutline3.ZIndex = 98
+                    colorpicker.BlackOutline3.Size = colorpicker.MainPicker.Size + UDim2.fromOffset(6, 6)
+                    colorpicker.BlackOutline3.BorderSizePixel = 0
+                    colorpicker.BlackOutline3.BackgroundColor3 = window.theme.outlinecolor2
+                    colorpicker.BlackOutline3.Position = UDim2.fromOffset(-3, -3)
+                    updateevent.Event:Connect(function(theme)
+                        colorpicker.BlackOutline3.BackgroundColor3 = theme.outlinecolor2
+                    end)
+                    
+                    colorpicker.Outline2 = Instance.new("Frame", colorpicker.MainPicker)
+                    colorpicker.Outline2.Name = "blackline"
+                    colorpicker.Outline2.ZIndex = 98
+                    colorpicker.Outline2.Size = colorpicker.MainPicker.Size + UDim2.fromOffset(4, 4)
+                    colorpicker.Outline2.BorderSizePixel = 0
+                    colorpicker.Outline2.BackgroundColor3 = window.theme.outlinecolor
+                    colorpicker.Outline2.Position = UDim2.fromOffset(-2, -2)
+                    updateevent.Event:Connect(function(theme)
+                        colorpicker.Outline2.BackgroundColor3 = theme.outlinecolor
+                    end)
+    
+                    colorpicker.BlackOutline3 = Instance.new("Frame", colorpicker.MainPicker)
+                    colorpicker.BlackOutline3.Name = "blackline"
+                    colorpicker.BlackOutline3.ZIndex = 98
+                    colorpicker.BlackOutline3.Size = colorpicker.MainPicker.Size + UDim2.fromOffset(2, 2)
+                    colorpicker.BlackOutline3.BorderSizePixel = 0
+                    colorpicker.BlackOutline3.BackgroundColor3 = window.theme.outlinecolor2
+                    colorpicker.BlackOutline3.Position = UDim2.fromOffset(-1, -1)
+                    updateevent.Event:Connect(function(theme)
+                        colorpicker.BlackOutline3.BackgroundColor3 = theme.outlinecolor2
+                    end)
+
+                    colorpicker.hue = Instance.new("ImageLabel", colorpicker.MainPicker)
+                    colorpicker.hue.ZIndex = 101
+                    colorpicker.hue.Position = UDim2.new(0,3,0,3)
+                    colorpicker.hue.Size = UDim2.new(0,172,0,172)
+                    colorpicker.hue.Image = "rbxassetid://4155801252"
+                    colorpicker.hue.ScaleType = Enum.ScaleType.Stretch
+                    colorpicker.hue.BackgroundColor3 = Color3.new(1,0,0)
+                    colorpicker.hue.BorderColor3 = window.theme.outlinecolor2
+                    updateevent.Event:Connect(function(theme)
+                        colorpicker.hue.BorderColor3 = theme.outlinecolor2
+                    end)
+
+                    colorpicker.hueselectorpointer = Instance.new("ImageLabel", colorpicker.MainPicker)
+                    colorpicker.hueselectorpointer.ZIndex = 101
+                    colorpicker.hueselectorpointer.BackgroundTransparency = 1
+                    colorpicker.hueselectorpointer.BorderSizePixel = 0
+                    colorpicker.hueselectorpointer.Position = UDim2.new(0, 0, 0, 0)
+                    colorpicker.hueselectorpointer.Size = UDim2.new(0, 7, 0, 7)
+                    colorpicker.hueselectorpointer.Image = "rbxassetid://6885856475"
+
+                    colorpicker.selector = Instance.new("TextLabel", colorpicker.MainPicker)
+                    colorpicker.selector.ZIndex = 100
+                    colorpicker.selector.Position = UDim2.new(0,3,0,181)
+                    colorpicker.selector.Size = UDim2.new(0,173,0,10)
+                    colorpicker.selector.BackgroundColor3 = Color3.fromRGB(255,255,255)
+                    colorpicker.selector.BorderColor3 = window.theme.outlinecolor2
+                    colorpicker.selector.Text = ""
+                    updateevent.Event:Connect(function(theme)
+                        colorpicker.selector.BorderColor3 = theme.outlinecolor2
+                    end)
+        
+                    colorpicker.gradient = Instance.new("UIGradient", colorpicker.selector)
+                    colorpicker.gradient.Color = ColorSequence.new({ 
+                        ColorSequenceKeypoint.new(0, Color3.new(1,0,0)), 
+                        ColorSequenceKeypoint.new(0.17, Color3.new(1,0,1)), 
+                        ColorSequenceKeypoint.new(0.33,Color3.new(0,0,1)), 
+                        ColorSequenceKeypoint.new(0.5,Color3.new(0,1,1)), 
+                        ColorSequenceKeypoint.new(0.67, Color3.new(0,1,0)), 
+                        ColorSequenceKeypoint.new(0.83, Color3.new(1,1,0)), 
+                        ColorSequenceKeypoint.new(1, Color3.new(1,0,0))
+                    })
+
+                    colorpicker.pointer = Instance.new("Frame", colorpicker.selector)
+                    colorpicker.pointer.ZIndex = 101
+                    colorpicker.pointer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                    colorpicker.pointer.Position = UDim2.new(0,0,0,0)
+                    colorpicker.pointer.Size = UDim2.new(0,2,0,10)
+                    colorpicker.pointer.BorderColor3 = Color3.fromRGB(255, 255, 255)
+
+                    if colorpicker.flag and colorpicker.flag ~= "" then
+                        library.flags[colorpicker.flag] = colorpicker.default
+                    end
+
+                    function colorpicker:RefreshHue()
+                        local x = (mouse.X - colorpicker.hue.AbsolutePosition.X) / colorpicker.hue.AbsoluteSize.X
+                        local y = (mouse.Y - colorpicker.hue.AbsolutePosition.Y) / colorpicker.hue.AbsoluteSize.Y
+                        colorpicker.hueselectorpointer:TweenPosition(UDim2.new(math.clamp(x * colorpicker.hue.AbsoluteSize.X, 0.5, 0.952 * colorpicker.hue.AbsoluteSize.X) / colorpicker.hue.AbsoluteSize.X, 0, math.clamp(y * colorpicker.hue.AbsoluteSize.Y, 0.5, 0.885 * colorpicker.hue.AbsoluteSize.Y) / colorpicker.hue.AbsoluteSize.Y, 0), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.05)
+                        colorpicker:Set(Color3.fromHSV(colorpicker.color, math.clamp(x * colorpicker.hue.AbsoluteSize.X, 0.5, 1 * colorpicker.hue.AbsoluteSize.X) / colorpicker.hue.AbsoluteSize.X, 1 - (math.clamp(y * colorpicker.hue.AbsoluteSize.Y, 0.5, 1 * colorpicker.hue.AbsoluteSize.Y) / colorpicker.hue.AbsoluteSize.Y)))
+                    end
+
+                    function colorpicker:RefreshSelector()
+                        local pos = math.clamp((mouse.X - colorpicker.hue.AbsolutePosition.X) / colorpicker.hue.AbsoluteSize.X, 0, 1)
+                        colorpicker.color = 1 - pos
+                        colorpicker.pointer:TweenPosition(UDim2.new(pos, 0, 0, 0), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.05)
+                        colorpicker.hue.BackgroundColor3 = Color3.fromHSV(1 - pos, 1, 1)
+
+                        local x = (colorpicker.hueselectorpointer.AbsolutePosition.X - colorpicker.hue.AbsolutePosition.X) / colorpicker.hue.AbsoluteSize.X
+                        local y = (colorpicker.hueselectorpointer.AbsolutePosition.Y - colorpicker.hue.AbsolutePosition.Y) / colorpicker.hue.AbsoluteSize.Y
+                        colorpicker:Set(Color3.fromHSV(colorpicker.color, math.clamp(x * colorpicker.hue.AbsoluteSize.X, 0.5, 1 * colorpicker.hue.AbsoluteSize.X) / colorpicker.hue.AbsoluteSize.X, 1 - (math.clamp(y * colorpicker.hue.AbsoluteSize.Y, 0.5, 1 * colorpicker.hue.AbsoluteSize.Y) / colorpicker.hue.AbsoluteSize.Y)))
+                    end
+
+                    function colorpicker:Set(value)
+                        local color = Color3.new(math.clamp(value.r, 0, 1), math.clamp(value.g, 0, 1), math.clamp(value.b, 0, 1))
+                        colorpicker.value = color
+                        if colorpicker.flag and colorpicker.flag ~= "" then
+                            library.flags[colorpicker.flag] = color
+                        end
+                        local clr = Color3.new(math.clamp(color.R / 1.7, 0, 1), math.clamp(color.G / 1.7, 0, 1), math.clamp(color.B / 1.7, 0, 1))
+                        colorpicker.Gradient.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, color), ColorSequenceKeypoint.new(1.00, clr) })
+                        pcall(colorpicker.callback, color)
+                    end
+
+                    function colorpicker:Get(value)
+                        return colorpicker.value
+                    end
+                    colorpicker:Set(colorpicker.default)
+
+                    local dragging_selector = false
+                    local dragging_hue = false
+
+                    colorpicker.selector.InputBegan:Connect(function(input)
+                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                            dragging_selector = true
+                            colorpicker:RefreshSelector()
+                        end
+                    end)
+    
+                    colorpicker.selector.InputEnded:Connect(function(input)
+                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                            dragging_selector = false
+                            colorpicker:RefreshSelector()
+                        end
+                    end)
+
+                    colorpicker.hue.InputBegan:Connect(function(input)
+                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                            dragging_hue = true
+                            colorpicker:RefreshHue()
+                        end
+                    end)
+    
+                    colorpicker.hue.InputEnded:Connect(function(input)
+                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                            dragging_hue = false
+                            colorpicker:RefreshHue()
+                        end
+                    end)
+    
+                    uis.InputChanged:Connect(function(input)
+                        if dragging_selector and input.UserInputType == Enum.UserInputType.MouseMovement then
+                            colorpicker:RefreshSelector()
+                        end
+                        if dragging_hue and input.UserInputType == Enum.UserInputType.MouseMovement then
+                            colorpicker:RefreshHue()
+                        end
+                    end)
+
+                    local inputBegan = function(input)
+                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                            for i,v in pairs(window.OpenedColorPickers) do
+                                if v and i ~= colorpicker.MainPicker then
+                                    i.Visible = false
+                                    window.OpenedColorPickers[i] = false
+                                end
+                            end
+
+                            colorpicker.MainPicker.Visible = not colorpicker.MainPicker.Visible
+                            window.OpenedColorPickers[colorpicker.MainPicker] = colorpicker.MainPicker.Visible
+                            if window.OpenedColorPickers[colorpicker.MainPicker] then
+                                colorpicker.BlackOutline2.BackgroundColor3 = window.theme.accentcolor
+                            else
+                                colorpicker.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                            end
+                        end
+                    end
+
+                    colorpicker.Main.InputBegan:Connect(inputBegan)
+                    colorpicker.Outline.InputBegan:Connect(inputBegan)
+                    colorpicker.BlackOutline2.InputBegan:Connect(inputBegan)
+                    table.insert(library.items, colorpicker)
+                    return colorpicker
+                end
+
+                function toggle:AddSlider(min, default, max, decimals, callback, flag)
+                    local slider = { }
+                    slider.text = text or ""
+                    slider.callback = callback or function(value) end
+                    slider.min = min or 0
+                    slider.max = max or 100
+                    slider.decimals = decimals or 1
+                    slider.default = default or slider.min
+                    slider.flag = flag or ( (toggle.text or "") .. tostring(#toggle.Items:GetChildren()))
+    
+                    slider.value = slider.default
+                    local dragging = false
+    
+                    slider.Main = Instance.new("TextButton", sector.Items)
+                    slider.Main.Name = "slider"
+                    slider.Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    slider.Main.Position = UDim2.fromOffset(0, 0)
+                    slider.Main.BorderSizePixel = 0
+                    slider.Main.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 12, 12)
+                    slider.Main.AutoButtonColor = false
+                    slider.Main.Text = ""
+                    slider.Main.ZIndex = 7
+
+                    slider.InputLabel = Instance.new("TextLabel", slider.Main)
+                    slider.InputLabel.BackgroundTransparency = 1
+                    slider.InputLabel.Size = slider.Main.Size
+                    slider.InputLabel.Font = window.theme.font
+                    slider.InputLabel.Text = "0"
+                    slider.InputLabel.TextColor3 = Color3.fromRGB(240, 240, 240)
+                    slider.InputLabel.Position = slider.Main.Position
+                    slider.InputLabel.Selectable = false
+                    slider.InputLabel.TextSize = 15
+                    slider.InputLabel.ZIndex = 9
+                    slider.InputLabel.TextStrokeTransparency = 1
+                    slider.InputLabel.TextXAlignment = Enum.TextXAlignment.Center
+                    updateevent.Event:Connect(function(theme)
+                        slider.InputLabel.Font = theme.font
+                        slider.InputLabel.TextColor3 = theme.itemscolor
+                    end)
+    
+                    slider.BlackOutline2 = Instance.new("Frame", slider.Main)
+                    slider.BlackOutline2.Name = "blackline"
+                    slider.BlackOutline2.ZIndex = 4
+                    slider.BlackOutline2.Size = slider.Main.Size + UDim2.fromOffset(6, 6)
+                    slider.BlackOutline2.BorderSizePixel = 0
+                    slider.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                    slider.BlackOutline2.Position = UDim2.fromOffset(-3, -3)
+                    updateevent.Event:Connect(function(theme)
+                        slider.BlackOutline2.BackgroundColor3 = theme.outlinecolor2
+                    end)
+                    
+                    slider.Outline = Instance.new("Frame", slider.Main)
+                    slider.Outline.Name = "blackline"
+                    slider.Outline.ZIndex = 4
+                    slider.Outline.Size = slider.Main.Size + UDim2.fromOffset(4, 4)
+                    slider.Outline.BorderSizePixel = 0
+                    slider.Outline.BackgroundColor3 = window.theme.outlinecolor
+                    slider.Outline.Position = UDim2.fromOffset(-2, -2)
+                    updateevent.Event:Connect(function(theme)
+                        slider.Outline.BackgroundColor3 = theme.outlinecolor
+                    end)
+    
+                    slider.BlackOutline = Instance.new("Frame", slider.Main)
+                    slider.BlackOutline.Name = "blackline"
+                    slider.BlackOutline.ZIndex = 4
+                    slider.BlackOutline.Size = slider.Main.Size + UDim2.fromOffset(2, 2)
+                    slider.BlackOutline.BorderSizePixel = 0
+                    slider.BlackOutline.BackgroundColor3 = window.theme.outlinecolor2
+                    slider.BlackOutline.Position = UDim2.fromOffset(-1, -1)
+                    updateevent.Event:Connect(function(theme)
+                        slider.BlackOutline.BackgroundColor3 = theme.outlinecolor2
+                    end)
+    
+                    slider.Gradient = Instance.new("UIGradient", slider.Main)
+                    slider.Gradient.Rotation = 90
+                    slider.Gradient.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, Color3.fromRGB(49, 49, 49)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(41, 41, 41)) })
+    
+                    slider.SlideBar = Instance.new("Frame", slider.Main)
+                    slider.SlideBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255) --Color3.fromRGB(204, 0, 102)
+                    slider.SlideBar.ZIndex = 8
+                    slider.SlideBar.BorderSizePixel = 0
+                    slider.SlideBar.Size = UDim2.fromOffset(0, slider.Main.Size.Y.Offset)
+    
+                    slider.Gradient2 = Instance.new("UIGradient", slider.SlideBar)
+                    slider.Gradient2.Rotation = 90
+                    slider.Gradient2.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, window.theme.accentcolor), ColorSequenceKeypoint.new(1.00, window.theme.accentcolor2) })
+                    updateevent.Event:Connect(function(theme)
+                        slider.Gradient2.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, theme.accentcolor), ColorSequenceKeypoint.new(1.00, theme.accentcolor2) })
+                    end)
+    
+                    slider.BlackOutline2.MouseEnter:Connect(function()
+                        slider.BlackOutline2.BackgroundColor3 = window.theme.accentcolor
+                    end)
+                    slider.BlackOutline2.MouseLeave:Connect(function()
+                        slider.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                    end)
+    
+                    if slider.flag and slider.flag ~= "" then
+                        library.flags[slider.flag] = slider.default or slider.min or 0
+                    end
+
+                    function slider:Get()
+                        return slider.value
+                    end
+    
+                    function slider:Set(value)
+                        slider.value = math.clamp(math.round(value * slider.decimals) / slider.decimals, slider.min, slider.max)
+                        local percent = 1 - ((slider.max - slider.value) / (slider.max - slider.min))
+                        if slider.flag and slider.flag ~= "" then
+                            library.flags[slider.flag] = slider.value
+                        end
+                        slider.SlideBar:TweenSize(UDim2.fromOffset(percent * slider.Main.AbsoluteSize.X, slider.Main.AbsoluteSize.Y), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.05)
+                        slider.InputLabel.Text = slider.value
+                        pcall(slider.callback, slider.value)
+                    end
+                    slider:Set(slider.default)
+    
+                    function slider:Refresh()
+                        local mousePos = camera:WorldToViewportPoint(mouse.Hit.p)
+                        local percent = math.clamp(mousePos.X - slider.SlideBar.AbsolutePosition.X, 0, slider.Main.AbsoluteSize.X) / slider.Main.AbsoluteSize.X
+                        local value = math.floor((slider.min + (slider.max - slider.min) * percent) * slider.decimals) / slider.decimals
+                        value = math.clamp(value, slider.min, slider.max)
+                        slider:Set(value)
+                    end
+    
+                    slider.SlideBar.InputBegan:Connect(function(input)
+                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                            dragging = true
+                            slider:Refresh()
+                        end
+                    end)
+    
+                    slider.SlideBar.InputEnded:Connect(function(input)
+                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                            dragging = false
+                        end
+                    end)
+    
+                    slider.Main.InputBegan:Connect(function(input)
+                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                            dragging = true
+                            slider:Refresh()
+                        end
+                    end)
+    
+                    slider.Main.InputEnded:Connect(function(input)
+                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                            dragging = false
+                        end
+                    end)
+    
+                    uis.InputChanged:Connect(function(input)
+                        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                            slider:Refresh()
+                        end
+                    end)
+    
+                    sector:FixSize()
+                    table.insert(library.items, slider)
+                    return slider
+                end
+
+                toggle.Main.MouseButton1Down:Connect(function()
+                    toggle:Set(not toggle.CheckedFrame.Visible)
+                end)
+                toggle.Label.InputBegan:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        toggle:Set(not toggle.CheckedFrame.Visible)
+                    end
                 end)
 
-                for index, drawing in next, library.drawings.objects do
-                    if drawing.Name ~= '' and drawing._object.Visible and utility.vector2.inside(mouse_pos, drawing.AbsolutePosition, drawing.AbsoluteSize) then
-                        debug_hover_object = drawing
-                        break
+                local MouseEnter = function()
+                    toggle.BlackOutline2.BackgroundColor3 = window.theme.accentcolor
+                end
+                local MouseLeave = function()
+                    toggle.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                end
+
+                toggle.Label.MouseEnter:Connect(MouseEnter)
+                toggle.Label.MouseLeave:Connect(MouseLeave)
+                toggle.BlackOutline2.MouseEnter:Connect(MouseEnter)
+                toggle.BlackOutline2.MouseLeave:Connect(MouseLeave)
+
+                sector:FixSize()
+                table.insert(library.items, toggle)
+                return toggle
+            end
+
+            function sector:AddTextbox(text, default, callback, flag)
+                local textbox = { }
+                textbox.text = text or ""
+                textbox.callback = callback or function() end
+                textbox.default = default
+                textbox.value = ""
+                textbox.flag = flag or text or ""
+
+                textbox.Label = Instance.new("TextButton", sector.Items)
+                textbox.Label.Name = "Label"
+                textbox.Label.AutoButtonColor = false
+                textbox.Label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                textbox.Label.BackgroundTransparency = 1
+                textbox.Label.Position = UDim2.fromOffset(sector.Main.Size.X.Offset, 0)
+                textbox.Label.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 12, 0)
+                textbox.Label.Font = window.theme.font
+                textbox.Label.ZIndex = 5
+                textbox.Label.Text = textbox.text
+                textbox.Label.TextColor3 = window.theme.itemscolor
+                textbox.Label.TextSize = 15
+                textbox.Label.TextStrokeTransparency = 1
+                textbox.Label.TextXAlignment = Enum.TextXAlignment.Left
+                updateevent.Event:Connect(function(theme)
+                    textbox.Label.Font = theme.font
+                end)
+
+                textbox.Holder = Instance.new("Frame", sector.Items)
+                textbox.Holder.Name = "holder"
+                textbox.Holder.ZIndex = 5
+                textbox.Holder.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 12, 14)
+                textbox.Holder.BorderSizePixel = 0
+                textbox.Holder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+
+                textbox.Gradient = Instance.new("UIGradient", textbox.Holder)
+                textbox.Gradient.Rotation = 90
+                textbox.Gradient.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, Color3.fromRGB(49, 49, 49)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(39, 39, 39)) })
+
+                textbox.Main = Instance.new("TextBox", textbox.Holder)
+                textbox.Main.PlaceholderText = textbox.text
+                textbox.Main.PlaceholderColor3 = Color3.fromRGB(190, 190, 190)
+                textbox.Main.Text = ""
+                textbox.Main.BackgroundTransparency = 1
+                textbox.Main.Font = window.theme.font
+                textbox.Main.Name = "textbox"
+                textbox.Main.MultiLine = false
+                textbox.Main.ClearTextOnFocus = false
+                textbox.Main.ZIndex = 5
+                textbox.Main.TextScaled = true
+                textbox.Main.Size = textbox.Holder.Size
+                textbox.Main.TextSize = 15
+                textbox.Main.TextColor3 = Color3.fromRGB(255, 255, 255)
+                textbox.Main.BorderSizePixel = 0
+                textbox.Main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+                textbox.Main.TextXAlignment = Enum.TextXAlignment.Left
+
+                if textbox.flag and textbox.flag ~= "" then
+                    library.flags[textbox.flag] = textbox.default or ""
+                end
+
+                function textbox:Set(text)
+                    textbox.value = text
+                    textbox.Main.Text = text
+                    if textbox.flag and textbox.flag ~= "" then
+                        library.flags[textbox.flag] = text
+                    end
+                    pcall(textbox.callback, text)
+                end
+                updateevent.Event:Connect(function(theme)
+                    textbox.Main.Font = theme.font
+                end)
+
+                function textbox:Get()
+                    return textbox.value
+                end
+
+                if textbox.default then 
+                    textbox:Set(textbox.default)
+                end
+
+                textbox.Main.FocusLost:Connect(function()
+                    textbox:Set(textbox.Main.Text)
+                end)
+
+                textbox.BlackOutline2 = Instance.new("Frame", textbox.Main)
+                textbox.BlackOutline2.Name = "blackline"
+                textbox.BlackOutline2.ZIndex = 4
+                textbox.BlackOutline2.Size = textbox.Main.Size + UDim2.fromOffset(6, 6)
+                textbox.BlackOutline2.BorderSizePixel = 0
+                textbox.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                textbox.BlackOutline2.Position = UDim2.fromOffset(-3, -3)
+                updateevent.Event:Connect(function(theme)
+                    textbox.BlackOutline2.BackgroundColor3 = theme.outlinecolor2
+                end)
+                
+                textbox.Outline = Instance.new("Frame", textbox.Main)
+                textbox.Outline.Name = "blackline"
+                textbox.Outline.ZIndex = 4
+                textbox.Outline.Size = textbox.Main.Size + UDim2.fromOffset(4, 4)
+                textbox.Outline.BorderSizePixel = 0
+                textbox.Outline.BackgroundColor3 = window.theme.outlinecolor
+                textbox.Outline.Position = UDim2.fromOffset(-2, -2)
+                updateevent.Event:Connect(function(theme)
+                    textbox.Outline.BackgroundColor3 = theme.outlinecolor
+                end)
+
+                textbox.BlackOutline = Instance.new("Frame", textbox.Main)
+                textbox.BlackOutline.Name = "blackline"
+                textbox.BlackOutline.ZIndex = 4
+                textbox.BlackOutline.Size = textbox.Main.Size + UDim2.fromOffset(2, 2)
+                textbox.BlackOutline.BorderSizePixel = 0
+                textbox.BlackOutline.BackgroundColor3 = window.theme.outlinecolor2
+                textbox.BlackOutline.Position = UDim2.fromOffset(-1, -1)
+                updateevent.Event:Connect(function(theme)
+                    textbox.BlackOutline.BackgroundColor3 = theme.outlinecolor2
+                end)
+
+                textbox.BlackOutline2.MouseEnter:Connect(function()
+                    textbox.BlackOutline2.BackgroundColor3 = window.theme.accentcolor
+                end)
+                textbox.BlackOutline2.MouseLeave:Connect(function()
+                    textbox.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                end)
+
+                sector:FixSize()
+                table.insert(library.items, textbox)
+                return textbox
+            end
+            
+            function sector:AddSlider(text, min, default, max, decimals, callback, flag)
+                local slider = { }
+                slider.text = text or ""
+                slider.callback = callback or function(value) end
+                slider.min = min or 0
+                slider.max = max or 100
+                slider.decimals = decimals or 1
+                slider.default = default or slider.min
+                slider.flag = flag or text or ""
+
+                slider.value = slider.default
+                local dragging = false
+
+                slider.MainBack = Instance.new("Frame", sector.Items)
+                slider.MainBack.Name = "MainBack"
+                slider.MainBack.ZIndex = 7
+                slider.MainBack.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 12, 25)
+                slider.MainBack.BorderSizePixel = 0
+                slider.MainBack.BackgroundTransparency = 1
+
+                slider.Label = Instance.new("TextLabel", slider.MainBack)
+                slider.Label.BackgroundTransparency = 1
+                slider.Label.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 12, 6)
+                slider.Label.Font = window.theme.font
+                slider.Label.Text = slider.text .. ":"
+                slider.Label.TextColor3 = window.theme.itemscolor
+                slider.Label.Position = UDim2.fromOffset(0, 0)
+                slider.Label.TextSize = 15
+                slider.Label.ZIndex = 4
+                slider.Label.TextStrokeTransparency = 1
+                slider.Label.TextXAlignment = Enum.TextXAlignment.Left
+                updateevent.Event:Connect(function(theme)
+                    slider.Label.Font = theme.font
+                    slider.Label.TextColor3 = theme.itemscolor
+                end)
+
+                local size = textservice:GetTextSize(slider.Label.Text, slider.Label.TextSize, slider.Label.Font, Vector2.new(200,300))
+                slider.InputLabel = Instance.new("TextBox", slider.MainBack)
+                slider.InputLabel.BackgroundTransparency = 1
+                slider.InputLabel.ClearTextOnFocus = false
+                slider.InputLabel.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - size.X - 15, 12)
+                slider.InputLabel.Font = window.theme.font
+                slider.InputLabel.Text = "0"
+                slider.InputLabel.TextColor3 = window.theme.itemscolor
+                slider.InputLabel.Position = UDim2.fromOffset(size.X + 3, -3)
+                slider.InputLabel.TextSize = 15
+                slider.InputLabel.ZIndex = 4
+                slider.InputLabel.TextStrokeTransparency = 1
+                slider.InputLabel.TextXAlignment = Enum.TextXAlignment.Left
+                updateevent.Event:Connect(function(theme)
+                    slider.InputLabel.Font = theme.font
+                    slider.InputLabel.TextColor3 = theme.itemscolor
+
+                    local size = textservice:GetTextSize(slider.Label.Text, slider.Label.TextSize, slider.Label.Font, Vector2.new(200,300))
+                    slider.InputLabel.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - size.X - 15, 12)
+                end)
+
+                slider.Main = Instance.new("TextButton", slider.MainBack)
+                slider.Main.Name = "slider"
+                slider.Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                slider.Main.Position = UDim2.fromOffset(0, 15)
+                slider.Main.BorderSizePixel = 0
+                slider.Main.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 12, 12)
+                slider.Main.AutoButtonColor = false
+                slider.Main.Text = ""
+                slider.Main.ZIndex = 5
+
+                slider.BlackOutline2 = Instance.new("Frame", slider.Main)
+                slider.BlackOutline2.Name = "blackline"
+                slider.BlackOutline2.ZIndex = 4
+                slider.BlackOutline2.Size = slider.Main.Size + UDim2.fromOffset(6, 6)
+                slider.BlackOutline2.BorderSizePixel = 0
+                slider.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                slider.BlackOutline2.Position = UDim2.fromOffset(-3, -3)
+                updateevent.Event:Connect(function(theme)
+                    slider.BlackOutline2.BackgroundColor3 = theme.outlinecolor2
+                end)
+                
+                slider.Outline = Instance.new("Frame", slider.Main)
+                slider.Outline.Name = "blackline"
+                slider.Outline.ZIndex = 4
+                slider.Outline.Size = slider.Main.Size + UDim2.fromOffset(4, 4)
+                slider.Outline.BorderSizePixel = 0
+                slider.Outline.BackgroundColor3 = window.theme.outlinecolor
+                slider.Outline.Position = UDim2.fromOffset(-2, -2)
+                updateevent.Event:Connect(function(theme)
+                    slider.Outline.BackgroundColor3 = theme.outlinecolor
+                end)
+
+                slider.BlackOutline = Instance.new("Frame", slider.Main)
+                slider.BlackOutline.Name = "blackline"
+                slider.BlackOutline.ZIndex = 4
+                slider.BlackOutline.Size = slider.Main.Size + UDim2.fromOffset(2, 2)
+                slider.BlackOutline.BorderSizePixel = 0
+                slider.BlackOutline.BackgroundColor3 = window.theme.outlinecolor2
+                slider.BlackOutline.Position = UDim2.fromOffset(-1, -1)
+                updateevent.Event:Connect(function(theme)
+                    slider.BlackOutline.BackgroundColor3 = theme.outlinecolor2
+                end)
+
+                slider.Gradient = Instance.new("UIGradient", slider.Main)
+                slider.Gradient.Rotation = 90
+                slider.Gradient.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, Color3.fromRGB(49, 49, 49)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(41, 41, 41)) })
+
+                slider.SlideBar = Instance.new("Frame", slider.Main)
+                slider.SlideBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255) --Color3.fromRGB(204, 0, 102)
+                slider.SlideBar.ZIndex = 5
+                slider.SlideBar.BorderSizePixel = 0
+                slider.SlideBar.Size = UDim2.fromOffset(0, slider.Main.Size.Y.Offset)
+
+                slider.Gradient2 = Instance.new("UIGradient", slider.SlideBar)
+                slider.Gradient2.Rotation = 90
+                slider.Gradient2.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, window.theme.accentcolor), ColorSequenceKeypoint.new(1.00, window.theme.accentcolor2) })
+                updateevent.Event:Connect(function(theme)
+                    slider.Gradient2.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, theme.accentcolor), ColorSequenceKeypoint.new(1.00, theme.accentcolor2) })
+                end)
+
+                slider.BlackOutline2.MouseEnter:Connect(function()
+                    slider.BlackOutline2.BackgroundColor3 = window.theme.accentcolor
+                end)
+                slider.BlackOutline2.MouseLeave:Connect(function()
+                    slider.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                end)
+
+                if slider.flag and slider.flag ~= "" then
+                    library.flags[slider.flag] = slider.default or slider.min or 0
+                end
+
+                function slider:Get()
+                    return slider.value
+                end
+
+                function slider:Set(value)
+                    slider.value = math.clamp(math.round(value * slider.decimals) / slider.decimals, slider.min, slider.max)
+                    local percent = 1 - ((slider.max - slider.value) / (slider.max - slider.min))
+                    if slider.flag and slider.flag ~= "" then
+                        library.flags[slider.flag] = slider.value
+                    end
+                    slider.SlideBar:TweenSize(UDim2.fromOffset(percent * slider.Main.AbsoluteSize.X, slider.Main.AbsoluteSize.Y), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.05)
+					slider.InputLabel.Text = slider.value
+					pcall(slider.callback, slider.value)
+				end
+                slider:Set(slider.default)
+
+                slider.InputLabel.FocusLost:Connect(function(Return)
+                    if not Return then 
+                        return 
+                    end
+                    if (slider.InputLabel.Text:match("^%d+$")) then
+                        slider:Set(tonumber(slider.InputLabel.Text))
+                    else
+                        slider.InputLabel.Text = tostring(slider.value)
+                    end
+                end)
+
+                function slider:Refresh()
+                    local mousePos = camera:WorldToViewportPoint(mouse.Hit.p)
+                    local percent = math.clamp(mousePos.X - slider.SlideBar.AbsolutePosition.X, 0, slider.Main.AbsoluteSize.X) / slider.Main.AbsoluteSize.X
+                    local value = math.floor((slider.min + (slider.max - slider.min) * percent) * slider.decimals) / slider.decimals
+                    value = math.clamp(value, slider.min, slider.max)
+                    slider:Set(value)
+                end
+
+                slider.SlideBar.InputBegan:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        dragging = true
+                        slider:Refresh()
+                    end
+                end)
+
+                slider.SlideBar.InputEnded:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        dragging = false
+                    end
+                end)
+
+                slider.Main.InputBegan:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        dragging = true
+                        slider:Refresh()
+                    end
+                end)
+
+                slider.Main.InputEnded:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        dragging = false
+                    end
+                end)
+
+				uis.InputChanged:Connect(function(input)
+					if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                        slider:Refresh()
+					end
+				end)
+
+                sector:FixSize()
+                table.insert(library.items, slider)
+                return slider
+            end
+
+            function sector:AddColorpicker(text, default, callback, flag)
+                local colorpicker = { }
+
+                colorpicker.text = text or ""
+                colorpicker.callback = callback or function() end
+                colorpicker.default = default or Color3.fromRGB(255, 255, 255)
+                colorpicker.value = colorpicker.default
+                colorpicker.flag = flag or text or ""
+
+                colorpicker.Label = Instance.new("TextLabel", sector.Items)
+                colorpicker.Label.BackgroundTransparency = 1
+                colorpicker.Label.Size = UDim2.fromOffset(156, 10)
+                colorpicker.Label.ZIndex = 4
+                colorpicker.Label.Font = window.theme.font
+                colorpicker.Label.Text = colorpicker.text
+                colorpicker.Label.TextColor3 = window.theme.itemscolor
+                colorpicker.Label.TextSize = 15
+                colorpicker.Label.TextStrokeTransparency = 1
+                colorpicker.Label.TextXAlignment = Enum.TextXAlignment.Left
+                updateevent.Event:Connect(function(theme)
+                    colorpicker.Label.Font = theme.font
+                    colorpicker.Label.TextColor3 = theme.itemscolor
+                end)
+
+                colorpicker.Main = Instance.new("Frame", colorpicker.Label)
+                colorpicker.Main.ZIndex = 6
+                colorpicker.Main.BorderSizePixel = 0
+                colorpicker.Main.Position = UDim2.fromOffset(sector.Main.Size.X.Offset - 29, 0)
+                colorpicker.Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                colorpicker.Main.Size = UDim2.fromOffset(16, 10)
+
+                colorpicker.Gradient = Instance.new("UIGradient", colorpicker.Main)
+                colorpicker.Gradient.Rotation = 90
+
+                local clr = Color3.new(math.clamp(colorpicker.value.R / 1.7, 0, 1), math.clamp(colorpicker.value.G / 1.7, 0, 1), math.clamp(colorpicker.value.B / 1.7, 0, 1))
+                colorpicker.Gradient.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, colorpicker.value), ColorSequenceKeypoint.new(1.00, clr) })
+
+                colorpicker.BlackOutline2 = Instance.new("Frame", colorpicker.Main)
+                colorpicker.BlackOutline2.Name = "blackline"
+                colorpicker.BlackOutline2.ZIndex = 4
+                colorpicker.BlackOutline2.Size = colorpicker.Main.Size + UDim2.fromOffset(6, 6)
+                colorpicker.BlackOutline2.BorderSizePixel = 0
+                colorpicker.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                colorpicker.BlackOutline2.Position = UDim2.fromOffset(-3, -3)
+                updateevent.Event:Connect(function(theme)
+                    colorpicker.BlackOutline2.BackgroundColor3 = window.OpenedColorPickers[colorpicker.MainPicker] and theme.accentcolor or theme.outlinecolor2
+                end)
+                
+                colorpicker.Outline = Instance.new("Frame", colorpicker.Main)
+                colorpicker.Outline.Name = "blackline"
+                colorpicker.Outline.ZIndex = 4
+                colorpicker.Outline.Size = colorpicker.Main.Size + UDim2.fromOffset(4, 4)
+                colorpicker.Outline.BorderSizePixel = 0
+                colorpicker.Outline.BackgroundColor3 = window.theme.outlinecolor
+                colorpicker.Outline.Position = UDim2.fromOffset(-2, -2)
+                updateevent.Event:Connect(function(theme)
+                    colorpicker.Outline.BackgroundColor3 = theme.outlinecolor
+                end)
+
+                colorpicker.BlackOutline = Instance.new("Frame", colorpicker.Main)
+                colorpicker.BlackOutline.Name = "blackline"
+                colorpicker.BlackOutline.ZIndex = 4
+                colorpicker.BlackOutline.Size = colorpicker.Main.Size + UDim2.fromOffset(2, 2)
+                colorpicker.BlackOutline.BorderSizePixel = 0
+                colorpicker.BlackOutline.BackgroundColor3 = window.theme.outlinecolor2
+                colorpicker.BlackOutline.Position = UDim2.fromOffset(-1, -1)
+                updateevent.Event:Connect(function(theme)
+                    colorpicker.BlackOutline.BackgroundColor3 = theme.outlinecolor2
+                end)
+
+                colorpicker.BlackOutline2.MouseEnter:Connect(function()
+                    colorpicker.BlackOutline2.BackgroundColor3 = window.theme.accentcolor
+                end)
+                colorpicker.BlackOutline2.MouseLeave:Connect(function()
+                    if not window.OpenedColorPickers[colorpicker.MainPicker] then
+                        colorpicker.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                    end
+                end)
+
+                colorpicker.MainPicker = Instance.new("TextButton", colorpicker.Main)
+                colorpicker.MainPicker.Name = "picker"
+                colorpicker.MainPicker.ZIndex = 100
+                colorpicker.MainPicker.Visible = false
+                colorpicker.MainPicker.AutoButtonColor = false
+                colorpicker.MainPicker.Text = ""
+                window.OpenedColorPickers[colorpicker.MainPicker] = false
+                colorpicker.MainPicker.Size = UDim2.fromOffset(180, 196)
+                colorpicker.MainPicker.BorderSizePixel = 0
+                colorpicker.MainPicker.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                colorpicker.MainPicker.Rotation = 0.000000000000001
+                colorpicker.MainPicker.Position = UDim2.fromOffset(-colorpicker.MainPicker.AbsoluteSize.X + colorpicker.Main.AbsoluteSize.X, 15)
+
+                colorpicker.BlackOutline3 = Instance.new("Frame", colorpicker.MainPicker)
+                colorpicker.BlackOutline3.Name = "blackline"
+                colorpicker.BlackOutline3.ZIndex = 98
+                colorpicker.BlackOutline3.Size = colorpicker.MainPicker.Size + UDim2.fromOffset(6, 6)
+                colorpicker.BlackOutline3.BorderSizePixel = 0
+                colorpicker.BlackOutline3.BackgroundColor3 = window.theme.outlinecolor2
+                colorpicker.BlackOutline3.Position = UDim2.fromOffset(-3, -3)
+                updateevent.Event:Connect(function(theme)
+                    colorpicker.BlackOutline3.BackgroundColor3 = theme.outlinecolor2
+                end)
+                
+                colorpicker.Outline2 = Instance.new("Frame", colorpicker.MainPicker)
+                colorpicker.Outline2.Name = "blackline"
+                colorpicker.Outline2.ZIndex = 98
+                colorpicker.Outline2.Size = colorpicker.MainPicker.Size + UDim2.fromOffset(4, 4)
+                colorpicker.Outline2.BorderSizePixel = 0
+                colorpicker.Outline2.BackgroundColor3 = window.theme.outlinecolor
+                colorpicker.Outline2.Position = UDim2.fromOffset(-2, -2)
+                updateevent.Event:Connect(function(theme)
+                    colorpicker.Outline2.BackgroundColor3 = theme.outlinecolor
+                end)
+
+                colorpicker.BlackOutline3 = Instance.new("Frame", colorpicker.MainPicker)
+                colorpicker.BlackOutline3.Name = "blackline"
+                colorpicker.BlackOutline3.ZIndex = 98
+                colorpicker.BlackOutline3.Size = colorpicker.MainPicker.Size + UDim2.fromOffset(2, 2)
+                colorpicker.BlackOutline3.BorderSizePixel = 0
+                colorpicker.BlackOutline3.BackgroundColor3 = window.theme.outlinecolor2
+                colorpicker.BlackOutline3.Position = UDim2.fromOffset(-1, -1)
+                updateevent.Event:Connect(function(theme)
+                    colorpicker.BlackOutline3.BackgroundColor3 = theme.outlinecolor2
+                end)
+
+                colorpicker.hue = Instance.new("ImageLabel", colorpicker.MainPicker)
+                colorpicker.hue.ZIndex = 101
+                colorpicker.hue.Position = UDim2.new(0,3,0,3)
+                colorpicker.hue.Size = UDim2.new(0,172,0,172)
+                colorpicker.hue.Image = "rbxassetid://4155801252"
+                colorpicker.hue.ScaleType = Enum.ScaleType.Stretch
+                colorpicker.hue.BackgroundColor3 = Color3.new(1,0,0)
+                colorpicker.hue.BorderColor3 = window.theme.outlinecolor2
+                updateevent.Event:Connect(function(theme)
+                    colorpicker.hue.BorderColor3 = theme.outlinecolor2
+                end)
+
+                colorpicker.hueselectorpointer = Instance.new("ImageLabel", colorpicker.MainPicker)
+                colorpicker.hueselectorpointer.ZIndex = 101
+                colorpicker.hueselectorpointer.BackgroundTransparency = 1
+                colorpicker.hueselectorpointer.BorderSizePixel = 0
+                colorpicker.hueselectorpointer.Position = UDim2.new(0, 0, 0, 0)
+                colorpicker.hueselectorpointer.Size = UDim2.new(0, 7, 0, 7)
+                colorpicker.hueselectorpointer.Image = "rbxassetid://6885856475"
+
+                colorpicker.selector = Instance.new("TextLabel", colorpicker.MainPicker)
+                colorpicker.selector.ZIndex = 100
+                colorpicker.selector.Position = UDim2.new(0,3,0,181)
+                colorpicker.selector.Size = UDim2.new(0,173,0,10)
+                colorpicker.selector.BackgroundColor3 = Color3.fromRGB(255,255,255)
+                colorpicker.selector.BorderColor3 = window.theme.outlinecolor2
+                colorpicker.selector.Text = ""
+                updateevent.Event:Connect(function(theme)
+                    colorpicker.selector.BorderColor3 = theme.outlinecolor2
+                end)
+    
+                colorpicker.gradient = Instance.new("UIGradient", colorpicker.selector)
+                colorpicker.gradient.Color = ColorSequence.new({ 
+                    ColorSequenceKeypoint.new(0, Color3.new(1,0,0)), 
+                    ColorSequenceKeypoint.new(0.17, Color3.new(1,0,1)), 
+                    ColorSequenceKeypoint.new(0.33,Color3.new(0,0,1)), 
+                    ColorSequenceKeypoint.new(0.5,Color3.new(0,1,1)), 
+                    ColorSequenceKeypoint.new(0.67, Color3.new(0,1,0)), 
+                    ColorSequenceKeypoint.new(0.83, Color3.new(1,1,0)), 
+                    ColorSequenceKeypoint.new(1, Color3.new(1,0,0))
+                })
+
+                colorpicker.pointer = Instance.new("Frame", colorpicker.selector)
+                colorpicker.pointer.ZIndex = 101
+                colorpicker.pointer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                colorpicker.pointer.Position = UDim2.new(0,0,0,0)
+                colorpicker.pointer.Size = UDim2.new(0,2,0,10)
+                colorpicker.pointer.BorderColor3 = Color3.fromRGB(255, 255, 255)
+
+                if colorpicker.flag and colorpicker.flag ~= "" then
+                    library.flags[colorpicker.flag] = colorpicker.default
+                end
+
+                function colorpicker:RefreshSelector()
+                    local pos = math.clamp((mouse.X - colorpicker.hue.AbsolutePosition.X) / colorpicker.hue.AbsoluteSize.X, 0, 1)
+                    colorpicker.color = 1 - pos
+                    colorpicker.pointer:TweenPosition(UDim2.new(pos, 0, 0, 0), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.05)
+                    colorpicker.hue.BackgroundColor3 = Color3.fromHSV(1 - pos, 1, 1)
+                end
+
+                function colorpicker:RefreshHue()
+                    local x = (mouse.X - colorpicker.hue.AbsolutePosition.X) / colorpicker.hue.AbsoluteSize.X
+                    local y = (mouse.Y - colorpicker.hue.AbsolutePosition.Y) / colorpicker.hue.AbsoluteSize.Y
+                    colorpicker.hueselectorpointer:TweenPosition(UDim2.new(math.clamp(x * colorpicker.hue.AbsoluteSize.X, 0.5, 0.952 * colorpicker.hue.AbsoluteSize.X) / colorpicker.hue.AbsoluteSize.X, 0, math.clamp(y * colorpicker.hue.AbsoluteSize.Y, 0.5, 0.885 * colorpicker.hue.AbsoluteSize.Y) / colorpicker.hue.AbsoluteSize.Y, 0), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.05)
+                    colorpicker:Set(Color3.fromHSV(colorpicker.color, math.clamp(x * colorpicker.hue.AbsoluteSize.X, 0.5, 1 * colorpicker.hue.AbsoluteSize.X) / colorpicker.hue.AbsoluteSize.X, 1 - (math.clamp(y * colorpicker.hue.AbsoluteSize.Y, 0.5, 1 * colorpicker.hue.AbsoluteSize.Y) / colorpicker.hue.AbsoluteSize.Y)))
+                end
+
+                function colorpicker:Set(value)
+                    local color = Color3.new(math.clamp(value.r, 0, 1), math.clamp(value.g, 0, 1), math.clamp(value.b, 0, 1))
+                    colorpicker.value = color
+                    if colorpicker.flag and colorpicker.flag ~= "" then
+                        library.flags[colorpicker.flag] = color
+                    end
+                    local clr = Color3.new(math.clamp(color.R / 1.7, 0, 1), math.clamp(color.G / 1.7, 0, 1), math.clamp(color.B / 1.7, 0, 1))
+                    colorpicker.Gradient.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0.00, color), ColorSequenceKeypoint.new(1.00, clr) })
+                    pcall(colorpicker.callback, color)
+                end
+                function colorpicker:Get()
+                    return colorpicker.value
+                end
+                colorpicker:Set(colorpicker.default)
+
+                function colorpicker:AddDropdown(items, default, multichoice, callback, flag)
+                    local dropdown = { }
+
+                    dropdown.defaultitems = items or { }
+                    dropdown.default = default
+                    dropdown.callback = callback or function() end
+                    dropdown.multichoice = multichoice or false
+                    dropdown.values = { }
+                    dropdown.flag = flag or ((colorpicker.text or "") .. tostring( #(sector.Items:GetChildren()) ))
+    
+                    dropdown.Main = Instance.new("TextButton", sector.Items)
+                    dropdown.Main.Name = "dropdown"
+                    dropdown.Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    dropdown.Main.BorderSizePixel = 0
+                    dropdown.Main.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 12, 16)
+                    dropdown.Main.Position = UDim2.fromOffset(0, 0)
+                    dropdown.Main.ZIndex = 5
+                    dropdown.Main.AutoButtonColor = false
+                    dropdown.Main.Font = window.theme.font
+                    dropdown.Main.Text = ""
+                    dropdown.Main.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    dropdown.Main.TextSize = 15
+                    dropdown.Main.TextXAlignment = Enum.TextXAlignment.Left
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.Main.Font = theme.font
+                    end)
+    
+                    dropdown.Gradient = Instance.new("UIGradient", dropdown.Main)
+                    dropdown.Gradient.Rotation = 90
+                    dropdown.Gradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(49, 49, 49)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(39, 39, 39))}
+    
+                    dropdown.SelectedLabel = Instance.new("TextLabel", dropdown.Main)
+                    dropdown.SelectedLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    dropdown.SelectedLabel.BackgroundTransparency = 1
+                    dropdown.SelectedLabel.Position = UDim2.fromOffset(5, 2)
+                    dropdown.SelectedLabel.Size = UDim2.fromOffset(130, 13)
+                    dropdown.SelectedLabel.Font = window.theme.font
+                    dropdown.SelectedLabel.Text = colorpicker.text
+                    dropdown.SelectedLabel.ZIndex = 5
+                    dropdown.SelectedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    dropdown.SelectedLabel.TextSize = 15
+                    dropdown.SelectedLabel.TextStrokeTransparency = 1
+                    dropdown.SelectedLabel.TextXAlignment = Enum.TextXAlignment.Left
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.SelectedLabel.Font = theme.font
+                    end)
+
+                    dropdown.Nav = Instance.new("ImageButton", dropdown.Main)
+                    dropdown.Nav.Name = "navigation"
+                    dropdown.Nav.BackgroundTransparency = 1
+                    dropdown.Nav.LayoutOrder = 10
+                    dropdown.Nav.Position = UDim2.fromOffset(sector.Main.Size.X.Offset - 26, 5)
+                    dropdown.Nav.Rotation = 90
+                    dropdown.Nav.ZIndex = 5
+                    dropdown.Nav.Size = UDim2.fromOffset(8, 8)
+                    dropdown.Nav.Image = "rbxassetid://4918373417"
+                    dropdown.Nav.ImageColor3 = Color3.fromRGB(210, 210, 210)
+    
+                    dropdown.BlackOutline2 = Instance.new("Frame", dropdown.Main)
+                    dropdown.BlackOutline2.Name = "blackline"
+                    dropdown.BlackOutline2.ZIndex = 4
+                    dropdown.BlackOutline2.Size = dropdown.Main.Size + UDim2.fromOffset(6, 6)
+                    dropdown.BlackOutline2.BorderSizePixel = 0
+                    dropdown.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                    dropdown.BlackOutline2.Position = UDim2.fromOffset(-3, -3)
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.BlackOutline2.BackgroundColor3 = theme.outlinecolor2
+                    end)
+    
+                    dropdown.Outline = Instance.new("Frame", dropdown.Main)
+                    dropdown.Outline.Name = "blackline"
+                    dropdown.Outline.ZIndex = 4
+                    dropdown.Outline.Size = dropdown.Main.Size + UDim2.fromOffset(4, 4)
+                    dropdown.Outline.BorderSizePixel = 0
+                    dropdown.Outline.BackgroundColor3 = window.theme.outlinecolor
+                    dropdown.Outline.Position = UDim2.fromOffset(-2, -2)
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.Outline.BackgroundColor3 = theme.outlinecolor
+                    end)
+    
+                    dropdown.BlackOutline = Instance.new("Frame", dropdown.Main)
+                    dropdown.BlackOutline.Name = "blackline"
+                    dropdown.BlackOutline.ZIndex = 4
+                    dropdown.BlackOutline.Size = dropdown.Main.Size + UDim2.fromOffset(2, 2)
+                    dropdown.BlackOutline.BorderSizePixel = 0
+                    dropdown.BlackOutline.BackgroundColor3 = window.theme.outlinecolor2
+                    dropdown.BlackOutline.Position = UDim2.fromOffset(-1, -1)
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.BlackOutline.BackgroundColor3 = theme.outlinecolor2
+                    end)
+    
+                    dropdown.ItemsFrame = Instance.new("ScrollingFrame", dropdown.Main)
+                    dropdown.ItemsFrame.Name = "itemsframe"
+                    dropdown.ItemsFrame.BorderSizePixel = 0
+                    dropdown.ItemsFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                    dropdown.ItemsFrame.Position = UDim2.fromOffset(0, dropdown.Main.Size.Y.Offset + 8)
+                    dropdown.ItemsFrame.ScrollBarThickness = 2
+                    dropdown.ItemsFrame.ZIndex = 8
+                    dropdown.ItemsFrame.ScrollingDirection = "Y"
+                    dropdown.ItemsFrame.Visible = false
+                    dropdown.ItemsFrame.CanvasSize = UDim2.fromOffset(dropdown.Main.AbsoluteSize.X, 0)
+    
+                    dropdown.ListLayout = Instance.new("UIListLayout", dropdown.ItemsFrame)
+                    dropdown.ListLayout.FillDirection = Enum.FillDirection.Vertical
+                    dropdown.ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    
+                    dropdown.ListPadding = Instance.new("UIPadding", dropdown.ItemsFrame)
+                    dropdown.ListPadding.PaddingTop = UDim.new(0, 2)
+                    dropdown.ListPadding.PaddingBottom = UDim.new(0, 2)
+                    dropdown.ListPadding.PaddingLeft = UDim.new(0, 2)
+                    dropdown.ListPadding.PaddingRight = UDim.new(0, 2)
+    
+                    dropdown.BlackOutline2Items = Instance.new("Frame", dropdown.Main)
+                    dropdown.BlackOutline2Items.Name = "blackline"
+                    dropdown.BlackOutline2Items.ZIndex = 7
+                    dropdown.BlackOutline2Items.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(6, 6)
+                    dropdown.BlackOutline2Items.BorderSizePixel = 0
+                    dropdown.BlackOutline2Items.BackgroundColor3 = window.theme.outlinecolor2
+                    dropdown.BlackOutline2Items.Position = dropdown.ItemsFrame.Position + UDim2.fromOffset(-3, -3)
+                    dropdown.BlackOutline2Items.Visible = false
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.BlackOutline2Items.BackgroundColor3 = theme.outlinecolor2
+                    end)
+                    
+                    dropdown.OutlineItems = Instance.new("Frame", dropdown.Main)
+                    dropdown.OutlineItems.Name = "blackline"
+                    dropdown.OutlineItems.ZIndex = 7
+                    dropdown.OutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(4, 4)
+                    dropdown.OutlineItems.BorderSizePixel = 0
+                    dropdown.OutlineItems.BackgroundColor3 = window.theme.outlinecolor
+                    dropdown.OutlineItems.Position = dropdown.ItemsFrame.Position + UDim2.fromOffset(-2, -2)
+                    dropdown.OutlineItems.Visible = false
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.OutlineItems.BackgroundColor3 = theme.outlinecolor
+                    end)
+    
+                    dropdown.BlackOutlineItems = Instance.new("Frame", dropdown.Main)
+                    dropdown.BlackOutlineItems.Name = "blackline"
+                    dropdown.BlackOutlineItems.ZIndex = 7
+                    dropdown.BlackOutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(-2, -2)
+                    dropdown.BlackOutlineItems.BorderSizePixel = 0
+                    dropdown.BlackOutlineItems.BackgroundColor3 = window.theme.outlinecolor2
+                    dropdown.BlackOutlineItems.Position = dropdown.ItemsFrame.Position + UDim2.fromOffset(-1, -1)
+                    dropdown.BlackOutlineItems.Visible = false
+                    updateevent.Event:Connect(function(theme)
+                        dropdown.BlackOutlineItems.BackgroundColor3 = theme.outlinecolor2
+                    end)
+    
+                    dropdown.IgnoreBackButtons = Instance.new("TextButton", dropdown.Main)
+                    dropdown.IgnoreBackButtons.BackgroundTransparency = 1
+                    dropdown.IgnoreBackButtons.BorderSizePixel = 0
+                    dropdown.IgnoreBackButtons.Position = UDim2.fromOffset(0, dropdown.Main.Size.Y.Offset + 8)
+                    dropdown.IgnoreBackButtons.Size = UDim2.new(0, 0, 0, 0)
+                    dropdown.IgnoreBackButtons.ZIndex = 7
+                    dropdown.IgnoreBackButtons.Text = ""
+                    dropdown.IgnoreBackButtons.Visible = false
+                    dropdown.IgnoreBackButtons.AutoButtonColor = false
+
+                    if dropdown.flag and dropdown.flag ~= "" then
+                        library.flags[dropdown.flag] = dropdown.multichoice and { dropdown.default or dropdown.defaultitems[1] or "" } or (dropdown.default or dropdown.defaultitems[1] or "")
+                    end
+
+                    function dropdown:isSelected(item)
+                        for i, v in pairs(dropdown.values) do
+                            if v == item then
+                                return true
+                            end
+                        end
+                        return false
+                    end
+    
+                    function dropdown:updateText(text)
+                        if #text >= 27 then
+                            text = text:sub(1, 25) .. ".."
+                        end
+                        dropdown.SelectedLabel.Text = text
+                    end
+    
+                    dropdown.Changed = Instance.new("BindableEvent")
+                    function dropdown:Set(value)
+                        if type(value) == "table" then
+                            dropdown.values = value
+                            dropdown:updateText(table.concat(value, ", "))
+                            pcall(dropdown.callback, value)
+                        else
+                            dropdown:updateText(value)
+                            dropdown.values = { value }
+                            pcall(dropdown.callback, value)
+                        end
+                        
+                        dropdown.Changed:Fire(value)
+                        if dropdown.flag and dropdown.flag ~= "" then
+                            library.flags[dropdown.flag] = dropdown.multichoice and dropdown.values or dropdown.values[1]
+                        end
+                    end
+    
+                    function dropdown:Get()
+                        return dropdown.multichoice and dropdown.values or dropdown.values[1]
+                    end
+    
+                    dropdown.items = { }
+                    function dropdown:Add(v)
+                        local Item = Instance.new("TextButton", dropdown.ItemsFrame)
+                        Item.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                        Item.TextColor3 = Color3.fromRGB(255, 255, 255)
+                        Item.BorderSizePixel = 0
+                        Item.Position = UDim2.fromOffset(0, 0)
+                        Item.Size = UDim2.fromOffset(dropdown.Main.Size.X.Offset - 4, 20)
+                        Item.ZIndex = 9
+                        Item.Text = v
+                        Item.Name = v
+                        Item.AutoButtonColor = false
+                        Item.Font = window.theme.font
+                        Item.TextSize = 15
+                        Item.TextXAlignment = Enum.TextXAlignment.Left
+                        Item.TextStrokeTransparency = 1
+                        dropdown.ItemsFrame.CanvasSize = dropdown.ItemsFrame.CanvasSize + UDim2.fromOffset(0, Item.AbsoluteSize.Y)
+    
+                        Item.MouseButton1Down:Connect(function()
+                            if dropdown.multichoice then
+                                if dropdown:isSelected(v) then
+                                    for i2, v2 in pairs(dropdown.values) do
+                                        if v2 == v then
+                                            table.remove(dropdown.values, i2)
+                                        end
+                                    end
+                                    dropdown:Set(dropdown.values)
+                                else
+                                    table.insert(dropdown.values, v)
+                                    dropdown:Set(dropdown.values)
+                                end
+    
+                                return
+                            else
+                                dropdown.Nav.Rotation = 90
+                                dropdown.ItemsFrame.Visible = false
+                                dropdown.ItemsFrame.Active = false
+                                dropdown.OutlineItems.Visible = false
+                                dropdown.BlackOutlineItems.Visible = false
+                                dropdown.BlackOutline2Items.Visible = false
+                                dropdown.IgnoreBackButtons.Visible = false
+                                dropdown.IgnoreBackButtons.Active = false
+                            end
+    
+                            dropdown:Set(v)
+                            return
+                        end)
+    
+                        runservice.RenderStepped:Connect(function()
+                            if dropdown.multichoice and dropdown:isSelected(v) or dropdown.values[1] == v then
+                                Item.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
+                                Item.TextColor3 = window.theme.accentcolor
+                                Item.Text = " " .. v
+                            else
+                                Item.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                                Item.TextColor3 = Color3.fromRGB(255, 255, 255)
+                                Item.Text = v
+                            end
+                        end)
+    
+                        table.insert(dropdown.items, v)
+                        dropdown.ItemsFrame.Size = UDim2.fromOffset(dropdown.Main.Size.X.Offset, math.clamp(#dropdown.items * Item.AbsoluteSize.Y, 20, 156) + 4)
+                        dropdown.ItemsFrame.CanvasSize = UDim2.fromOffset(dropdown.ItemsFrame.AbsoluteSize.X, (#dropdown.items * Item.AbsoluteSize.Y) + 4)
+    
+                        dropdown.OutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(4, 4)
+                        dropdown.BlackOutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(2, 2)
+                        dropdown.BlackOutline2Items.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(6, 6)
+                        dropdown.IgnoreBackButtons.Size = dropdown.ItemsFrame.Size
+                    end
+    
+                    function dropdown:Remove(value)
+                        local item = dropdown.ItemsFrame:FindFirstChild(value)
+                        if item then
+                            for i,v in pairs(dropdown.items) do
+                                if v == value then
+                                    table.remove(dropdown.items, i)
+                                end
+                            end
+    
+                            dropdown.ItemsFrame.Size = UDim2.fromOffset(dropdown.Main.Size.X.Offset, math.clamp(#dropdown.items * item.AbsoluteSize.Y, 20, 156) + 4)
+                            dropdown.ItemsFrame.CanvasSize = UDim2.fromOffset(dropdown.ItemsFrame.AbsoluteSize.X, (#dropdown.items * item.AbsoluteSize.Y) + 4)
+        
+                            dropdown.OutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(2, 2)
+                            dropdown.BlackOutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(4, 4)
+                            dropdown.BlackOutline2Items.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(6, 6)
+                            dropdown.IgnoreBackButtons.Size = dropdown.ItemsFrame.Size
+    
+                            item:Remove()
+                        end
+                    end 
+    
+                    for i,v in pairs(dropdown.defaultitems) do
+                        dropdown:Add(v)
+                    end
+    
+                    if dropdown.default then
+                        dropdown:Set(dropdown.default)
+                    end
+    
+                    local MouseButton1Down = function()
+                        if dropdown.Nav.Rotation == 90 then
+                            dropdown.ItemsFrame.ScrollingEnabled = true
+                            sector.Main.Parent.ScrollingEnabled = false
+                            tweenservice:Create(dropdown.Nav, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { Rotation = -90 }):Play()
+                            dropdown.ItemsFrame.Visible = true
+                            dropdown.ItemsFrame.Active = true
+                            dropdown.IgnoreBackButtons.Visible = true
+                            dropdown.IgnoreBackButtons.Active = true
+                            dropdown.OutlineItems.Visible = true
+                            dropdown.BlackOutlineItems.Visible = true
+                            dropdown.BlackOutline2Items.Visible = true
+                        else
+                            dropdown.ItemsFrame.ScrollingEnabled = false
+                            sector.Main.Parent.ScrollingEnabled = true
+                            tweenservice:Create(dropdown.Nav, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { Rotation = 90 }):Play()
+                            dropdown.ItemsFrame.Visible = false
+                            dropdown.ItemsFrame.Active = false
+                            dropdown.IgnoreBackButtons.Visible = false
+                            dropdown.IgnoreBackButtons.Active = false
+                            dropdown.OutlineItems.Visible = false
+                            dropdown.BlackOutlineItems.Visible = false
+                            dropdown.BlackOutline2Items.Visible = false
+                        end
+                    end
+    
+                    dropdown.Main.MouseButton1Down:Connect(MouseButton1Down)
+                    dropdown.Nav.MouseButton1Down:Connect(MouseButton1Down)
+    
+                    dropdown.BlackOutline2.MouseEnter:Connect(function()
+                        dropdown.BlackOutline2.BackgroundColor3 = window.theme.accentcolor
+                    end)
+                    dropdown.BlackOutline2.MouseLeave:Connect(function()
+                        dropdown.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                    end)
+    
+                    sector:FixSize()
+                    table.insert(library.items, dropdown)
+                    return dropdown
+                end
+
+                local dragging_selector = false
+                local dragging_hue = false
+
+                colorpicker.selector.InputBegan:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        dragging_selector = true
+                        colorpicker:RefreshSelector()
+                    end
+                end)
+
+                colorpicker.selector.InputEnded:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        dragging_selector = false
+                        colorpicker:RefreshSelector()
+                    end
+                end)
+
+                colorpicker.hue.InputBegan:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        dragging_hue = true
+                        colorpicker:RefreshHue()
+                    end
+                end)
+
+                colorpicker.hue.InputEnded:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        dragging_hue = false
+                        colorpicker:RefreshHue()
+                    end
+                end)
+
+                uis.InputChanged:Connect(function(input)
+                    if dragging_selector and input.UserInputType == Enum.UserInputType.MouseMovement then
+                        colorpicker:RefreshSelector()
+                    end
+                    if dragging_hue and input.UserInputType == Enum.UserInputType.MouseMovement then
+                        colorpicker:RefreshHue()
+                    end
+                end)
+
+                local inputBegan = function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        for i,v in pairs(window.OpenedColorPickers) do
+                            if v and i ~= colorpicker.MainPicker then
+                                i.Visible = false
+                                window.OpenedColorPickers[i] = false
+                            end
+                        end
+
+                        colorpicker.MainPicker.Visible = not colorpicker.MainPicker.Visible
+                        window.OpenedColorPickers[colorpicker.MainPicker] = colorpicker.MainPicker.Visible
+                        if window.OpenedColorPickers[colorpicker.MainPicker] then
+                            colorpicker.BlackOutline2.BackgroundColor3 = window.theme.accentcolor
+                        else
+                            colorpicker.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                        end
                     end
                 end
 
-                if debug_hover_object then
-                    if library.debug_object.Parent ~= debug_hover_object then
-                        library.debug_object.Visible = true
-                        library.debug_object.Parent = debug_hover_object
-                        library.debug_text.Text = ('Name: %s\nSize: %s\nPosition: %s\nZIndex: %s\nChildren: %s\nCalculate: %s'):format(
-                            debug_hover_object.Name,
-                            utility:get_size_string(debug_hover_object.Size, debug_hover_object.AbsoluteSize),
-                            utility:get_size_string(debug_hover_object.Position, debug_hover_object.AbsolutePosition),
-                            debug_hover_object.ZIndex,
-                            #debug_hover_object._children,
-                            math_floor(((tick() - debug_calc_start) * 1000) * 10000) / 10000 .. 'ms'
-                        ) 
-                    end
-                else
-                    library.debug_object.Parent = nil
-                    library.debug_object.Visible = false
+                colorpicker.Main.InputBegan:Connect(inputBegan)
+                colorpicker.Outline.InputBegan:Connect(inputBegan)
+                colorpicker.BlackOutline2.InputBegan:Connect(inputBegan)
+
+                sector:FixSize()
+                table.insert(library.items, colorpicker)
+                return colorpicker
+            end
+
+            function sector:AddKeybind(text,default,newkeycallback,callback,flag)
+                local keybind = { }
+
+                keybind.text = text or ""
+                keybind.default = default or "None"
+                keybind.callback = callback or function() end
+                keybind.newkeycallback = newkeycallback or function(key) end
+                keybind.flag = flag or text or ""
+
+                keybind.value = keybind.default
+
+                keybind.Main = Instance.new("TextLabel", sector.Items)
+                keybind.Main.BackgroundTransparency = 1
+                keybind.Main.Size = UDim2.fromOffset(156, 10)
+                keybind.Main.ZIndex = 4
+                keybind.Main.Font = window.theme.font
+                keybind.Main.Text = keybind.text
+                keybind.Main.TextColor3 = window.theme.itemscolor
+                keybind.Main.TextSize = 15
+                keybind.Main.TextStrokeTransparency = 1
+                keybind.Main.TextXAlignment = Enum.TextXAlignment.Left
+                updateevent.Event:Connect(function(theme)
+                    keybind.Main.Font = theme.font
+                    keybind.Main.TextColor3 = theme.itemscolor
+                end)
+
+                keybind.Bind = Instance.new("TextButton", keybind.Main)
+                keybind.Bind.Name = "keybind"
+                keybind.Bind.BackgroundTransparency = 1
+                keybind.Bind.BorderColor3 = window.theme.outlinecolor
+                keybind.Bind.ZIndex = 5
+                keybind.Bind.BorderSizePixel = 0
+                keybind.Bind.Position = UDim2.fromOffset(sector.Main.Size.X.Offset - 10, 0)
+                keybind.Bind.Font = window.theme.font
+                keybind.Bind.TextColor3 = Color3.fromRGB(136, 136, 136)
+                keybind.Bind.TextSize = 15
+                keybind.Bind.TextXAlignment = Enum.TextXAlignment.Right
+                keybind.Bind.MouseButton1Down:Connect(function()
+                    keybind.Bind.Text = "[...]"
+                    keybind.Bind.TextColor3 = window.theme.accentcolor
+                end)
+                updateevent.Event:Connect(function(theme)
+                    keybind.Bind.BorderColor3 = theme.outlinecolor
+                    keybind.Bind.Font = theme.font
+                end)
+
+                if keybind.flag and keybind.flag ~= "" then
+                    library.flags[keybind.flag] = keybind.default
                 end
-            else
-                library.debug_object.Parent = nil
-                library.debug_object.Visible = false
+
+                local shorter_keycodes = {
+                    ["LeftShift"] = "LSHIFT",
+                    ["RightShift"] = "RSHIFT",
+                    ["LeftControl"] = "LCTRL",
+                    ["RightControl"] = "RCTRL",
+                    ["LeftAlt"] = "LALT",
+                    ["RightAlt"] = "RALT"
+                }
+
+                function keybind:Set(value)
+                    if value == "None" then
+                        keybind.value = value
+                        keybind.Bind.Text = "[" .. value .. "]"
+    
+                        local size = textservice:GetTextSize(keybind.Bind.Text, keybind.Bind.TextSize, keybind.Bind.Font, Vector2.new(2000, 2000))
+                        keybind.Bind.Size = UDim2.fromOffset(size.X, size.Y)
+                        keybind.Bind.Position = UDim2.fromOffset(sector.Main.Size.X.Offset - 10 - keybind.Bind.AbsoluteSize.X, 0)
+                        if keybind.flag and keybind.flag ~= "" then
+                            library.flags[keybind.flag] = value
+                        end
+                        pcall(keybind.newkeycallback, value)
+                    end
+
+                    keybind.value = value
+                    keybind.Bind.Text = "[" .. (shorter_keycodes[value.Name or value] or (value.Name or value)) .. "]"
+
+                    local size = textservice:GetTextSize(keybind.Bind.Text, keybind.Bind.TextSize, keybind.Bind.Font, Vector2.new(2000, 2000))
+                    keybind.Bind.Size = UDim2.fromOffset(size.X, size.Y)
+                    keybind.Bind.Position = UDim2.fromOffset(sector.Main.Size.X.Offset - 10 - keybind.Bind.AbsoluteSize.X, 0)
+                    if keybind.flag and keybind.flag ~= "" then
+                        library.flags[keybind.flag] = value
+                    end
+                    pcall(keybind.newkeycallback, value)
+                end
+                keybind:Set(keybind.default and keybind.default or "None")
+
+                function keybind:Get()
+                    return keybind.value
+                end
+
+                uis.InputBegan:Connect(function(input, gameProcessed)
+                    if not gameProcessed then
+                        if keybind.Bind.Text == "[...]" then
+                            keybind.Bind.TextColor3 = Color3.fromRGB(136, 136, 136)
+                            if input.UserInputType == Enum.UserInputType.Keyboard then
+                                keybind:Set(input.KeyCode)
+                            else
+                                keybind:Set("None")
+                            end
+                        else
+                            if keybind.value ~= "None" and input.KeyCode == keybind.value then
+                                pcall(keybind.callback)
+                            end
+                        end
+                    end
+                end)
+
+                sector:FixSize()
+                table.insert(library.items, keybind)
+                return keybind
             end
 
-            for index, drawing in next, library.drawings.active do
-                if drawing._object.Visible then
-                    if hover_object == drawing and not drawing.MouseHover then
-                        drawing._properties.MouseHover = true
-                        drawing.MouseEnter:Fire()
-                    elseif not (hover_object == drawing) and drawing.MouseHover then
-                        drawing._properties.MouseHover = false
-                        drawing.MouseLeave:Fire()
+            function sector:AddDropdown(text, items, default, multichoice, callback, flag)
+                local dropdown = { }
+
+                dropdown.text = text or ""
+                dropdown.defaultitems = items or { }
+                dropdown.default = default
+                dropdown.callback = callback or function() end
+                dropdown.multichoice = multichoice or false
+                dropdown.values = { }
+                dropdown.flag = flag or text or ""
+
+                dropdown.MainBack = Instance.new("Frame", sector.Items)
+                dropdown.MainBack.Name = "backlabel"
+                dropdown.MainBack.ZIndex = 7
+                dropdown.MainBack.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 12, 34)
+                dropdown.MainBack.BorderSizePixel = 0
+                dropdown.MainBack.BackgroundTransparency = 1
+
+                dropdown.Label = Instance.new("TextLabel", dropdown.MainBack)
+                dropdown.Label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                dropdown.Label.BackgroundTransparency = 1
+                dropdown.Label.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 12, 10)
+                dropdown.Label.Position = UDim2.fromOffset(0, 0)
+                dropdown.Label.Font = window.theme.font
+                dropdown.Label.Text = dropdown.text
+                dropdown.Label.ZIndex = 4
+                dropdown.Label.TextColor3 = window.theme.itemscolor
+                dropdown.Label.TextSize = 15
+                dropdown.Label.TextStrokeTransparency = 1
+                dropdown.Label.TextXAlignment = Enum.TextXAlignment.Left
+
+                updateevent.Event:Connect(function(theme)
+                    dropdown.Label.Font = theme.font
+                    dropdown.Label.TextColor3 = theme.itemscolor
+                end)
+
+                dropdown.Main = Instance.new("TextButton", dropdown.MainBack)
+                dropdown.Main.Name = "dropdown"
+                dropdown.Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                dropdown.Main.BorderSizePixel = 0
+                dropdown.Main.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 12, 16)
+                dropdown.Main.Position = UDim2.fromOffset(0, 17)
+                dropdown.Main.ZIndex = 5
+                dropdown.Main.AutoButtonColor = false
+                dropdown.Main.Font = window.theme.font
+                dropdown.Main.Text = ""
+                dropdown.Main.TextColor3 = Color3.fromRGB(255, 255, 255)
+                dropdown.Main.TextSize = 15
+                dropdown.Main.TextXAlignment = Enum.TextXAlignment.Left
+                updateevent.Event:Connect(function(theme)
+                    dropdown.Main.Font = theme.font
+                end)
+
+                dropdown.Gradient = Instance.new("UIGradient", dropdown.Main)
+                dropdown.Gradient.Rotation = 90
+                dropdown.Gradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(49, 49, 49)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(39, 39, 39))}
+
+                dropdown.SelectedLabel = Instance.new("TextLabel", dropdown.Main)
+                dropdown.SelectedLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                dropdown.SelectedLabel.BackgroundTransparency = 1
+                dropdown.SelectedLabel.Position = UDim2.fromOffset(5, 2)
+                dropdown.SelectedLabel.Size = UDim2.fromOffset(130, 13)
+                dropdown.SelectedLabel.Font = window.theme.font
+                dropdown.SelectedLabel.Text = dropdown.text
+                dropdown.SelectedLabel.ZIndex = 5
+                dropdown.SelectedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                dropdown.SelectedLabel.TextSize = 15
+                dropdown.SelectedLabel.TextStrokeTransparency = 1
+                dropdown.SelectedLabel.TextXAlignment = Enum.TextXAlignment.Left
+                updateevent.Event:Connect(function(theme)
+                    dropdown.SelectedLabel.Font = theme.font
+                end)
+
+                dropdown.Nav = Instance.new("ImageButton", dropdown.Main)
+                dropdown.Nav.Name = "navigation"
+                dropdown.Nav.BackgroundTransparency = 1
+                dropdown.Nav.LayoutOrder = 10
+                dropdown.Nav.Position = UDim2.fromOffset(sector.Main.Size.X.Offset - 26, 5)
+                dropdown.Nav.Rotation = 90
+                dropdown.Nav.ZIndex = 5
+                dropdown.Nav.Size = UDim2.fromOffset(8, 8)
+                dropdown.Nav.Image = "rbxassetid://4918373417"
+                dropdown.Nav.ImageColor3 = Color3.fromRGB(210, 210, 210)
+
+                dropdown.BlackOutline2 = Instance.new("Frame", dropdown.Main)
+                dropdown.BlackOutline2.Name = "blackline"
+                dropdown.BlackOutline2.ZIndex = 4
+                dropdown.BlackOutline2.Size = dropdown.Main.Size + UDim2.fromOffset(6, 6)
+                dropdown.BlackOutline2.BorderSizePixel = 0
+                dropdown.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                dropdown.BlackOutline2.Position = UDim2.fromOffset(-3, -3)
+                updateevent.Event:Connect(function(theme)
+                    dropdown.BlackOutline2.BackgroundColor3 = theme.outlinecolor2
+                end)
+
+                dropdown.Outline = Instance.new("Frame", dropdown.Main)
+                dropdown.Outline.Name = "blackline"
+                dropdown.Outline.ZIndex = 4
+                dropdown.Outline.Size = dropdown.Main.Size + UDim2.fromOffset(4, 4)
+                dropdown.Outline.BorderSizePixel = 0
+                dropdown.Outline.BackgroundColor3 = window.theme.outlinecolor
+                dropdown.Outline.Position = UDim2.fromOffset(-2, -2)
+                updateevent.Event:Connect(function(theme)
+                    dropdown.Outline.BackgroundColor3 = theme.outlinecolor
+                end)
+
+                dropdown.BlackOutline = Instance.new("Frame", dropdown.Main)
+                dropdown.BlackOutline.Name = "blackline"
+                dropdown.BlackOutline.ZIndex = 4
+                dropdown.BlackOutline.Size = dropdown.Main.Size + UDim2.fromOffset(2, 2)
+                dropdown.BlackOutline.BorderSizePixel = 0
+                dropdown.BlackOutline.BackgroundColor3 = window.theme.outlinecolor2
+                dropdown.BlackOutline.Position = UDim2.fromOffset(-1, -1)
+                updateevent.Event:Connect(function(theme)
+                    dropdown.BlackOutline.BackgroundColor3 = theme.outlinecolor2
+                end)
+
+                dropdown.ItemsFrame = Instance.new("ScrollingFrame", dropdown.Main)
+                dropdown.ItemsFrame.Name = "itemsframe"
+                dropdown.ItemsFrame.BorderSizePixel = 0
+                dropdown.ItemsFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                dropdown.ItemsFrame.Position = UDim2.fromOffset(0, dropdown.Main.Size.Y.Offset + 8)
+                dropdown.ItemsFrame.ScrollBarThickness = 2
+                dropdown.ItemsFrame.ZIndex = 8
+                dropdown.ItemsFrame.ScrollingDirection = "Y"
+                dropdown.ItemsFrame.Visible = false
+                dropdown.ItemsFrame.CanvasSize = UDim2.fromOffset(dropdown.Main.AbsoluteSize.X, 0)
+
+                dropdown.ListLayout = Instance.new("UIListLayout", dropdown.ItemsFrame)
+                dropdown.ListLayout.FillDirection = Enum.FillDirection.Vertical
+                dropdown.ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+                dropdown.ListPadding = Instance.new("UIPadding", dropdown.ItemsFrame)
+                dropdown.ListPadding.PaddingTop = UDim.new(0, 2)
+                dropdown.ListPadding.PaddingBottom = UDim.new(0, 2)
+                dropdown.ListPadding.PaddingLeft = UDim.new(0, 2)
+                dropdown.ListPadding.PaddingRight = UDim.new(0, 2)
+
+                dropdown.BlackOutline2Items = Instance.new("Frame", dropdown.Main)
+                dropdown.BlackOutline2Items.Name = "blackline"
+                dropdown.BlackOutline2Items.ZIndex = 7
+                dropdown.BlackOutline2Items.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(6, 6)
+                dropdown.BlackOutline2Items.BorderSizePixel = 0
+                dropdown.BlackOutline2Items.BackgroundColor3 = window.theme.outlinecolor2
+                dropdown.BlackOutline2Items.Position = dropdown.ItemsFrame.Position + UDim2.fromOffset(-3, -3)
+                dropdown.BlackOutline2Items.Visible = false
+                updateevent.Event:Connect(function(theme)
+                    dropdown.BlackOutline2Items.BackgroundColor3 = theme.outlinecolor2
+                end)
+
+                dropdown.OutlineItems = Instance.new("Frame", dropdown.Main)
+                dropdown.OutlineItems.Name = "blackline"
+                dropdown.OutlineItems.ZIndex = 7
+                dropdown.OutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(4, 4)
+                dropdown.OutlineItems.BorderSizePixel = 0
+                dropdown.OutlineItems.BackgroundColor3 = window.theme.outlinecolor
+                dropdown.OutlineItems.Position = dropdown.ItemsFrame.Position + UDim2.fromOffset(-2, -2)
+                dropdown.OutlineItems.Visible = false
+                updateevent.Event:Connect(function(theme)
+                    dropdown.OutlineItems.BackgroundColor3 = theme.outlinecolor
+                end)
+
+                dropdown.BlackOutlineItems = Instance.new("Frame", dropdown.Main)
+                dropdown.BlackOutlineItems.Name = "blackline"
+                dropdown.BlackOutlineItems.ZIndex = 7
+                dropdown.BlackOutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(-2, -2)
+                dropdown.BlackOutlineItems.BorderSizePixel = 0
+                dropdown.BlackOutlineItems.BackgroundColor3 = window.theme.outlinecolor2
+                dropdown.BlackOutlineItems.Position = dropdown.ItemsFrame.Position + UDim2.fromOffset(-1, -1)
+                dropdown.BlackOutlineItems.Visible = false
+                updateevent.Event:Connect(function(theme)
+                    dropdown.BlackOutlineItems.BackgroundColor3 = theme.outlinecolor2
+                end)
+
+                dropdown.IgnoreBackButtons = Instance.new("TextButton", dropdown.Main)
+                dropdown.IgnoreBackButtons.BackgroundTransparency = 1
+                dropdown.IgnoreBackButtons.BorderSizePixel = 0
+                dropdown.IgnoreBackButtons.Position = UDim2.fromOffset(0, dropdown.Main.Size.Y.Offset + 8)
+                dropdown.IgnoreBackButtons.Size = UDim2.new(0, 0, 0, 0)
+                dropdown.IgnoreBackButtons.ZIndex = 7
+                dropdown.IgnoreBackButtons.Text = ""
+                dropdown.IgnoreBackButtons.Visible = false
+                dropdown.IgnoreBackButtons.AutoButtonColor = false
+
+                if dropdown.flag and dropdown.flag ~= "" then
+                    library.flags[dropdown.flag] = dropdown.multichoice and { dropdown.default or dropdown.defaultitems[1] or "" } or (dropdown.default or dropdown.defaultitems[1] or "")
+                end
+
+                function dropdown:isSelected(item)
+                    for i, v in pairs(dropdown.values) do
+                        if v == item then
+                            return true
+                        end
                     end
+                    return false
+                end
+
+                function dropdown:GetOptions()
+                    return dropdown.values
+                end
+
+                function dropdown:updateText(text)
+                    if #text >= 27 then
+                        text = text:sub(1, 25) .. ".."
+                    end
+                    dropdown.SelectedLabel.Text = text
+                end
+
+                dropdown.Changed = Instance.new("BindableEvent")
+                function dropdown:Set(value)
+                    if type(value) == "table" then
+                        dropdown.values = value
+                        dropdown:updateText(table.concat(value, ", "))
+                        pcall(dropdown.callback, value)
+                    else
+                        dropdown:updateText(value)
+                        dropdown.values = { value }
+                        pcall(dropdown.callback, value)
+                    end
+                    
+                    dropdown.Changed:Fire(value)
+                    if dropdown.flag and dropdown.flag ~= "" then
+                        library.flags[dropdown.flag] = dropdown.multichoice and dropdown.values or dropdown.values[1]
+                    end
+                end
+
+                function dropdown:Get()
+                    return dropdown.multichoice and dropdown.values or dropdown.values[1]
+                end
+
+                dropdown.items = { }
+                function dropdown:Add(v)
+                    local Item = Instance.new("TextButton", dropdown.ItemsFrame)
+                    Item.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                    Item.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    Item.BorderSizePixel = 0
+                    Item.Position = UDim2.fromOffset(0, 0)
+                    Item.Size = UDim2.fromOffset(dropdown.Main.Size.X.Offset - 4, 20)
+                    Item.ZIndex = 9
+                    Item.Text = v
+                    Item.Name = v
+                    Item.AutoButtonColor = false
+                    Item.Font = window.theme.font
+                    Item.TextSize = 15
+                    Item.TextXAlignment = Enum.TextXAlignment.Left
+                    Item.TextStrokeTransparency = 1
+                    dropdown.ItemsFrame.CanvasSize = dropdown.ItemsFrame.CanvasSize + UDim2.fromOffset(0, Item.AbsoluteSize.Y)
+
+                    Item.MouseButton1Down:Connect(function()
+                        if dropdown.multichoice then
+                            if dropdown:isSelected(v) then
+                                for i2, v2 in pairs(dropdown.values) do
+                                    if v2 == v then
+                                        table.remove(dropdown.values, i2)
+                                    end
+                                end
+                                dropdown:Set(dropdown.values)
+                            else
+                                table.insert(dropdown.values, v)
+                                dropdown:Set(dropdown.values)
+                            end
+
+                            return
+                        else
+                            dropdown.Nav.Rotation = 90
+                            dropdown.ItemsFrame.Visible = false
+                            dropdown.ItemsFrame.Active = false
+                            dropdown.OutlineItems.Visible = false
+                            dropdown.BlackOutlineItems.Visible = false
+                            dropdown.BlackOutline2Items.Visible = false
+                            dropdown.IgnoreBackButtons.Visible = false
+                            dropdown.IgnoreBackButtons.Active = false
+                        end
+
+                        dropdown:Set(v)
+                        return
+                    end)
+
+                    runservice.RenderStepped:Connect(function()
+                        if dropdown.multichoice and dropdown:isSelected(v) or dropdown.values[1] == v then
+                            Item.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
+                            Item.TextColor3 = window.theme.accentcolor
+                            Item.Text = " " .. v
+                        else
+                            Item.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                            Item.TextColor3 = Color3.fromRGB(255, 255, 255)
+                            Item.Text = v
+                        end
+                    end)
+
+                    table.insert(dropdown.items, v)
+                    dropdown.ItemsFrame.Size = UDim2.fromOffset(dropdown.Main.Size.X.Offset, math.clamp(#dropdown.items * Item.AbsoluteSize.Y, 20, 156) + 4)
+                    dropdown.ItemsFrame.CanvasSize = UDim2.fromOffset(dropdown.ItemsFrame.AbsoluteSize.X, (#dropdown.items * Item.AbsoluteSize.Y) + 4)
+
+                    dropdown.OutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(4, 4)
+                    dropdown.BlackOutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(2, 2)
+                    dropdown.BlackOutline2Items.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(6, 6)
+                    dropdown.IgnoreBackButtons.Size = dropdown.ItemsFrame.Size
+                end
+
+                function dropdown:Remove(value)
+                    local item = dropdown.ItemsFrame:FindFirstChild(value)
+                    if item then
+                        for i,v in pairs(dropdown.items) do
+                            if v == value then
+                                table.remove(dropdown.items, i)
+                            end
+                        end
+
+                        dropdown.ItemsFrame.Size = UDim2.fromOffset(dropdown.Main.Size.X.Offset, math.clamp(#dropdown.items * item.AbsoluteSize.Y, 20, 156) + 4)
+                        dropdown.ItemsFrame.CanvasSize = UDim2.fromOffset(dropdown.ItemsFrame.AbsoluteSize.X, (#dropdown.items * item.AbsoluteSize.Y) + 4)
+    
+                        dropdown.OutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(2, 2)
+                        dropdown.BlackOutlineItems.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(4, 4)
+                        dropdown.BlackOutline2Items.Size = dropdown.ItemsFrame.Size + UDim2.fromOffset(6, 6)
+                        dropdown.IgnoreBackButtons.Size = dropdown.ItemsFrame.Size
+
+                        item:Remove()
+                    end
+                end 
+
+                for i,v in pairs(dropdown.defaultitems) do
+                    dropdown:Add(v)
+                end
+
+                if dropdown.default then
+                    dropdown:Set(dropdown.default)
+                end
+
+                local MouseButton1Down = function()
+                    if dropdown.Nav.Rotation == 90 then
+                        tweenservice:Create(dropdown.Nav, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { Rotation = -90 }):Play()
+                        if dropdown.items and #dropdown.items ~= 0 then
+                            dropdown.ItemsFrame.ScrollingEnabled = true
+                            sector.Main.Parent.ScrollingEnabled = false
+                            dropdown.ItemsFrame.Visible = true
+                            dropdown.ItemsFrame.Active = true
+                            dropdown.IgnoreBackButtons.Visible = true
+                            dropdown.IgnoreBackButtons.Active = true
+                            dropdown.OutlineItems.Visible = true
+                            dropdown.BlackOutlineItems.Visible = true
+                            dropdown.BlackOutline2Items.Visible = true
+                        end
+                    else
+                        tweenservice:Create(dropdown.Nav, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), { Rotation = 90 }):Play()
+                        dropdown.ItemsFrame.ScrollingEnabled = false
+                        sector.Main.Parent.ScrollingEnabled = true
+                        dropdown.ItemsFrame.Visible = false
+                        dropdown.ItemsFrame.Active = false
+                        dropdown.IgnoreBackButtons.Visible = false
+                        dropdown.IgnoreBackButtons.Active = false
+                        dropdown.OutlineItems.Visible = false
+                        dropdown.BlackOutlineItems.Visible = false
+                        dropdown.BlackOutline2Items.Visible = false
+                    end
+                end
+
+                dropdown.Main.MouseButton1Down:Connect(MouseButton1Down)
+                dropdown.Nav.MouseButton1Down:Connect(MouseButton1Down)
+
+                dropdown.BlackOutline2.MouseEnter:Connect(function()
+                    dropdown.BlackOutline2.BackgroundColor3 = window.theme.accentcolor
+                end)
+                dropdown.BlackOutline2.MouseLeave:Connect(function()
+                    dropdown.BlackOutline2.BackgroundColor3 = window.theme.outlinecolor2
+                end)
+
+                sector:FixSize()
+                table.insert(library.items, dropdown)
+                return dropdown
+            end
+
+            function sector:AddSeperator(text)
+                local seperator = { }
+                seperator.text = text or ""
+
+                seperator.main = Instance.new("Frame", sector.Items)
+                seperator.main.Name = "Main"
+                seperator.main.ZIndex = 5
+                seperator.main.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 12, 10)
+                seperator.main.BorderSizePixel = 0
+                seperator.main.BackgroundTransparency = 1
+
+                seperator.line = Instance.new("Frame", seperator.main)
+                seperator.line.Name = "Line"
+                seperator.line.ZIndex = 7
+                seperator.line.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+                seperator.line.BorderSizePixel = 0
+                seperator.line.Size = UDim2.fromOffset(sector.Main.Size.X.Offset - 26, 1)
+                seperator.line.Position = UDim2.fromOffset(7, 5)
+
+                seperator.outline = Instance.new("Frame", seperator.line)
+                seperator.outline.Name = "Outline"
+                seperator.outline.ZIndex = 6
+                seperator.outline.BorderSizePixel = 0
+                seperator.outline.BackgroundColor3 = window.theme.outlinecolor2
+                seperator.outline.Position = UDim2.fromOffset(-1, -1)
+                seperator.outline.Size = seperator.line.Size - UDim2.fromOffset(-2, -2)
+                updateevent.Event:Connect(function(theme)
+                    seperator.outline.BackgroundColor3 = theme.outlinecolor2
+                end)
+
+                seperator.label = Instance.new("TextLabel", seperator.main)
+                seperator.label.Name = "Label"
+                seperator.label.BackgroundTransparency = 1
+                seperator.label.Size = seperator.main.Size
+                seperator.label.Font = window.theme.font
+                seperator.label.ZIndex = 8
+                seperator.label.Text = seperator.text
+                seperator.label.TextColor3 = Color3.fromRGB(255, 255, 255)
+                seperator.label.TextSize = window.theme.fontsize
+                seperator.label.TextStrokeTransparency = 1
+                seperator.label.TextXAlignment = Enum.TextXAlignment.Center
+                updateevent.Event:Connect(function(theme)
+                    seperator.label.Font = theme.font
+                    seperator.label.TextSize = theme.fontsize
+                end)
+
+                local textSize = textservice:GetTextSize(seperator.text, window.theme.fontsize, window.theme.font, Vector2.new(2000, 2000))
+                local textStart = seperator.main.AbsoluteSize.X / 2 - (textSize.X / 2)
+
+                sector.LabelBackFrame = Instance.new("Frame", seperator.main)
+                sector.LabelBackFrame.Name = "LabelBack"
+                sector.LabelBackFrame.ZIndex = 7
+                sector.LabelBackFrame.Size = UDim2.fromOffset(textSize.X + 12, 10)
+                sector.LabelBackFrame.BorderSizePixel = 0
+                sector.LabelBackFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+                sector.LabelBackFrame.Position = UDim2.new(0, textStart - 6, 0, 0)
+                updateevent.Event:Connect(function(theme)
+                    textSize = textservice:GetTextSize(seperator.text, theme.fontsize, theme.font, Vector2.new(2000, 2000))
+                    textStart = seperator.main.AbsoluteSize.X / 2 - (textSize.X / 2)
+
+                    sector.LabelBackFrame.Size = UDim2.fromOffset(textSize.X + 12, 10)
+                    sector.LabelBackFrame.Position = UDim2.new(0, textStart - 6, 0, 0)
+                end)
+
+                sector:FixSize()
+                return seperator
+            end
+
+            return sector
+        end
+
+        function tab:CreateConfigSystem(side)
+            local configSystem = { }
+
+            configSystem.configFolder = window.name .. "/" .. tostring(game.PlaceId)
+            if (not isfolder(configSystem.configFolder)) then
+                makefolder(configSystem.configFolder)
+            end
+
+            configSystem.sector = tab:CreateSector("Configs", side or "left")
+
+            local ConfigName = configSystem.sector:AddTextbox("Config Name", "", ConfigName, function() end, "")
+            local default = tostring(listfiles(configSystem.configFolder)[1] or ""):gsub(configSystem.configFolder .. "\\", ""):gsub(".txt", "")
+            local Config = configSystem.sector:AddDropdown("Configs", {}, default, false, function() end, "")
+            for i,v in pairs(listfiles(configSystem.configFolder)) do
+                if v:find(".txt") then
+                    Config:Add(tostring(v):gsub(configSystem.configFolder .. "\\", ""):gsub(".txt", ""))
                 end
             end
 
-            if library.dragging_slider then
-                library.dragging_slider:update()
+            configSystem.Create = configSystem.sector:AddButton("Create", function()
+                for i,v in pairs(listfiles(configSystem.configFolder)) do
+                    Config:Remove(tostring(v):gsub(configSystem.configFolder .. "\\", ""):gsub(".txt", ""))
+                end
+
+                if ConfigName:Get() and ConfigName:Get() ~= "" then
+                    local config = {}
+    
+                    for i,v in pairs(library.flags) do
+                        if (v ~= nil and v ~= "") then
+                            if (typeof(v) == "Color3") then
+                                config[i] = { v.R, v.G, v.B }
+                            elseif (tostring(v):find("Enum.KeyCode")) then
+                                config[i] = v.Name
+                            elseif (typeof(v) == "table") then
+                                config[i] = { v }
+                            else
+                                config[i] = v
+                            end
+                        end
+                    end
+    
+                    writefile(configSystem.configFolder .. "/" .. ConfigName:Get() .. ".txt", httpservice:JSONEncode(config))
+    
+                    for i,v in pairs(listfiles(configSystem.configFolder)) do
+                        if v:find(".txt") then
+                            Config:Add(tostring(v):gsub(configSystem.configFolder .. "\\", ""):gsub(".txt", ""))
+                        end
+                    end
+                end
+            end)
+
+            configSystem.Save = configSystem.sector:AddButton("Save", function()
+                local config = {}
+                if Config:Get() and Config:Get() ~= "" then
+                    for i,v in pairs(library.flags) do
+                        if (v ~= nil and v ~= "") then
+                            if (typeof(v) == "Color3") then
+                                config[i] = { v.R, v.G, v.B }
+                            elseif (tostring(v):find("Enum.KeyCode")) then
+                                config[i] = "Enum.KeyCode." .. v.Name
+                            elseif (typeof(v) == "table") then
+                                config[i] = { v }
+                            else
+                                config[i] = v
+                            end
+                        end
+                    end
+    
+                    writefile(configSystem.configFolder .. "/" .. Config:Get() .. ".txt", httpservice:JSONEncode(config))
+                end
+            end)
+
+            configSystem.Load = configSystem.sector:AddButton("Load", function()
+                local Success = pcall(readfile, configSystem.configFolder .. "/" .. Config:Get() .. ".txt")
+                if (Success) then
+                    pcall(function() 
+                        local ReadConfig = httpservice:JSONDecode(readfile(configSystem.configFolder .. "/" .. Config:Get() .. ".txt"))
+                        local NewConfig = {}
+    
+                        for i,v in pairs(ReadConfig) do
+                            if (typeof(v) == "table") then
+                                if (typeof(v[1]) == "number") then
+                                    NewConfig[i] = Color3.new(v[1], v[2], v[3])
+                                elseif (typeof(v[1]) == "table") then
+                                    NewConfig[i] = v[1]
+                                end
+                            elseif (tostring(v):find("Enum.KeyCode.")) then
+                                NewConfig[i] = Enum.KeyCode[tostring(v):gsub("Enum.KeyCode.", "")]
+                            else
+                                NewConfig[i] = v
+                            end
+                        end
+    
+                        library.flags = NewConfig
+    
+                        for i,v in pairs(library.flags) do
+                            for i2,v2 in pairs(library.items) do
+                                if (i ~= nil and i ~= "" and i ~= "Configs_Name" and i ~= "Configs" and v2.flag ~= nil) then
+                                    if (v2.flag == i) then
+                                        pcall(function() 
+                                            v2:Set(v)
+                                        end)
+                                    end
+                                end
+                            end
+                        end
+                    end)
+                end
+            end)
+
+            configSystem.Delete = configSystem.sector:AddButton("Delete", function()
+                for i,v in pairs(listfiles(configSystem.configFolder)) do
+                    Config:Remove(tostring(v):gsub(configSystem.configFolder .. "\\", ""):gsub(".txt", ""))
+                end
+
+                if (not Config:Get() or Config:Get() == "") then return end
+                if (not isfile(configSystem.configFolder .. "/" .. Config:Get() .. ".txt")) then return end
+                delfile(configSystem.configFolder .. "/" .. Config:Get() .. ".txt")
+
+                for i,v in pairs(listfiles(configSystem.configFolder)) do
+                    if v:find(".txt") then
+                        Config:Add(tostring(v):gsub(configSystem.configFolder .. "\\", ""):gsub(".txt", ""))
+                    end
+                end
+            end)
+
+            return configSystem
+        end
+
+        --[[ not finished lol
+        function tab:CreatePlayerlist(name)
+            local list = { }
+            list.name = name or ""
+
+            list.Main = Instance.new("Frame", tab.TabPage) 
+            list.Main.Name = list.name:gsub(" ", "") .. "Sector"
+            list.Main.BorderColor3 = window.theme.outlinecolor
+            list.Main.ZIndex = 2
+            list.Main.Size = UDim2.fromOffset(window.size.X.Offset - 22, 220)
+            list.Main.BackgroundColor3 = window.theme.sectorcolor
+            list.Main.Position = UDim2.new(0, 11, 0, 12)
+
+            tab.SectorsLeft[#tab.SectorsLeft + 1] = 220
+            --tab.SectorsRight[#tab.SectorsLeft + 1].space = 220
+
+            list.Line = Instance.new("Frame", list.Main)
+            list.Line.Name = "line"
+            list.Line.ZIndex = 2
+            list.Line.Size = UDim2.fromOffset(list.Main.Size.X.Offset + 2, 1)
+            list.Line.BorderSizePixel = 0
+            list.Line.Position = UDim2.fromOffset(-1, -1)
+            list.Line.BackgroundColor3 = window.theme.accentcolor
+
+            list.BlackOutline = Instance.new("Frame", list.Main)
+            list.BlackOutline.Name = "blackline"
+            list.BlackOutline.ZIndex = 1
+            list.BlackOutline.Size = list.Main.Size + UDim2.fromOffset(4, 4)
+            list.BlackOutline.BorderSizePixel = 0
+            list.BlackOutline.BackgroundColor3 = window.theme.outlinecolor2
+            list.BlackOutline.Position = UDim2.fromOffset(-2, -2)
+
+            local size = textservice:GetTextSize(list.name, 13, window.theme.font, Vector2.new(2000, 2000))
+            list.Label = Instance.new("TextLabel", list.Main)
+            list.Label.AnchorPoint = Vector2.new(0,0.5)
+            list.Label.Position = UDim2.fromOffset(12, -1)
+            list.Label.Size = UDim2.fromOffset(math.clamp(textservice:GetTextSize(list.name, 13, window.theme.font, Vector2.new(200,300)).X + 10, 0, list.Main.Size.X.Offset), size.Y)
+            list.Label.BackgroundTransparency = 1
+            list.Label.BorderSizePixel = 0
+            list.Label.ZIndex = 4
+            list.Label.Text = list.name
+            list.Label.TextColor3 = Color3.new(1,1,2552/255)
+            list.Label.TextStrokeTransparency = 1
+            list.Label.Font = window.theme.font
+            list.Label.TextSize = 13
+
+            list.LabelBackFrame = Instance.new("Frame", list.Label)
+            list.LabelBackFrame.Name = "labelframe"
+            list.LabelBackFrame.ZIndex = 3
+            list.LabelBackFrame.Size = UDim2.fromOffset(list.Label.Size.X.Offset, 10)
+            list.LabelBackFrame.BorderSizePixel = 0
+            list.LabelBackFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+            list.LabelBackFrame.Position = UDim2.fromOffset(0, 6)
+
+            list.Items = Instance.new("ScrollingFrame", list.Main) 
+            list.Items.Name = "items"
+            list.Items.ZIndex = 2
+            list.Items.ScrollBarThickness = 1
+            list.Items.BackgroundTransparency = 1
+            list.Items.Size = list.Main.Size - UDim2.fromOffset(10, 15)
+            list.Items.ScrollingDirection = "Y"
+            list.Items.BorderSizePixel = 0
+            list.Items.Position = UDim2.fromOffset(5, 10)
+            list.Items.CanvasSize = list.Items.Size
+
+            list.ListLayout = Instance.new("UIListLayout", list.Items)
+            list.ListLayout.FillDirection = Enum.FillDirection.Vertical
+            list.ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            list.ListLayout.Padding = UDim.new(0, 0)
+
+            list.ListPadding = Instance.new("UIPadding", list.Items)
+            list.ListPadding.PaddingTop = UDim.new(0, 2)
+            list.ListPadding.PaddingLeft = UDim.new(0, 6)
+            list.ListPadding.PaddingRight = UDim.new(0, 6)
+
+            list.items = { }
+            function list:AddPlayer(Player)
+                local player = { }
+
+                player.Main = Instance.new("Frame", list.Items)
+                player.Main.Name = Player.Name
+                player.Main.BorderColor3 = window.theme.outlinecolor
+                player.Main.ZIndex = 3
+                player.Main.Size = UDim2.fromOffset(list.Items.AbsoluteSize.X - 12, 20)
+                player.Main.BackgroundColor3 = window.theme.sectorcolor
+                player.Main.Position = UDim2.new(0, 0, 0, 0)
+
+                table.insert(list.items, Player)
+                list.Items.CanvasSize = UDim2.fromOffset(list.Items.AbsoluteSize.X, (#list.items * 20))
+                list.Items.Size = UDim2.fromOffset(list.Items.AbsoluteSize.X, math.clamp(list.Items.CanvasSize.Y.Offset, 0, 205))
+                return player
             end
 
-        end
-    end)
+            function list:RemovePlayer(Player)
+                local p = list.Items:FindFirstChild(Player)
+                if p then
+                    for i,v in pairs(list.items) do
+                        if v == Player then
+                            table.remove(list.items, i)
+                        end
+                    end
 
-    library:connection(camera:GetPropertyChangedSignal('FieldOfView'), function()
-        for i,v in next, library.fovcircles do
-            v:update()
-        end
-    end)
-
-    library:connection(camera:GetPropertyChangedSignal('ViewportSize'), function()
-        for i,v in next, library.drawings.noparent do
-            v.Size = v.Size
-            v.Position = v.Position
-        end
-        for i,v in next, library.fovcircles do
-            v:update()
-        end
-    end)
-end
-
--- // finish
-library.colorpicker = library:create('colorpicker', {})
-library.dropdown = {selected = nil, objects = {values = {}}, connections = {}}
-
-library.dropdown.objects.background = library:create('rect', {
-    Theme = {['Color'] = 'Background'},
-    Size = udim2_new(1,-4,0,20),
-    Position = udim2_new(0.5,0,1,0),
-    AnchorPoint = vector2_new(0.5,0),
-    Visible = false,
-    ZIndex = 40,
-})
-
--- library.dropdown.objects.scroll = library:create('rect', {
---     Theme = {['Color'] = 'Accent'},
---     Size = udim2_new(0,2,0.5,0),
---     Position = udim2_new(1,-1,0,1),
---     AnchorPoint = vector2_new(1,0),
---     ZIndex = 42,
---     Parent = library.dropdown.objects.background 
--- })
-
-library.dropdown.objects.border_inner = library:create('outline', library.dropdown.objects.background, {Theme = {['Color'] = 'Border 3'}})
-library.dropdown.objects.border_outer = library:create('outline', library.dropdown.objects.border_inner, {Theme = {['Color'] = 'Border'}})
-
-function library:create_settings_tab(menu)
-    local tab = menu:tab({text = 'settings', order = 999})
-    local settings_main = tab:section({text = 'main', side = 1})
-    local settings_config = tab:section({text = 'config', side = 2})
-
-    settings_main:keybind({text = 'open / close', flag = 'menubind', default = Enum.KeyCode.End, callback = function(bool)
-        library.cursor[1].Visible = bool
-        library.cursor[2].Visible = bool
-        menu:set_open(bool, 0.1)
-    end})
-
-    settings_main:colorpicker({text = 'accent', flag = 'theme_accent', default = library.themes.default.Accent, callback = function(color)
-        library.theme.Accent = color
-        library:update_theme()
-    end})
-
-    settings_main:button({text = 'join discord', callback = function()
-        local res = syn.request({
-            Url = 'http://127.0.0.1:6463/rpc?v=1',
-            Method = 'POST',
-            Headers = {
-                ['Content-Type'] = 'application/json',
-                Origin = 'https://discord.com'
-            },
-            Body = http:JSONEncode({
-                cmd = 'INVITE_BROWSER',
-                nonce = http:GenerateGUID(false),
-                args = {code = 'uvV5B24nAP'}
-            })
-        })
-        if res.Success then
-            library:notification(library.cheatname .. ' | joined discord', 3);
-        end
-    end})
-
-    settings_main:button({text = 'copy lua invite', callback = function()
-
-    end})
-
-    settings_main:button({text = 'copy javascript invite', callback = function()
-        setclipboard('Roblox.GameLauncher.joinGameInstance('..game.PlaceId..',"'..game.JobId..'")')
-    end})
-
-
-    settings_config:dropdown({text = 'config', flag = 'configs_selected'})
-    settings_config:textbox({text = 'config name', flag = 'configs_input'})
-
-    settings_config:button({text = 'create', confirm = true, callback = function()
-        xpcall(function()
-            library:save_config(flags.configs_input, true)
-            library:notification(("successfully created config '%s'"):format(flags.configs_input), 5, color3_new(0.35, 1, 0.35))
-        end, function()
-            library:notification(("unable to create config '%s'"):format(flags.configs_input), 5, color3_new(1, 0.35, 0.35))
-        end)
-    end})
-
-    settings_config:button({text = 'save', confirm = true, callback = function()
-        xpcall(function()
-            library:save_config(flags.configs_selected)
-            library:notification(("successfully saved config '%s'"):format(flags.configs_selected), 5, color3_new(0.35, 1, 0.35))
-        end, function(err)
-            library:notification(err or ("unable to save config '%s'"):format(flags.configs_selected), 5, color3_new(1, 0.35, 0.35))
-        end)
-    end})
-
-    settings_config:button({text = 'load', confirm = true, callback = function()
-        xpcall(function()
-            library:load_config(flags.configs_selected)
-            library:notification(("successfully loaded config '%s'"):format(flags.configs_selected), 5, color3_new(0.35, 1, 0.35))
-        end, function(err)
-            library:notification(err or ("unable to load config '%s'"):format(flags.configs_selected), 5, color3_new(1, 0.35, 0.35))
-        end)
-    end})
-
-    if isfolder(library.cheatname .. '/' .. library.gamename .. '/configs') then
-        for i,v in next, listfiles(library.cheatname .. '/' .. library.gamename .. '/configs') do
-            local ext = '.'..v:split('.')[#v:split('.')];
-            if ext == '.txt' then
-                options.configs_selected:add_value(v:split('\\')[#v:split('\\')]:sub(1,-#ext-1))
+                    p:Remove()
+                    list.Items.CanvasSize = UDim2.fromOffset(list.Items.AbsoluteSize.X, (#list.items * 90))
+                end
             end
+
+            for i,v in pairs(game:GetService("Players"):GetPlayers()) do
+                list:AddPlayer(v)
+            end
+            
+            game:GetService("Players").PlayerAdded:Connect(function(v)
+                list:AddPlayer(v)
+            end)
+            
+            return list
         end
+        ]]--
+
+        table.insert(window.Tabs, tab)
+        return tab
     end
 
-    return tab, settings_main
+    return window
 end
 
-library.has_init = true
-getgenv().library = library
-local menu = library:create('menu')
-library:create_settings_tab(menu)
+return library

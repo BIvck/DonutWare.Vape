@@ -1,2 +1,2 @@
-# Credit To liamm#0223 and Blvck
+# Credit To Munchkins and Blvck
 # Thanks for using my script dawgs

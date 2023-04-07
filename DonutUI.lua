@@ -213,8 +213,8 @@ function library:CreateWatermark(name, position)
 
     return watermark
 end
-
-function library:Notify(Text, Time)
+-- not fixed tho
+--[[function library:Notify(Text, Time)
     local XSize, YSize = Library:GetTextBounds(Text, Library.Font, 14);
 
     YSize = YSize + 7
@@ -303,8 +303,7 @@ function library:Notify(Text, Time)
 
         NotifyOuter:Destroy();
     end)
-end
-
+end--]]
 function library:CreateWindow(name, size, hidebutton)
     local window = { }
 

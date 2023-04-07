@@ -214,7 +214,7 @@ function library:CreateWatermark(name, position)
     return watermark
 end
 
-function Library:Notify(Text, Time)
+function library:Notify(Text, Time)
     local XSize, YSize = Library:GetTextBounds(Text, Library.Font, 14);
 
     YSize = YSize + 7

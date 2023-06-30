@@ -75,7 +75,7 @@ function library:CreateWatermark(name, position)
     local gamename = marketplaceservice:GetProductInfo(game.PlaceId).Name
     local watermark = { }
     watermark.Visible = true
-    watermark.text = " " .. name:gsub("{game}", gamename):gsub("{fps}", "0 FPS") .. " "
+    watermark.text = " " .. name:gsub("{game}", gamename):gsub("{fps}", "0") .. " "
 
     watermark.main = Instance.new("ScreenGui", coregui)
     watermark.main.Name = "Watermark"
@@ -161,7 +161,7 @@ function library:CreateWatermark(name, position)
         watermark.BlackOutline.Visible = watermark.Visible
 
         if not name:find("{fps}") then
-            watermark.label.Text = " " .. name:gsub("{game}", gamename):gsub("{fps}", "0 FPS") .. " "
+            watermark.label.Text = " " .. name:gsub("{game}", gamename):gsub("{fps}", "0") .. " "
         end
 
         if name:find("{fps}") then
@@ -173,7 +173,7 @@ function library:CreateWatermark(name, position)
                 startTime = currentTime
 
                 if fps ~= oldfps then
-                    watermark.label.Text = " " .. name:gsub("{game}", gamename):gsub("{fps}", fps .. " FPS") .. " "
+                    watermark.label.Text = " " .. name:gsub("{game}", gamename):gsub("{fps}", fps .. "") .. " "
         
                     watermark.label.Size = UDim2.new(0, watermark.label.TextBounds.X+10, 0, 25)
                     watermark.mainbar.Size = UDim2.new(0, watermark.label.TextBounds.X, 0, 25)

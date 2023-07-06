@@ -1,9 +1,6 @@
 return {
-    ["9cff6d2a-360f-436a-b99b-acc26dfca827"] = "gsingisabot", -- vm_monesy
-    -- [""] = 2,
-    -- [""] = 3, 
-    -- [""] = 4, 
-    -- [""] = 5, 
-    -- [""] = 6, 
-    -- [""] = 7, 
+    "CD5ACD02-74F9-477A-8008-B5DCBA69B555", -- i want balls
+    "9CFF6D2A-360F-436A-B99B-ACC26DFCA827", -- VM_Monesey
+    "",
+    "",
 }

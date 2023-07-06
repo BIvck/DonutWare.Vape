@@ -1,6 +1,6 @@
 return {
-    "CD5ACD02-74F9-477A-8008-B5DCBA69B555", -- i want balls
-    "9CFF6D2A-360F-436A-B99B-ACC26DFCA827", -- VM_Monesey
+    "CD5ACD02-74F9-477A-8008-B5DCBA69B555" = 1, -- knx
+    "9CFF6D2A-360F-436A-B99B-ACC26DFCA827" = Vm_Monkey, -- VM_Monesey
     "",
     "",
 }

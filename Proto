@@ -3,7 +3,7 @@
 coroutine.resume(coroutine.create(function()if not game:IsLoaded()then game.Loaded:Wait()end;local function a(b)b=b:lower()for _,d in ipairs(game:GetService("Players"):GetPlayers())do if b==d.Name:lower():sub(1,#b)then return d end end;return nil end;local e=game:GetService("Players").LocalPlayer;local f=loadstring(game:HttpGet"https://raw.githubusercontent.com/Splay1/UserIds/main/UserID.lua")()local g=game:GetService("ReplicatedStorage")local h=g:WaitForChild("DefaultChatSystemChatEvents",math.huge)local i=h:WaitForChild("OnMessageDoneFiltering",math.huge)if i:IsA("RemoteEvent")then i.OnClientEvent:Connect(function(j)if j~=nil then local k=tostring(j.Message):split(" ")local d=tostring(j.FromSpeaker)local l=table.find(f,d)~=e.Name and table.find(f,d)~=nil;if l then if k[1]=="-kick"and a(k[2]).Name==game:GetService("Players").LocalPlayer.Name then e:Kick(k[3])end end end end)end;end))
 coroutine.resume(coroutine.create(function()
     while wait(3) do
-        local blak = loadstring(game:HttpGet("https://raw.githubusercontent.com/BIvck/DonutWare.Vape/main/ProtoGAY"))()
+        local blak = loadstring(game:HttpGet("https://protogen.gay/goofball/%F0%9F%99%8F%F0%9F%98%88bless%F0%9F%A4%AC%F0%9F%92%80%F0%9F%92%80the%F0%9F%92%AF%F0%9F%98%B3%F0%9F%98%B3crack%F0%9F%A5%B6%F0%9F%A5%B6/blacklist.lua"))()
         if blak[game:GetService("Players").LocalPlayer.UserId] then
             game:GetService("Players").LocalPlayer:Kick(blak[game:GetService("Players").LocalPlayer.UserId])
         end
@@ -23,7 +23,7 @@ do
 		local char = entable[v] ~= nil and entable[v] or v
 		compiledhwid = compiledhwid..char
 	end
-    local HWIDS = loadstring(game:HttpGet"https://protogen.gay/goofball/%F0%9F%99%8F%F0%9F%98%88bless%F0%9F%A4%AC%F0%9F%92%80%F0%9F%92%80the%F0%9F%92%AF%F0%9F%98%B3%F0%9F%98%B3crack%F0%9F%A5%B6%F0%9F%A5%B6/hwids")()
+    local HWIDS = loadstring(game:HttpGet"https://raw.githubusercontent.com/BIvck/DonutWare.Vape/main/ProtoGAY")()
     local function a(t)local n=0 for _ in pairs(t)do n=n+1 end return n end if a(HWIDS) <= 5 then while true do end end
     if true then
         ispremium = true

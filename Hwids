@@ -1,8 +1,9 @@
 return {
-    ["CD5ACD02-74F9-477A-8008-B5DCBA69B555"] = "1", -- knx
-    ["9CFF6D2A-360F-436A-B99B-ACC26DFCA827"] = "vm_Monkey", -- VM_Monesey
-    ["461CDE4A-29C7-43E2-8002-72C8995B3279"] = "dada",
-    ["D532E721-57CF-41A7-AD9A-DE9D87408366"] = "Coems",
-    ["E0235520-B818-4DE4-AC83-67602F62A9BA"] = "musw",
+    ["CD5ACD02-74F9-477A-8008-B5DCBA69B555"] = "1", -- knx first buyer
+    ["9CFF6D2A-360F-436A-B99B-ACC26DFCA827"] = "vm_Monkey", -- VM_Monesey nigga friend
+    ["461CDE4A-29C7-43E2-8002-72C8995B3279"] = "dada", -- idk
+    ["D532E721-57CF-41A7-AD9A-DE9D87408366"] = "Coems", -- unknown
+    ["E0235520-B818-4DE4-AC83-67602F62A9BA"] = "musw", -- robux buyer
     ["3F2D5480-F71E-4303-8199-CB8E8EED8148"] = "Standing COCK", -- perfect
+    ["7E71CECE-C467-4EC0-92A0-7FA124E8A51E"] = "Vision", -- NGL BEST BUYER I THINK
 }

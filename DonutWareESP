@@ -716,7 +716,21 @@ end
 
 -- game specific functions
 function EspInterface.getWeapon(player)
-	return "Unknown";
+    local currentSelectedObject = tostring(player.CurrentSelectedObject.Value)
+    local success, currentGun = pcall(function()
+        return player.GunInventory[currentSelectedObject].Value
+    end)
+
+    if not success or not currentGun then
+        for _, gun in pairs(player.GunInventory:GetChildren()) do
+            if gun.Value == currentSelectedObject then
+                currentGun = gun
+                break
+            end
+        end
+    end
+
+    return currentGun
 end
 
 function EspInterface.isFriendly(player)
